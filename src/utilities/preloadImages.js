@@ -8,8 +8,6 @@ export const preloadImages = (sources) => {
       let loadedImages = 0;
       const numImages = sources.length;
 
-      
-  
       sources.forEach((source) => {
         const img = new Image();
         img.src = source.url;

@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model highscores {
+  playerid    Int      @id(map: "highscorespk") @default(autoincrement())
+  playername  String   @db.VarChar(25)
+  numberturns Int
+  gameplayed  DateTime @db.Timestamp(6)
+}
+
+model questions {
+  questionid      Int      @id(map: "questionspk") @default(autoincrement())
+  badgeicon       String   @db.VarChar(100)
+  questiontype    Int
+  questiontext    String   @db.VarChar(255)
+  options         String[] @db.VarChar
+  optionstoselect Int
+  answeridx       Int[]
+  hintind         Int
+  hinttxt         String   @db.VarChar(255)
+  hinttxt1        String?  @db.VarChar(255)
+  hinttxt2        String?  @db.VarChar(255)
+  hintcards       Int
+  hintcardtitles  String[] @db.VarChar
+  hintcardtext    String[] @db.VarChar
+}

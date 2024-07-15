@@ -31,11 +31,15 @@ const isPointInPolygon = (point, vertices) => {
     return null;
   }
   
-  export function mouseXY_to_HexID(mouseX, mouseY, tileWidth, tileHeight_full, tileHeight_trim, tilesHOffset, tilesVOffset, boardData, mapData) {
+  export function mouseXY_to_HexID(mouseX, mouseY, tileWidth, tileHeight_full, tileHeight_trim, tilesHOffset, tilesVOffset, boardData, mapData, gamePlayData, actionMenuParams, canvas) {
     // Reset hover
     var hexID = -99;
     // Set the 'hover' property to zero for every tile.
     mapData.forEach(tile => {tile.hover = 0;});
+    actionMenuParams.iconHover = [0, 0, 0, 0, 0, 0];
+
+    // Create a holder variable for what the mouse is over.
+    var mousePosition;
     
     var approxRow;
     // First, get an idea as to where the mouse is vertically - is it in the player info section, or on the game board
@@ -60,7 +64,44 @@ const isPointInPolygon = (point, vertices) => {
     } else {
       approxCol = Math.floor((mouseX - tileWidth * 0.5 * tilesHOffset) / tileWidth);
     }
-  
+
+    // Now check if the mouse is in the action menu
+    // Where would the action menu be (based on current player)
+    const playerBoxWidth = actionMenuParams.playerBoxWidth;
+    const customMargin = actionMenuParams.customMargin;
+
+    var amXpos;
+    var amYpos = actionMenuParams.yOffset;
+    if (gamePlayData.currentPlayer === gamePlayData.numberPlayers - 1) {
+        // Show it on the left of player display box
+        amXpos = canvas.width - actionMenuParams.width - customMargin * 16; 
+        console.log(canvas.width, actionMenuParams.width, customMargin)
+    } else {
+        // Show it on the left of player display box
+        amXpos = gamePlayData.currentPlayer * playerBoxWidth + customMargin * 16; 
+    }
+    //console.log('actionMenuParams.xOffset1', actionMenuParams.xOffset1, ', actionMenuParams.XOffset2', actionMenuParams.actionMenuXOffset2, ', canvaswidth: ', canvas.width);
+    //console.log('Mouse XY: (', mouseX, ',', mouseY, '), Menu XYWH: (', amXpos, ',', amYpos, ',', actionMenuParams.width, ',', actionMenuParams.height);
+    if (mouseX >= amXpos && mouseX <= (amXpos + actionMenuParams.width) && mouseY >= amYpos && mouseY <= (amYpos + actionMenuParams.height)
+        && gamePlayData.currentPhase === 2)
+    {
+      // Prevent any further searching for the mouse location
+      approxRow = -1;
+      approxCol = -1;
+
+      // Determine which circle the mouse is over
+      var cirlceRad = (actionMenuParams.height * actionMenuParams.iconSize) / 2;
+      var iconRough = Math.floor((mouseX - amXpos) / (actionMenuParams.height));
+      var iconRoughCenterX = amXpos + actionMenuParams.iconOffset + iconRough * actionMenuParams.height + cirlceRad;
+      var iconRoughCenterY = amYpos + 0.5 * (actionMenuParams.height * (1 - actionMenuParams.iconSize)) + cirlceRad;
+      var distance = ((mouseX - iconRoughCenterX) ** 2  + (mouseY - iconRoughCenterY) ** 2) ** (0.5);
+      if (distance <= cirlceRad) {
+        actionMenuParams.iconHover[iconRough] = 1;
+        mousePosition = {type: 'am', id: iconRough};
+      } 
+    }
+
+   
     if (approxRow >= 0 && approxCol >= 0) {
       // First row
       if (approxRow < 1) {
@@ -75,9 +116,15 @@ const isPointInPolygon = (point, vertices) => {
       if (hexID && hexID >= 0 && hexID <= mapData.length) {
         //console.log('Mouse is over hexID:', hexID);
         mapData[hexID].hover = 1;
+        mousePosition = {type: 'hex', id: hexID};
+      } else if (hexID === 0) {
+        mapData[hexID].hover = 1;
+        mousePosition = {type: 'hex', id: hexID};
       } else {
         //console.log('Mouse is not over any hex tile');
       }
     }
+
+    return (mousePosition);
 };
   
