@@ -1,5 +1,5 @@
 // Required imports
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 //import { Button, Typography, Stack, Grid } from '@mui/material';
 
 import './App.css';
@@ -325,7 +325,7 @@ const GameBoardCanvas = ({images, gameComponents, addLog, addCurrentInstruction}
     const showTradeOverlay = (playerData, onConfirm, onCancel) => {
       setTradeOverlayVisible(true);
     };
-    const handleTradeConfirm = (tradedResources) => {
+    const handleTradeConfirm = useCallback((tradedResources) => {
         // Player is trading
         const {outWood, outFood, outMetal, outTech, inWood, inFood, inMetal} = tradedResources;
         // Deduct resources from player
@@ -343,24 +343,25 @@ const GameBoardCanvas = ({images, gameComponents, addLog, addCurrentInstruction}
         var tradeInFood   = '';
         var tradeInMetal  = '';
         
-        if (outWood  > 0)  {tradeOutWood  = outWood  + ' wood '}
-        if (outFood  > 0)  {tradeOutFood  = outFood  + ' food '}
-        if (outMetal > 0)  {tradeOutMetal = outMetal + ' metal '}
-        if (outTech  > 0)  {tradeOutTech  = outTech + ' tech' }
-        if (inWood   > 0)  {tradeInWood   = inWood  + ' wood'}
-        if (inFood   > 0)  {tradeInFood   = inFood  + ' food'}
-        if (inMetal >  0)  {tradeInMetal  = inMetal + ' metal'}
+        if (outWood  > 0)  {tradeOutWood  = outWood  + ' wood, '}
+        if (outFood  > 0)  {tradeOutFood  = outFood  + ' food, '}
+        if (outMetal > 0)  {tradeOutMetal = outMetal + ' metal, '}
+        if (outTech  > 0)  {tradeOutTech  = outTech + ' tech, ' }
+        if (inWood   > 0)  {tradeInWood   = inWood  + ' wood, '}
+        if (inFood   > 0)  {tradeInFood   = inFood  + ' food, '}
+        if (inMetal >  0)  {tradeInMetal  = inMetal + ' metal, '}
 
         var logTxt = 'Player ' + (gamePlayData.currentPlayer + 1) + ' traded: [' + tradeOutWood + tradeOutFood + tradeOutMetal + tradeOutTech
                            + '] for [' + tradeInWood + tradeInFood + tradeInMetal + ']';
         addLog(logTxt);
         UpdateGamePlayData('actionPhaseSet', -1);
         setTradeOverlayVisible(false);
-    };
-    const handleTradeCancel = () => {
+    }, [UpdatePlayerData, gamePlayData.currentPlayer, playerData, addLog, UpdateGamePlayData]);
+    
+    const handleTradeCancel = useCallback(() => {
       UpdateGamePlayData('actionPhaseSet', -1);
       setTradeOverlayVisible(false);
-    };
+    }, [UpdateGamePlayData]);
 
 
 
@@ -490,7 +491,7 @@ const GameBoardCanvas = ({images, gameComponents, addLog, addCurrentInstruction}
       canvas.removeEventListener('click', handleClick);
     };
   }, [tileWidth, images, boardData, mapData, playerData, gamePlayData, UpdatePlayerData, UpdateGamePlayData, UpdateMapData
-               , addLog, addCurrentInstruction]); // Add all react hooks as dependencies
+               , addLog, addCurrentInstruction, handleTradeCancel, handleTradeConfirm]); // Add all react hooks as dependencies
 
   
   return (
