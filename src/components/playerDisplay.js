@@ -21,23 +21,44 @@ function handleButtonClick(addCurrentInstruction, showQuestionOverlay) {
 
 // Some code to create 'pulsing' animation behind the picture for the current player
 const pulsingCircleStyle = {
-    //position: 'absolute',
-    borderRadius: '50%',
+    borderRadius: '25%',
     width: '80%',
     height: '80%',
     animation: 'pulse 2s infinite',
-    zIndex: 0, // Ensure the circle is behind the child box element
+    zIndex: 0, 
   };
   const boxStyle = {
     position: 'relative',
-    zIndex: 1, // Ensure the child box element is in front of the pulsing circle.
+    zIndex: 1, 
   };
 
+
+  const question0 = {
+    badgeIcon: 'images/badges/sb_gettingStartedEnterpriseGradeDataScience.png'
+    , questionType: 1
+    , questionText: "Threat hunting requires a great deal of skill, concentration, collaboration, and more than a little creativity. These are the areas where the human mind excels. But threat hunting also requires the right technology to sift intelligence from a vast seat of data, spot anomalies in system logs and automate the process using a global network of threat intelligence. "
+    , options: ["Because the traditional defense strategy is not to layer on another point-product tool or technology to an already fragmented and disjointed IT environment."
+, "Costly and complex fragmented security capabilities provide the visibility and coordination needed to stop today’s sophisticated attacks."
+, "Until recently, organizations have responded to security concerns by deploying a new tool to address each new risk. We’ve observed one company was using 85 tools from 45 different software vendors! Now they have to install, configure, manage, patch, upgrade, and pay for dozens of non-integrated solutions with limited views of the landscape."
+, "The security portfolio structured around domains presents a less organized fashion to make sense of threats using logs, data, threats, flows, packets, etc."
+, "Because it involves the partner ecosystem that allows collaboration across companies and competitors, to understand global threats and data, and adapt to new threats."
+]
+    , matchoptions: []
+    , optionsToSelect: 2
+    , answerIdx: [0, 2] 
+    , hintInd: 1
+    , hintTxt: "Hint goes here"
+    , hintTxt1: 'With more text here'
+    , hintTxt2: 'And maybe some more here'
+    , hintCards: 0
+    , hintCardTitles: []
+    , hintCardText: []
+}
 
   const question1 = {
     badgeIcon: 'images/badges/sb_gettingStartedEnterpriseGradeDataScience.png'
     , questionType: 1
-    , questionText: "Data in all its forms, both structured and unstructured, would be the focus of which of the following V's of data?"
+    , questionText: "When thinking about the 5 main Vs of data, what does Veracity refer to?"
     , options: ['Volume', 'Velocity', 'Variety', 'Veracity']
     , matchoptions: []
     , optionsToSelect: 1
@@ -46,7 +67,7 @@ const pulsingCircleStyle = {
     , hintTxt: "The 5 v's of data are: "
     , hintTxt1: ''
     , hintTxt2: ''
-    , hintCards: 1
+    , hintCards: 0
     , hintCardTitles: ["Volume", "Variety", "Velocity", "Veracity", "Value"]
     , hintCardText: ["Refers to the vast amount of data generated every second",
                "Refers to the different types of data we can use",
@@ -100,7 +121,7 @@ const question3 = {
     , hintCardText: []
 }
 
-
+const questionList = [question0, question1, question2, question3]
 
 const PlayerBox = (props) => {
     const {playerData, BoxWidth, gamePlayData, addCurrentInstruction, showQuestionOverlay} = props;
@@ -127,8 +148,6 @@ const PlayerBox = (props) => {
         customFontSize = 1.25;
         customMargin = 1;
     }
-
-   
 
 
     return (
@@ -160,7 +179,7 @@ const PlayerBox = (props) => {
                         component='img'
                         src='images/icons/icon-v2-skillsbuild.png'
                         alt='sb'
-                        sx={{ ...boxStyle, width: '100%', height: '100%', cursor: 'pointer', alignItems:'center'}}
+                        sx={{ ...boxStyle, width: '100%', height: '100%', cursor: 'pointer', alignItems:'center', objectFit: 'contain'}}
                         
                         onClick={() => handleButtonClick(addCurrentInstruction, showQuestionOverlay)}
                     ></Box>
@@ -338,7 +357,7 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
             </Box>
             {questionOverlayVisible && (
                 <QuestionOverlay
-                question = {question1}
+                question = {questionList[gamePlayData.currentPlayer]}
                 onResult={handleQuestionResult}
             />
         )}

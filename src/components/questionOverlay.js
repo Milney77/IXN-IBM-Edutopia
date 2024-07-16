@@ -3,6 +3,31 @@ import { Box, Typography, Button, Stack, Grid, Tooltip, Card, CardContent} from 
 
 import { DraggableItem, DropTarget } from './dragAndDrop'; 
 
+
+
+
+// Font Resizing functions
+// Can handle the screen width in a general sense - but the length of the strings can be quite different, so including this function:
+function calculateFontSize (maxTextLength, baseFontSize) {
+    // Get the screen width
+    const screenWidth = window.innerWidth;
+    // Get a screen width level
+    var screenSizeLevel = Math.max(0.6, Math.min(1, 0.6 + 0.1 * Math.floor((screenWidth - 800)/200)));
+    // Text Length level
+    var textSizeLevel = Math.max(0.7, Math.min(1, 0.7 + 0.1 * Math.floor((400 - maxTextLength)/100)));
+
+    // Determine base font modifier, and the base font sizes for each element of the question overlay
+    const baseFontModifier = Math.min(1, Math.max(0.4, 1 * screenSizeLevel * textSizeLevel));
+    const customFontSize = baseFontSize * baseFontModifier;
+    return (customFontSize);
+  };
+
+
+
+
+
+  
+
 const QuestionOverlay = ({ question, onResult }) => {
 
     // Create some states that are used for various purposes
@@ -64,7 +89,7 @@ const QuestionOverlay = ({ question, onResult }) => {
         setAnswered(true);
         // logging
         console.log(isAnswerCorrect ? 'Correct!' : 'Incorrect!');
-        console.log('IsCorrect:', isCorrect, ', ShowHint:', showHint)
+        // console.log('IsCorrect:', isCorrect, ', ShowHint:', showHint)
     }
 
     // Determine if the hint should be displayed
@@ -101,21 +126,21 @@ const QuestionOverlay = ({ question, onResult }) => {
       };
       
 
+    // Font size calculations
+    // First get the max length for all the arrays
+    const maxOptionLength = question.options.reduce((max, option) => Math.max(max, option.length), 0);
+    const maxHintLength = Math.max(question.hintTxt.length, question.hintTxt1.length, question.hintTxt2.length)
+    const maxCardTitleLength = question.hintCardTitles.reduce((max, cardTitle) => Math.max(max, cardTitle.length), 0);
+    const maxCardTextLength = question.hintCardText.reduce((max, cardText) => Math.max(max, cardText.length), 0);
     
-    console.log('Shuffled:',shuffledMatchOptions, ', Available:',  availableOptions, ', Matched:', matchedOptions);
+    const questionFontSize = calculateFontSize(question.questionText.length, 2.5);
+    const optionFontSize = calculateFontSize(question.questionText.length, 1.5);
+    const optionMarginSize = optionFontSize * 1.5 * 0.5;
+    const hintFontSize = calculateFontSize(question.questionText.length, 1.5);
+    const cardTitleFontSize = calculateFontSize(question.questionText.length, 1.25);
+    const cardTextFontSize = calculateFontSize(question.questionText.length, 1);
 
-    // Custom font size calculation to make sure everything fits on the screen.
-    const screenHeight = window.innerHeight;
-    var customFontSize;
-    if (screenHeight <= 400) {
-        customFontSize = 0.5;
-    } else if (screenHeight <= 600) {
-        customFontSize = 0.75;
-    } else if (screenHeight <= 800) {
-        customFontSize = 1;
-    } else {
-        customFontSize = 1.25;
-    }
+    console.log('questionFontSize:', questionFontSize, ', optionFontSize:', optionFontSize, ', optionMarginSize:', optionMarginSize, ', hintFontSize:', hintFontSize, ', cardTitleFontSize:', cardTitleFontSize, ', cardTextFontSize:', cardTextFontSize)
 
     return ( 
     
@@ -137,19 +162,21 @@ const QuestionOverlay = ({ question, onResult }) => {
         <Box
             sx={{
                 bgcolor: 'white',
+                marginTop: '5rem',
                 padding: 3,
                 borderRadius: 2,
                 boxShadow: 3,
-                maxWidth: '75%',
+                maxWidth: '80%',
+                maxHeight: '80%',
                 textAlign: 'center',
-                
+                overflowY: 'auto'
             }}
         >
             {/* Create a grid to keep the badge on the left, question on the right */}
             <Grid container >
                 <Stack direction='row'>
                     {/* Icon for the skills build course */}
-                    <Grid item xs={4} lg={3}>
+                    <Grid item xs={1} lg={2}>
                         <Box component='img'
                             src={question.badgeIcon}
                             alt={'badge'}
@@ -158,21 +185,19 @@ const QuestionOverlay = ({ question, onResult }) => {
                     </Grid>
 
                     {/* Question section */}
-                    <Grid item xs={8}>
-                        <Box sx={{marginLeft: '4rem'}}>
-                        <Typography variant='h4' align="left" sx={{marginBottom: '1rem', alignItems: 'center', 
-                                        fontSize: `${customFontSize*1.5}rem`
-                        }}>
-                            { question.questionText }
+                    <Grid item xs={11} lg={10}>
+                        <Box sx={{marginLeft: '1rem'}}>
+                        <Typography variant='h4' align='left' sx={{fontSize:`${questionFontSize}rem`, marginBottom: '1rem'}}>
+                            {question.questionText}
                         </Typography>
                         {question.questionType === 1 ? 
                             (question.options.map((option, index) => (
                                 <Box key={index} 
                                     sx={{
                                         display: 'flex',
-                                        alignItems: 'center',
-                                        marginBottom: '1rem',
-                                        marginLeft: '1rem',
+                                        alignItems: 'flex-start',
+                                        marginBottom: `${optionMarginSize}rem`,
+                                        marginLeft: '0rem',
                                 }}>
                                     <input
                                         type={question.optionsToSelect === 1 ? 'radio' : 'checkbox'}
@@ -180,88 +205,111 @@ const QuestionOverlay = ({ question, onResult }) => {
                                         value={index}
                                         checked={selectedOptions.includes(index.toString())}
                                         onChange={handleOptionChange}
+                                        style={{ marginTop: `${optionFontSize*0.5}rem`, height: `${optionFontSize}rem` }}
                                     />
-                                    <label style={{  fontSize: `${customFontSize}rem` }}><b>{alphabet[index]}:</b> {option}</label>
+                                    <label>
+                                        <Typography variant='h6' align='left' sx={{fontSize:`${optionFontSize}rem`, marginLeft: '0.5rem'}}>
+                                             {<span>
+                                             <b>{alphabet[index]}:  </b>{option}
+                                            </span>}
+                                        </Typography>
+                                    </label>
                                 </Box>
                                 ))
                             ) : (
-                            <Grid container spacing={2}>
+                                <Grid container spacing={2}>
                                 <Grid item xs={9}>
-                                {question.options.map((option, index) => (
-                                    <Stack direction='row' spacing={1}
-                                        key={index} 
-                                        sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem', marginLeft: '0.5rem' }}>
-                                      <Typography variant='body1' align="left"
-                                             sx={{  width: '75%', 
-                                                    whiteSpace: 'wrap', 
-                                                }}>
-                                        {option}
-                                      </Typography>
-                                      <Box sx={{width: '20%'}}>
-                                        <DropTarget id={index} 
-                                                accept="MATCH_OPTION" 
-                                                onDrop={handleDrop} 
-                                                currentItem={matchedOptions[index] !== undefined ? shuffledMatchOptions.find(option => option.id === matchedOptions[index]) : undefined} />
-                                      </Box>
-                                        {matchedOptions[index] !== undefined && (
-                                            <Button variant="outlined" onClick={() => handleRemove(index)} 
-                                                    sx={{margin:'0', padding:'0', maxWidth: '1rem', minWidth: '1rem', width:'1rem'}}>x</Button>
-                                        )}
-                                    </Stack>
-                                  ))}
+                                    {question.options.map((option, index) => (
+                                        <Stack direction='row' spacing={1}
+                                            key={index} 
+                                            sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem', marginLeft: '0.5rem' }}>
+                                            <Grid container alignItems="center">
+                                                <Grid item xs={8}>
+                                                    <Typography variant='body1' align="left"
+                                                        sx={{ 
+                                                            whiteSpace: 'wrap', 
+                                                            fontSize: `${optionFontSize}rem`
+                                                        }}>
+                                                        {option}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <DropTarget id={index} 
+                                                        accept="MATCH_OPTION" 
+                                                        onDrop={handleDrop} 
+                                                        currentItem={matchedOptions[index] !== undefined ? shuffledMatchOptions.find(option => option.id === matchedOptions[index]) : undefined} 
+                                                        fontSize={optionFontSize}  
+                                                        sx={{ width: '100%' }}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={1}>
+                                                    {matchedOptions[index] !== undefined && (
+                                                        <Button variant="outlined" onClick={() => handleRemove(index)} 
+                                                            sx={{ margin: '0', padding: '0', maxWidth: '1rem', minWidth: '1rem', width: '1rem' }}>x</Button>
+                                                    )}
+                                                </Grid>
+                                            </Grid>
+                                        </Stack>
+                                    ))}
                                 </Grid>
                                 <Grid item xs={3}>
-                                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                  {availableOptions.map((matchOption) => (
-                                    <DraggableItem key={matchOption.id} id={matchOption.id} text={matchOption.text} />
-                                    ))}
-                                  </Box>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                        {availableOptions.map((matchOption) => (
+                                            <DraggableItem key={matchOption.id} id={matchOption.id} text={matchOption.text} fontSize={optionFontSize} sx={{ width: '100%' }} />
+                                        ))}
+                                    </Box>
                                 </Grid>
-                              </Grid>
+                            </Grid>
                         )}
 
                         {/* Reward and buttons - these and the hint will disappear when the user has selected an answer and hit confirm */}
                         { !answered ? 
-                        <Stack direction="row" justifycontents="space-between" spacing={8} mt={2}>
+                        
+
+                        <Grid container justifyContent="space-between" alignItems="center" spacing={2} mt={2}>
+                            <Grid item>
                             <Stack direction='row' spacing={1}>
-                                <Typography variant='h6' sx={{ fontSize:`${customFontSize*1.5}rem`}}>Reward:</Typography>
+                                <Typography variant='h6' sx={{ fontSize:`${questionFontSize}rem`}}>Reward:</Typography>
                                 <Box component='img'
                                     src='images/icons/icons-tech.png'
                                     alt={'tech'}
-                                    sx={{ width: `${customFontSize*1.5}rem`, height: `${customFontSize*1.5}rem`}}>
+                                    sx={{ width: `${questionFontSize}rem`, height: `${questionFontSize}rem`}}>
                                 </Box>
                                 { !showHint ? 
                                 <Box component='img'
                                     src='images/icons/icons-tech.png'
                                     alt={'tech'}
-                                    sx={{ width: `${customFontSize*1.5}rem`, height: `${customFontSize*1.5}rem`}}>
+                                    sx={{ width: `${questionFontSize}rem`, height: `${questionFontSize}rem`}}>
                                 </Box> : null}
                             </Stack>
+                            </Grid>
+                            <Grid item>
                             <Stack direction='row' spacing={4}>
                                 { !showHint && question.hintInd === 1 ? 
                                 <Tooltip title="A hint will reduce your reward to just one tech point">
                                 <Button variant="contained" color="secondary" onClick={onHint}>Hint
-                                            <img src='images/icons/icons-tech.png' alt='techpoints' style={{width: `${customFontSize*1.25}rem`, height: `${customFontSize*1.25}rem`}}/>
+                                            <img src='images/icons/icons-tech.png' alt='techpoints' style={{width: `${questionFontSize}rem`, height: `${questionFontSize}rem`}}/>
                                 </Button>
                                 </Tooltip> : null}
 
-                                <Tooltip title="">
+                                <Tooltip title="Click to answer the question">
                                 <Button variant="contained" color="primary" onClick={onConfirm}
                                     disabled={(question.questionType === 1 && selectedOptions.length === 0) || (question.questionType === 2 && availableOptions.length > 0)}
                                 >Confirm</Button>
                                 
                                 </Tooltip>
                             </Stack>
-                        </Stack>
+                            </Grid>
+                        </Grid>
                         : 
                         <Stack direction="row" justifyContent="space-between" spacing={8} mt={2}>
                             {isCorrect ? 
-                            <Typography variant='h6' sx={{ fontSize:`${customFontSize*1.5}rem`}}>Correct!</Typography>
+                            <Typography variant='h6' sx={{ fontSize:`${questionFontSize*0.75}rem`}}>Correct!</Typography>
                             : (question.questionType === 1) ?
-                            <Typography variant='h6' sx={{ fontSize:`${customFontSize*1.5}rem`}}>Incorrect!  Correct answer(s): {question.answerIdx.map(idx => alphabet[idx]).join(', ')}
+                            <Typography variant='h6' sx={{ fontSize:`${questionFontSize*0.75}rem`}}>Incorrect!  Correct answer(s): {question.answerIdx.map(idx => alphabet[idx]).join(', ')}
                             </Typography>
                             : 
-                            <Typography variant='h6' sx={{ fontSize:`${customFontSize*1.5}rem`}}>Incorrect!  Correct answer(s): {question.matchoptions.join(', ')}
+                            <Typography variant='h6' sx={{ fontSize:`${questionFontSize*0.75}rem`}}>Incorrect!  Correct answer(s): {question.matchoptions.join(', ')}
                             </Typography>
                             }   
                             <Button variant="contained" color="primary" onClick={onNext}>
@@ -277,19 +325,19 @@ const QuestionOverlay = ({ question, onResult }) => {
             {/* Hint Section */}
             { showHint && !answered ? 
             <Box sx={{ mt: 2, bgcolor: '#f0f0f0', borderRadius: '8px', border: '1px solid #e0e0e0', padding: 2 }}>
-                <Typography variant='h5' sx={{ fontSize: `${customFontSize*1}rem`, marginY:'1rem'}}>Hint:  {question.hintTxt}</Typography>
-                {question.hintTxt1 ? <Typography variant='h6' sx={{ fontSize: `${customFontSize*0.75}rem`}}> {question.hintTxt1}</Typography> : null}
-                {question.hintTxt1 ? <Typography variant='h6' sx={{ fontSize: `${customFontSize*0.75}rem`}}> {question.hintTxt2}</Typography> : null}
+                <Typography variant='h6' sx={{ fontSize: `${hintFontSize}rem`}}>Hint:  {question.hintTxt}</Typography>
+                {(question.hintCards === 0 && question.hintTxt1) ? <Typography variant='h6' sx={{ fontSize: `${hintFontSize}rem`}}> {question.hintTxt1}</Typography> : null}
+                {(question.hintCards === 0 && question.hintTxt2) ? <Typography variant='h6' sx={{ fontSize: `${hintFontSize}rem`}}> {question.hintTxt2}</Typography> : null}
                 {question.hintCardTitles.length > 0 && (
                     <Grid container spacing={2}>
                         {question.hintCardTitles.map((title, idx) => (
                             <Grid item xs={6} sm={4} md={12 / question.hintCardTitles.length} key={idx}>
                                 <Card variant="outlined" sx={{ borderRadius: '8px' }}>
                                     <CardContent>
-                                        <Typography variant="h6" component="div" sx={{ fontSize: `${customFontSize*0.75}rem`, fontWeight: 'bold' }}>
+                                        <Typography variant="h6" component="div" sx={{ fontSize: `${cardTitleFontSize}rem`, fontWeight: 'bold' }}>
                                             {title}
                                         </Typography>
-                                        <Typography variant="body2" component="p" sx={{ fontSize: `${customFontSize*0.75}rem`}}>
+                                        <Typography variant="body2" component="p" sx={{ fontSize: `${cardTextFontSize}rem`}}>
                                             {question.hintCardText[idx]}
                                         </Typography>
                                     </CardContent>

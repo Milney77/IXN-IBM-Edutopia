@@ -386,10 +386,10 @@ const GameBoardCanvas = ({images, gameComponents, addLog, addCurrentInstruction}
       // Initialise the board data based on this sizing.
       BoardInitialisation(mapData, boardData, tileWidth, tileHeight_full, tileHeight_trim);
       
-      // Player Display font sizes & margins - also applicable to the action menu & board listener
-      // Font Size - Based on screen width & number of players
+      // Player Display margins - used by both the game board renderer & listener to know where the action menu is.
+      // Possible improvement - this field should come from PlayerDisplay, but that is not a priority.
       const screenWidth = window.innerWidth;
-        var customMargin;
+      var customMargin;
       var playerInfoWidth = screenWidth / gamePlayData.numberPlayers;
       if (playerInfoWidth <= 200) {
           customMargin = 1;
@@ -400,7 +400,6 @@ const GameBoardCanvas = ({images, gameComponents, addLog, addCurrentInstruction}
       } else {
           customMargin = 2;
       }
-
       // Parameters for the action menu
       const actionMenuWidth = Math.floor(canvas.width / 4);
       const actionMenuHeight = Math.floor(actionMenuWidth / 6);
