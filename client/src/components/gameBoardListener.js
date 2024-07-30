@@ -75,7 +75,7 @@ const isPointInPolygon = (point, vertices) => {
     if (gamePlayData.currentPlayer === gamePlayData.numberPlayers - 1) {
         // Show it on the left of player display box
         amXpos = canvas.width - actionMenuParams.width - customMargin * 16; 
-        console.log(canvas.width, actionMenuParams.width, customMargin)
+        //console.log(canvas.width, actionMenuParams.width, customMargin)
     } else {
         // Show it on the left of player display box
         amXpos = gamePlayData.currentPlayer * playerBoxWidth + customMargin * 16; 

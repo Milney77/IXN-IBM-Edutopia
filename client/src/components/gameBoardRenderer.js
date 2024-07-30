@@ -1,4 +1,4 @@
-import { colorMap } from '../constants/constants';
+import { colourMap } from '../constants/constants';
 
 // Rending the board
 const structureSizeRatio = 0.4;
@@ -10,7 +10,7 @@ export const DrawBoard = (canvas, ctx, images, mapData, playerData, gamePlayData
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Background
-    ctx.fillStyle = 'blue';
+    ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw the tiles
@@ -25,66 +25,64 @@ export const DrawBoard = (canvas, ctx, images, mapData, playerData, gamePlayData
     }
 
     // Draw the action menu
-    if (gamePlayData.currentPhase === 2) {
+    if (gamePlayData.currentPhase === 2 && playerData[gamePlayData.currentPlayer].compPlayer === 0) {
       DrawActionMenu(canvas, ctx, images, gamePlayData, playerData, actionMenuParams);
     }
 
-
-
     // 'Grey' out invalid hexes
-    const playerFillCol = hexToRgba(colorMap[playerData[gamePlayData.currentPlayer].color].background, 0.5);
+    const playerFillCol = hexToRgba(colourMap[playerData[gamePlayData.currentPlayer].colour].background, 0.5);
     //console.log(playerFillCol);
     var greyOutTiles;
-    var playerColorTiles;
+    var playerColourTiles;
     if (gamePlayData.actionPhaseSet === 1) {
       // Grey out hexes that the player doesn't own.
-      // If they have structure level 4, overlay the player color over that hex.
+      // If they have structure level 4, overlay the player colour over that hex.
       greyOutTiles = mapData.filter((tile) => tile.actionable !== 1);
-      playerColorTiles = mapData.filter((tile) => tile.actionable === 1 && tile.structure === 4);
+      playerColourTiles = mapData.filter((tile) => tile.actionable === 1 && tile.structure === 4);
       for (let i = 0; i < greyOutTiles.length; i++) {
         opaqueGreyHex(ctx, greyOutTiles[i]);
       }
-      for (let i = 0; i < playerColorTiles.length; i++) {
-        opaquePlayerColor(ctx, playerColorTiles[i], playerFillCol);
+      for (let i = 0; i < playerColourTiles.length; i++) {
+        opaquePlayerColour(ctx, playerColourTiles[i], playerFillCol);
       }
 
     } else if (gamePlayData.actionPhaseSet === 2) {
       // Grey out hexes that are not adjacent to the player, or are owned by other players.
-      // Player tiles have the player color overlaid.
+      // Player tiles have the player colour overlaid.
       greyOutTiles = mapData.filter((tile) => tile.actionable === 0 || tile.actionable === 3);
-      playerColorTiles = mapData.filter((tile) => tile.actionable === 1);
+      playerColourTiles = mapData.filter((tile) => tile.actionable === 1);
       for (let i = 0; i < greyOutTiles.length; i++) {
         opaqueGreyHex(ctx, greyOutTiles[i]);
       }
-      for (let i = 0; i < playerColorTiles.length; i++) {
-        opaquePlayerColor(ctx, playerColorTiles[i], playerFillCol);
+      for (let i = 0; i < playerColourTiles.length; i++) {
+        opaquePlayerColour(ctx, playerColourTiles[i], playerFillCol);
       }
 
   } else if (gamePlayData.actionPhaseSet === 3) {
     // Grey out hexes that are not adjacent to the player, or are empty.
-    // Player tiles have the player color overlaid.
+    // Player tiles have the player colour overlaid.
     greyOutTiles = mapData.filter((tile) => tile.actionable === 0 || tile.actionable === 2);
-    playerColorTiles = mapData.filter((tile) => tile.actionable === 1);
+    playerColourTiles = mapData.filter((tile) => tile.actionable === 1);
     for (let i = 0; i < greyOutTiles.length; i++) {
       opaqueGreyHex(ctx, greyOutTiles[i]);
     }
-    for (let i = 0; i < playerColorTiles.length; i++) {
-      opaquePlayerColor(ctx, playerColorTiles[i], playerFillCol);
+    for (let i = 0; i < playerColourTiles.length; i++) {
+      opaquePlayerColour(ctx, playerColourTiles[i], playerFillCol);
     }
   }
+ 
+  // Fireworks for the end of the game (TODO)
+
 }
 
 
 
 
-
-
 function drawTile(ctx, tileData, images, playerData) {
-
     // Back to black - only need this while I have the grid above.
     ctx.strokeStyle = 'black'
     
-    // Determine colors  colorMap[playerData.color];
+    // Determine colours  colourMap[playerData.colour];
 
     // Complete a hex outline for ownership
     ctx.beginPath();
@@ -92,11 +90,11 @@ function drawTile(ctx, tileData, images, playerData) {
       ctx.lineTo(tileData.xHexVert[j], tileData.yHexVert[j]);
     }
     ctx.closePath();
-    // What Color should this path be?
+    // What Colour should this path be?
     if (tileData.currentOwner === 0) {
         ctx.fillStyle = 'grey';
     } else {
-        ctx.fillStyle = colorMap[playerData[tileData.currentOwner - 1].color].border;
+        ctx.fillStyle = colourMap[playerData[tileData.currentOwner - 1].colour].border;
     }
     ctx.stroke();
     ctx.fill();
@@ -123,7 +121,7 @@ function drawTile(ctx, tileData, images, playerData) {
                           ['struct_teal_camp', 'struct_teal_house', 'struct_teal_village', 'struct_teal_castle']
                         ]
     if (tileData.structure > 0) {
-      const playerStructRef = ['r', 'b', 'g', 'y', 'p', 't'].indexOf(playerData[tileData.currentOwner - 1].color);
+      const playerStructRef = ['r', 'b', 'g', 'y', 'p', 't'].indexOf(playerData[tileData.currentOwner - 1].colour);
       // Draw structures
       ctx.drawImage(images[structimages[playerStructRef][tileData.structure - 1]]
               , tileData.xPos[0] + (1 - structureSizeRatio) / 2 * tileData.xPos[1]
@@ -133,7 +131,7 @@ function drawTile(ctx, tileData, images, playerData) {
     }
 
 
-
+    
     // DELETE WHEN DONE
     // Hex ID
     ctx.fillStyle = 'black';
@@ -153,8 +151,9 @@ function drawTile(ctx, tileData, images, playerData) {
     ctx.fillText(tileData.actionable
             , tileData.xPos[0] + (1 - structureSizeRatio) / 2 * tileData.xPos[1] + 20
             , tileData.yPos[0] + (1 - structureSizeRatio) / 2 * tileData.yPos[1] + 40)
-  
-  }
+    
+
+  } 
 
 
 function highlightTile(ctx, tileData, images) {
@@ -183,7 +182,7 @@ function highlightTile(ctx, tileData, images) {
       ctx.fill();
  }
 
-function opaquePlayerColor(ctx, tileData, playerFillCol) {
+function opaquePlayerColour(ctx, tileData, playerFillCol) {
     ctx.beginPath();
     for (var j = 0; j < 6; j++) {
       ctx.lineTo(tileData.xHexVert[j], tileData.yHexVert[j]);
@@ -203,7 +202,7 @@ function hexToRgba(hex, opacity) {
   let g = parseInt(hex.substring(2, 4), 16);
   let b = parseInt(hex.substring(4, 6), 16);
 
-  // Construct the rgba color
+  // Construct the rgba colour
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
@@ -228,9 +227,9 @@ function DrawActionMenu(canvas, ctx, images, gamePlayData, playerData, actionMen
       customMargin = 2;
   }
   
-  ctx.strokeStyle = colorMap[playerData[gamePlayData.currentPlayer].color].border;
+  ctx.strokeStyle = colourMap[playerData[gamePlayData.currentPlayer].colour].border;
   
-  ctx.fillStyle = colorMap[playerData[gamePlayData.currentPlayer].color].background;
+  ctx.fillStyle = colourMap[playerData[gamePlayData.currentPlayer].colour].background;
 
 
   // Determine where to show the menu
@@ -256,11 +255,11 @@ function DrawActionMenu(canvas, ctx, images, gamePlayData, playerData, actionMen
     var icon_ypos = actionMenuYOffset + 0.5 * actionMenuHeight * (1 - actionMenuIconSize);
     const circleRadius = (actionMenuHeight * actionMenuIconSize) / 2;
     if (actionMenuParams.iconHover[i] === 1) {
-      fillCircle(ctx, icon_xpos + circleRadius, icon_ypos + circleRadius, circleRadius-1, colorMap[playerData[gamePlayData.currentPlayer].color].border)
+      fillCircle(ctx, icon_xpos + circleRadius, icon_ypos + circleRadius, circleRadius-1, colourMap[playerData[gamePlayData.currentPlayer].colour].border)
       // Add tool tip
       addToolTip(ctx, icon_xpos, icon_ypos, actionMenuHeight, i);
     } 
-    drawCircle(ctx, icon_xpos + circleRadius, icon_ypos + circleRadius, circleRadius, colorMap[playerData[gamePlayData.currentPlayer].color].border)
+    drawCircle(ctx, icon_xpos + circleRadius, icon_ypos + circleRadius, circleRadius, colourMap[playerData[gamePlayData.currentPlayer].colour].border)
     ctx.drawImage(images[iconlist[i]], icon_xpos + 0.25 * circleRadius, icon_ypos + 0.25 * circleRadius, circleRadius * 1.5 , circleRadius * 1.5 )
   }
 
@@ -268,19 +267,18 @@ function DrawActionMenu(canvas, ctx, images, gamePlayData, playerData, actionMen
 }
 
 
-
-function drawCircle(ctx, x, y, rad, color) {
+function drawCircle(ctx, x, y, rad, colour) {
     ctx.beginPath();
     ctx.arc(x, y, rad, 0, 2 * Math.PI);
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = colour;
     ctx.lineWidth = 2;
     ctx.stroke();
 }
 
-function fillCircle(ctx, x, y, rad, color) {
+function fillCircle(ctx, x, y, rad, colour) {
   ctx.beginPath();
   ctx.arc(x, y, rad, 0, 2 * Math.PI);
-  ctx.strokeStyle = color;
+  ctx.strokeStyle = colour;
   ctx.lineWidth = 2;
   ctx.fill();
 }
@@ -318,3 +316,4 @@ function addToolTip(ctx, iconx, icony, actionMenuHeight, iconid) {
       ctx.fillStyle = 'black';
       ctx.fillText(text, x + padding, y - padding);
 }
+

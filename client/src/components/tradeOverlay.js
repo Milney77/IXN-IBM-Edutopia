@@ -1,15 +1,19 @@
 import React, {useEffect, useState } from 'react';
 import { Box, Typography, Button, Stack, Grid, Tooltip, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import Paper from '@mui/material/Paper';
+
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+
+import { tradingRatios } from '../constants/constants';
+
 
 const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
     
 
     // Setup states for all resources (don't want to alter player data until trade is confirmed) //
-    const [playerStartFood,  setPlayerStartFood ] = useState(playerData.wood);
-    const [playerStartWood,  setPlayerStartWood ] = useState(playerData.food);
+    const [playerStartFood,  setPlayerStartFood ] = useState(playerData.food);
+    const [playerStartWood,  setPlayerStartWood ] = useState(playerData.wood);
     const [playerStartMetal, setPlayerStartMetal] = useState(playerData.metal);
     const [playerStartTech,  setPlayerStartTech ] = useState(playerData.tech);
 
@@ -30,15 +34,15 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
     const [resourcesTaken, setResourcesTaken] = useState(0);
     
     // Constants for trading (may need to be sourced from playerData, if this is allowed to change)
-    const tradeRatioFood = 4;
-    const tradeRatioWood = 4;
-    const tradeRatioMetal = 4;
-    const tradeRatioTech = 1;
+    const tradeRatioFood = tradingRatios.tradeRatioFood;
+    const tradeRatioWood = tradingRatios.tradeRatioWood;
+    const tradeRatioMetal = tradingRatios.tradeRatioMetal;
+    const tradeRatioTech = tradingRatios.tradeRatioTech;
 
-    const tradeBankRatioFood = 1;
-    const tradeBankRatioWood = 1;
-    const tradeBankRatioMetal = 1;
-    const tradeBankRatioTech = 4;
+    const tradeBankRatioFood = tradingRatios.tradeBankRatioFood;
+    const tradeBankRatioWood = tradingRatios.tradeBankRatioWood;
+    const tradeBankRatioMetal = tradingRatios.tradeBankRatioMetal;
+    const tradeBankRatioTech = tradingRatios.tradeBankRatioTech;
 
     // Some booleans to help determine when players can trade 
     const canTradeUpFood    = bankRecFood >= tradeRatioFood;
@@ -90,19 +94,19 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
         if (resource === 'food') {
             setBankRecFood(bankRecFood + tradeMultiplier * tradeRatioFood);
             setPlayerStartFood(playerStartFood - tradeMultiplier * tradeRatioFood);
-             setResourcesGained(resourcesGained + tradeMultiplier * tradeBankRatioFood);
+            setResourcesGained(resourcesGained + tradeMultiplier * tradeBankRatioFood);
         } else if (resource === 'wood') {
             setBankRecWood(bankRecWood + tradeMultiplier * tradeRatioWood);
             setPlayerStartWood(playerStartWood - tradeMultiplier * tradeRatioWood);
-             setResourcesGained(resourcesGained + tradeMultiplier * tradeBankRatioWood);
+            setResourcesGained(resourcesGained + tradeMultiplier * tradeBankRatioWood);
         } else if (resource === 'metal') {
             setBankRecMetal(bankRecMetal + tradeMultiplier * tradeRatioMetal);
             setPlayerStartMetal(playerStartMetal - tradeMultiplier * tradeRatioMetal);
-             setResourcesGained(resourcesGained + tradeMultiplier * tradeBankRatioMetal);
+            setResourcesGained(resourcesGained + tradeMultiplier * tradeBankRatioMetal);
         } else if (resource === 'tech') {
             setBankRecTech(bankRecTech + tradeMultiplier * tradeRatioTech);
             setPlayerStartTech(playerStartTech - tradeMultiplier * tradeRatioTech);
-             setResourcesGained(resourcesGained + tradeMultiplier * tradeBankRatioTech);
+            setResourcesGained(resourcesGained + tradeMultiplier * tradeBankRatioTech);
         }
     }
 
@@ -315,7 +319,7 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
                                         <IconDisplay  tooltipTxt='Wood' imgSource='images/icons/icons-wood.png' alttxt='wood' iconFontSize={iconFontSize} />
                                         </TableCell>
                                     <TableCell>
-                                        <IconDisplay  tooltipTxt='Tech' imgSource='images/icons/icons-tech.png' alttxt='tech' iconFontSize={iconFontSize} />
+                                        <IconDisplay  tooltipTxt='Metal' imgSource='images/icons/icons-metal.png' alttxt='tech' iconFontSize={iconFontSize} />
                                         </TableCell>
                                 </TableRow>
                             </TableHead>

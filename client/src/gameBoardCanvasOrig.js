@@ -69,18 +69,57 @@ function generateResources(gamePlayData, mapData, playerData, UpdatePlayerData, 
     const currentPlayer = gamePlayData.currentPlayer;
     const playerTiles = mapData.filter((tile) => tile.currentOwner === currentPlayer + 1 );
     // Calculate how much resources should be gained
-    const wood  = playerTiles.filter((tile) => tile.tileType === 'w').length;
-    const food  = playerTiles.filter((tile) => tile.tileType === 'f').length;
-    const metal = playerTiles.filter((tile) => tile.tileType === 'm').length;
-    const logTxt = "Generating resources for Player " + (currentPlayer + 1) + ' = Wood: ' + wood + ', food: ' + food + ', metal: ' + metal;
+    let woodResource = 0;
+    let foodResource = 0;
+    let metalResource = 0;
 
-      UpdatePlayerData(currentPlayer, 'wood', playerData[currentPlayer].wood + wood)
-      UpdatePlayerData(currentPlayer, 'food', playerData[currentPlayer].food + food)
-      UpdatePlayerData(currentPlayer, 'metal', playerData[currentPlayer].metal + metal)
-      addLog(logTxt);
+    // Loop through the player tiles
+    playerTiles.forEach((tile) => {
+      if (tile.tileType === 'w') {
+        woodResource += calculateResources(tile.structure);
+      } else if (tile.tileType === 'f') {
+        foodResource += calculateResources(tile.structure);
+      } else if (tile.tileType === 'm') {
+        metalResource += calculateResources(tile.structure);
+      }
+    });
+    const logTxt = "Generating resources for Player " + (currentPlayer + 1) + ' = Wood: ' + woodResource + ', food: ' + foodResource + ', metal: ' + metalResource;
+    UpdatePlayerData(currentPlayer, 'wood', playerData[currentPlayer].wood + woodResource)
+    UpdatePlayerData(currentPlayer, 'food', playerData[currentPlayer].food + foodResource)
+    UpdatePlayerData(currentPlayer, 'metal', playerData[currentPlayer].metal + metalResource)
+    addLog(logTxt);
     UpdateGamePlayData('currentPhase', 2);
-    
+  }
+
+  function calculateResources(structure) {
+    if (structure === 0) {return 1;}
+    else if (structure === 1) {return 1;}
+    else if (structure === 2) {return 2;}
+    else {return 2;}
+  }
+
+
+function calculateVictoryPoints(gamePlayData, mapData, UpdatePlayerData) {
+  // Re-calculate victory points for all players (just in case a player has taken over other player hexes, have to do this for everyone
+  for (var i = 0; i < gamePlayData.numberPlayers; i++) {
+    // Get the set of player tiles
+    const playerTiles = mapData.filter((tile) => tile.currentOwner === i + 1 );
+    // Set victory points to the number of tiles they own
+    let victoryPoints = playerTiles.length;
+    // Now add victory points based on what structures they have
+    playerTiles.forEach((tile)=> {
+      if (tile.structure === 1) {victoryPoints += 0;}
+      else if (tile.structure === 2) {victoryPoints += 1}
+      else if (tile.structure === 3) {victoryPoints += 2}
+      else if (tile.structure === 4) {victoryPoints += 3}
+    })
+    console.log('VICTORY POINTS CALCULATIONS - current player: ', i, ', tiles:', playerTiles.length, ', VPs:', victoryPoints);
+    // Update victory points
+    UpdatePlayerData(i, 'vp', victoryPoints)
+  }
 }
+
+
 
 // Function to handle mouse clicks
 // This may need to be split or something.  Its getting a bit long... 
@@ -161,6 +200,7 @@ function handleMouseClick (mousePos, gamePlayData, mapData, playerData
               var logTxt = 'Player ' + (currentPlayer + 1) + ' has built a ' + structureName + ' on hex ' + hexid;
               addLog(logTxt);
               UpdateGamePlayData('actionPhaseSet', -1);
+              calculateVictoryPoints(gamePlayData, mapData, UpdatePlayerData)
             };
             showOverlay('Do you want to build on this hex?', cost, onConfirm, false);
           }
@@ -184,6 +224,7 @@ function handleMouseClick (mousePos, gamePlayData, mapData, playerData
             playerData[currentPlayer].tech < cost.tech
         ) {
           showOverlay('Insufficient resources to develop this hex.', cost, null, true);
+          UpdateGamePlayData('actionPhaseSet', -1);
         } else {
           console.log('HexID:', hexid, 'CurrPlayer idx:', currentPlayer, 'CurrOwnership:', currentPlayerOwnership);
             const onConfirm = () => {
@@ -200,6 +241,7 @@ function handleMouseClick (mousePos, gamePlayData, mapData, playerData
             var logTxt = 'Player ' + (currentPlayer + 1) + ' has developed hex ' + hexid;
             addLog(logTxt);
             UpdateGamePlayData('actionPhaseSet', -1);
+            calculateVictoryPoints(gamePlayData, mapData, UpdatePlayerData)
             }
           showOverlay('Do you want to build on this hex?', cost, onConfirm, false);
           console.log(mapData[hexid]);
@@ -238,9 +280,10 @@ function handleMouseClick (mousePos, gamePlayData, mapData, playerData
             var logTxt = 'Player ' + (currentPlayer + 1) + ' has taken over hex ' + hexid;
             addLog(logTxt);
             UpdateGamePlayData('actionPhaseSet', -1);
+            calculateVictoryPoints(gamePlayData, mapData, UpdatePlayerData)
             }
           showOverlay('Do you want to take over this hex?', cost, onConfirm, false);
-          console.log(mapData[hexid]);
+          //console.log(mapData[hexid]);
         }
       } else {
         // Player has clicked somewhere else.
@@ -253,7 +296,7 @@ function handleMouseClick (mousePos, gamePlayData, mapData, playerData
 
 // Calculate hex status for actions
 function calculateHexStatus(currentPlayer, mapData) {
-  console.log('CALCULATING HEX STATUS')
+  //console.log('CALCULATING HEX STATUS')
   // Now, flag each hex as follows:
   // 1 - Hex is owned by player
   // 2 - Empty hex adjacent to a player hex
@@ -328,6 +371,7 @@ const GameBoardCanvas = ({images, gameComponents, addLog, addCurrentInstruction}
     const handleTradeConfirm = useCallback((tradedResources) => {
         // Player is trading
         const {outWood, outFood, outMetal, outTech, inWood, inFood, inMetal} = tradedResources;
+        console.log('outWood:', outWood, ', outFood:', outFood, ', outMetal:', outMetal, ', outTech:', outTech, ', inWood:', inWood, ', inFood:', inFood, ', inMetal:', inMetal);
         // Deduct resources from player
         UpdatePlayerData(gamePlayData.currentPlayer, 'wood', playerData[gamePlayData.currentPlayer].wood - outWood + inWood);
         UpdatePlayerData(gamePlayData.currentPlayer, 'food', playerData[gamePlayData.currentPlayer].food - outFood + inFood);

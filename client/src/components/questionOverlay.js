@@ -5,7 +5,6 @@ import { DraggableItem, DropTarget } from './dragAndDrop';
 
 
 
-
 // Font Resizing functions
 // Can handle the screen width in a general sense - but the length of the strings can be quite different, so including this function:
 function calculateFontSize (maxTextLength, baseFontSize) {
@@ -24,9 +23,6 @@ function calculateFontSize (maxTextLength, baseFontSize) {
 
 
 
-
-
-  
 
 const QuestionOverlay = ({ question, onResult }) => {
 
@@ -55,7 +51,7 @@ const QuestionOverlay = ({ question, onResult }) => {
     // Function to handle selection changes.
     const handleOptionChange = (event) => {
         const { value, checked } = event.target;
-        if (question.optionsToSelect === 1) {
+        if (question.optionstoselect === 1) {
             setSelectedOptions([value]);
         } else {
             if (checked) {
@@ -73,8 +69,8 @@ const QuestionOverlay = ({ question, onResult }) => {
         var correctAnswers
         var userAnswers;
         var isAnswerCorrect;
-        if (question.questionType === 1) {  // Multi-choice question
-            correctAnswers = question.answerIdx.map(String);   // Convert the answer indexes to an array of strings
+        if (question.questiontype === 1) {  // Multi-choice question
+            correctAnswers = question.answeridx.map(String);   // Convert the answer indexes to an array of strings
             userAnswers = selectedOptions.map(String);         // Convert user answers to an array of strings
             isAnswerCorrect = userAnswers.length === correctAnswers.length && userAnswers.every(option => correctAnswers.includes(option));
         } else {  // Matching Question
@@ -102,7 +98,8 @@ const QuestionOverlay = ({ question, onResult }) => {
         console.log('IsCorrect:', isCorrect, ', ShowHint:', showHint);
         const answerCorrectInd = isCorrect ? 1 : 0;
         const usedHintInd = showHint ? 1 : 0;
-        onResult(answerCorrectInd, usedHintInd);
+        const questionid = question.questionid;
+        onResult(answerCorrectInd, usedHintInd, questionid);
     }
 
     // Handle the drag & drop
@@ -129,18 +126,18 @@ const QuestionOverlay = ({ question, onResult }) => {
     // Font size calculations
     // First get the max length for all the arrays
     const maxOptionLength = question.options.reduce((max, option) => Math.max(max, option.length), 0);
-    const maxHintLength = Math.max(question.hintTxt.length, question.hintTxt1.length, question.hintTxt2.length)
-    const maxCardTitleLength = question.hintCardTitles.reduce((max, cardTitle) => Math.max(max, cardTitle.length), 0);
-    const maxCardTextLength = question.hintCardText.reduce((max, cardText) => Math.max(max, cardText.length), 0);
+    const maxHintLength = Math.max(question.hinttxt.length, question.hinttxt1.length, question.hinttxt2.length)
+    const maxCardTitleLength = question.hintcardtitles.reduce((max, cardTitle) => Math.max(max, cardTitle.length), 0);
+    const maxCardTextLength = question.hintcardtext.reduce((max, cardText) => Math.max(max, cardText.length), 0);
     
-    const questionFontSize = calculateFontSize(question.questionText.length, 2.5);
-    const optionFontSize = calculateFontSize(question.questionText.length, 1.5);
+    const questionFontSize = calculateFontSize(question.questiontext.length, 2.5);
+    const optionFontSize = calculateFontSize(maxOptionLength, 1.5);
     const optionMarginSize = optionFontSize * 1.5 * 0.5;
-    const hintFontSize = calculateFontSize(question.questionText.length, 1.5);
-    const cardTitleFontSize = calculateFontSize(question.questionText.length, 1.25);
-    const cardTextFontSize = calculateFontSize(question.questionText.length, 1);
+    const hintFontSize = calculateFontSize(maxHintLength, 1.5);
+    const cardTitleFontSize = calculateFontSize(maxCardTitleLength, 1.25);
+    const cardTextFontSize = calculateFontSize(maxCardTextLength, 1);
 
-    console.log('questionFontSize:', questionFontSize, ', optionFontSize:', optionFontSize, ', optionMarginSize:', optionMarginSize, ', hintFontSize:', hintFontSize, ', cardTitleFontSize:', cardTitleFontSize, ', cardTextFontSize:', cardTextFontSize)
+    //console.log('questionFontSize:', questionFontSize, ', optionFontSize:', optionFontSize, ', optionMarginSize:', optionMarginSize, ', hintFontSize:', hintFontSize, ', cardTitleFontSize:', cardTitleFontSize, ', cardTextFontSize:', cardTextFontSize)
 
     return ( 
     
@@ -188,9 +185,9 @@ const QuestionOverlay = ({ question, onResult }) => {
                     <Grid item xs={11} lg={10}>
                         <Box sx={{marginLeft: '1rem'}}>
                         <Typography variant='h4' align='left' sx={{fontSize:`${questionFontSize}rem`, marginBottom: '1rem'}}>
-                            {question.questionText}
+                            {question.questiontext}
                         </Typography>
-                        {question.questionType === 1 ? 
+                        {question.questiontype === 1 ? 
                             (question.options.map((option, index) => (
                                 <Box key={index} 
                                     sx={{
@@ -200,7 +197,7 @@ const QuestionOverlay = ({ question, onResult }) => {
                                         marginLeft: '0rem',
                                 }}>
                                     <input
-                                        type={question.optionsToSelect === 1 ? 'radio' : 'checkbox'}
+                                        type={question.optionstoselect === 1 ? 'radio' : 'checkbox'}
                                         name="options"
                                         value={index}
                                         checked={selectedOptions.includes(index.toString())}
@@ -285,7 +282,7 @@ const QuestionOverlay = ({ question, onResult }) => {
                             </Grid>
                             <Grid item>
                             <Stack direction='row' spacing={4}>
-                                { !showHint && question.hintInd === 1 ? 
+                                { !showHint && question.hintind === 1 ? 
                                 <Tooltip title="A hint will reduce your reward to just one tech point">
                                 <Button variant="contained" color="secondary" onClick={onHint}>Hint
                                             <img src='images/icons/icons-tech.png' alt='techpoints' style={{width: `${questionFontSize}rem`, height: `${questionFontSize}rem`}}/>
@@ -294,7 +291,7 @@ const QuestionOverlay = ({ question, onResult }) => {
 
                                 <Tooltip title="Click to answer the question">
                                 <Button variant="contained" color="primary" onClick={onConfirm}
-                                    disabled={(question.questionType === 1 && selectedOptions.length === 0) || (question.questionType === 2 && availableOptions.length > 0)}
+                                    disabled={(question.questiontype === 1 && selectedOptions.length === 0) || (question.questiontype === 2 && availableOptions.length > 0)}
                                 >Confirm</Button>
                                 
                                 </Tooltip>
@@ -305,8 +302,8 @@ const QuestionOverlay = ({ question, onResult }) => {
                         <Stack direction="row" justifyContent="space-between" spacing={8} mt={2}>
                             {isCorrect ? 
                             <Typography variant='h6' sx={{ fontSize:`${questionFontSize*0.75}rem`}}>Correct!</Typography>
-                            : (question.questionType === 1) ?
-                            <Typography variant='h6' sx={{ fontSize:`${questionFontSize*0.75}rem`}}>Incorrect!  Correct answer(s): {question.answerIdx.map(idx => alphabet[idx]).join(', ')}
+                            : (question.questiontype === 1) ?
+                            <Typography variant='h6' sx={{ fontSize:`${questionFontSize*0.75}rem`}}>Incorrect!  Correct answer(s): {question.answeridx.map(idx => alphabet[idx]).join(', ')}
                             </Typography>
                             : 
                             <Typography variant='h6' sx={{ fontSize:`${questionFontSize*0.75}rem`}}>Incorrect!  Correct answer(s): {question.matchoptions.join(', ')}
@@ -325,20 +322,20 @@ const QuestionOverlay = ({ question, onResult }) => {
             {/* Hint Section */}
             { showHint && !answered ? 
             <Box sx={{ mt: 2, bgcolor: '#f0f0f0', borderRadius: '8px', border: '1px solid #e0e0e0', padding: 2 }}>
-                <Typography variant='h6' sx={{ fontSize: `${hintFontSize}rem`}}>Hint:  {question.hintTxt}</Typography>
-                {(question.hintCards === 0 && question.hintTxt1) ? <Typography variant='h6' sx={{ fontSize: `${hintFontSize}rem`}}> {question.hintTxt1}</Typography> : null}
-                {(question.hintCards === 0 && question.hintTxt2) ? <Typography variant='h6' sx={{ fontSize: `${hintFontSize}rem`}}> {question.hintTxt2}</Typography> : null}
-                {question.hintCardTitles.length > 0 && (
+                <Typography variant='h6' sx={{ fontSize: `${hintFontSize}rem`}}>Hint:  {question.hinttxt}</Typography>
+                {(question.hintcards === 0 && question.hinttxt1) ? <Typography variant='h6' sx={{ fontSize: `${hintFontSize}rem`}}> {question.hinttxt1}</Typography> : null}
+                {(question.hintcards === 0 && question.hinttxt2) ? <Typography variant='h6' sx={{ fontSize: `${hintFontSize}rem`}}> {question.hinttxt2}</Typography> : null}
+                {question.hintcardtitles.length > 0 && (
                     <Grid container spacing={2}>
-                        {question.hintCardTitles.map((title, idx) => (
-                            <Grid item xs={6} sm={4} md={12 / question.hintCardTitles.length} key={idx}>
+                        {question.hintcardtitles.map((title, idx) => (
+                            <Grid item xs={6} sm={4} md={12 / question.hintcardtitles.length} key={idx}>
                                 <Card variant="outlined" sx={{ borderRadius: '8px' }}>
                                     <CardContent>
                                         <Typography variant="h6" component="div" sx={{ fontSize: `${cardTitleFontSize}rem`, fontWeight: 'bold' }}>
                                             {title}
                                         </Typography>
                                         <Typography variant="body2" component="p" sx={{ fontSize: `${cardTextFontSize}rem`}}>
-                                            {question.hintCardText[idx]}
+                                            {question.hintcardtext[idx]}
                                         </Typography>
                                     </CardContent>
                                 </Card>

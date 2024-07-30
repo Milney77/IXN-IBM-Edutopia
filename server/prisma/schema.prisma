@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model courselist {
+  courseid   Int         @id(map: "coursepk")
+  coursename String      @db.VarChar(255)
+  badgeicon  String      @db.VarChar(100)
+  questions  questions[]
+}
+
+model highscores {
+  playerid    Int      @id(map: "highscorespk") @default(autoincrement())
+  playername  String   @db.VarChar(25)
+  boardname   String   @db.VarChar(25)
+  numberturns Int
+  dateplayed  DateTime @db.Timestamp(6)
+}
+
+model questions {
+  questionid      Int        @id(map: "questionspk") @default(autoincrement())
+  courseid        Int
+  quiznumber      Int
+  questiontype    Int
+  questiontext    String     @db.VarChar(400)
+  options         String[]   @db.VarChar
+  matchoptions    String[]   @db.VarChar
+  optionstoselect Int?
+  answeridx       Int[]
+  hintind         Int
+  hinttxt         String?    @db.VarChar(255)
+  hinttxt1        String?    @db.VarChar(255)
+  hinttxt2        String?    @db.VarChar(255)
+  hintcards       Int
+  hintcardtitles  String[]   @db.VarChar
+  hintcardtext    String[]   @db.VarChar
+  courselist      courselist @relation(fields: [courseid], references: [courseid], onDelete: NoAction, onUpdate: NoAction)
+}
