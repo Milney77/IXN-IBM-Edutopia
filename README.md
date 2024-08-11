@@ -14,12 +14,13 @@ npm install
 
 4 Install Postgresql (see https://www.postgresql.org/).  
   During installation of Postgresql, you may be asked to provide a username for the database superuser (default: postgres), and you <u>will</u> be aksed to provide a password for this database superuser.  Keep a note of these, as they will be needed in the following steps.
+  Also, during installation, you may be asked what port you want to run Postgres on (default: 5432).  If you change this, then take note of the port number you are using.
 
 5 - Navigate to the root/server folder in the edutopia project
 
 6 - Add an environment file to this subfolder 'root/server'.  This environment file should be called ".env"
 
-7 - Add the following to the .env file, where {Database-User} and {Database-Password} are the username and password you set during installation of Postgresql
+7 - Add the following to the .env file, where {Database-User} and {Database-Password} are the username and password you set during installation of Postgresql (and if you changed the port, you need to replace '5432' with the port you chose).
 ```bash
 DATABASE_URL="postgresql://{Database-User}:{Database-Password}@localhost:5432/edutopia?schema=public"
 ```
