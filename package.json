@@ -1,5 +1,5 @@
 {
-  "name": "v3_edutopia",
+  "name": "v2_edutopia",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -26,5 +26,10 @@
   },
   "dependencies": {
     "@testing-library/react-hooks": "^8.0.1"
-  }
+  },
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ]
 }
