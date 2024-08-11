@@ -16,6 +16,7 @@ import { DimensionsProvider } from './components/dimensionsContext';
 
 import TitleScreen from './components/titleScreen.js';
 import MainMenu from './components/mainMenu';
+import AdminScreen from './components/adminController.js';
 
 import GameBoardCanvas from './gameBoardCanvas';
 import PlayerDisplay from './components/playerDisplay';
@@ -36,11 +37,11 @@ function App() {
   const [startNewGame, setStartNewGame] = useState(false);
   const [canResume, setCanResume] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
  
-
   // Set initial values for game components
   const gameComponents = useGameComponents();
-  const {boardData, mapData, playerData, gamePlayData, InitBoardData, InitPlayerData, InitGamePlayData, UpdateMapData, UpdateGamePlayData } = gameComponents; 
+  const {boardData, mapData, playerData, gamePlayData, questionData, InitBoardData, InitPlayerData, InitGamePlayData, UpdateMapData, UpdateGamePlayData, UpdateQuestions } = gameComponents; 
 
   // Load the images - makes sure all images are loaded before the game window is presented.
   useEffect(() => {
@@ -63,8 +64,8 @@ function App() {
   }
 
   // Load the parameters from the main menu and start the game
-  const startGame = (boardInfo, playerInfo) => {
-    //console.log('Board Data:', boardInfo, 'Player Data:', playerInfo);
+  const startGame = (boardInfo, playerInfo, skillsBuildCourses, includeQuiz3) => {
+    //console.log('Board Data:', boardInfo, 'Player Data:', playerInfo, 'Skills Build Courses: ', skillsBuildCourses, 'Include Quiz 3:', includeQuiz3 );
 
     // Split the board data into two - the map data, and the rest of the board data
     const { mapData, ...restBoardData} = boardInfo;
@@ -102,6 +103,9 @@ function App() {
     InitGamePlayData();
     // And make sure number of players is correct
     UpdateGamePlayData('numberPlayers', playerInfo.length);
+    // And use the player's selection for the skills build courses to use and whether or not to use quiz 3 questions
+    UpdateGamePlayData('skillsBuildCourses', skillsBuildCourses);
+    UpdateGamePlayData('includeQuiz3Questions', includeQuiz3 ? 1 : 0);
 
     // And clear the log
     setLog(['Starting Game']);
@@ -119,6 +123,14 @@ function App() {
     setIsGameStarted(true);
   };
 
+  const handleAdminClick = () => {
+    setShowAdmin(true);
+  }
+
+  const handleAdminExit = () => {
+    setShowAdmin(false);
+  }
+
   // Function for exiting back to the title screen
   const exitToTitle = (hasWon = false) => {
     setStartNewGame(false);
@@ -134,6 +146,7 @@ function App() {
     console.log('mapData:', mapData);
     console.log('playerData:', playerData);
     console.log('gamePlayData:', gamePlayData);
+    console.log('Question data:', questionData);
   }
 
   // If the images are taking a while to load, then this 'loading' message will appear.
@@ -143,12 +156,14 @@ function App() {
   }
   
   // MAIN OUTPUT
+  else {
     return (
-    <div className="App">
+    <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor:'black' }}>
       <ThemeProvider theme={Theme}>
       <CssBaseline />
       <DndProvider backend={HTML5Backend}>
       <DimensionsProvider>
+      <>
       {isGameStarted ? (
         <>
         <PlayerDisplay 
@@ -168,27 +183,35 @@ function App() {
           currentInstruction = {currentInstruction}
           log={log}
           exitToTitle={exitToTitle}
-        />
+          />
         </>
         ) : ( 
         startNewGame ? (
           <MainMenu startGame={startGame} />
         ) : (
+        showAdmin ? (
+          <AdminScreen handleAdminExit={handleAdminExit}/>
+        ) : (
           <TitleScreen
               handleNewGameClick={handleNewGameClick}
               handleResumeGameClick={handleResumeGameClick}
               canResume={canResume}
+              handleAdminClick={handleAdminClick}
               />
         )
-      )}
+      ))}
       
         {/* TEMP - Just a button to show game data */}
-        <Button variant='contained' onClick={showData} sx={{marginTop:'1rem'}}>SHOW DATA</Button>
+        <div display='flex'>
+          <Button variant='contained' onClick={showData} sx={{marginTop:'1rem' , width:'10rem'}}>SHOW DATA</Button>
+        </div>
+        </>
         </DimensionsProvider>
         </DndProvider>
         </ThemeProvider>
     </div>
   );
+  }
 }
 
 export default App;

@@ -1,15 +1,35 @@
-import React, {useEffect, useState } from 'react';
+import React, {useEffect, useState, useContext } from 'react';
 import { Box, Typography, Button, Stack, Grid, Tooltip, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import Paper from '@mui/material/Paper';
 
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 
+import { DimensionsContext } from './dimensionsContext';
+
 import { tradingRatios } from '../constants/constants';
+
+export const calculateFontSizeAndMargin = (width, setCustomFontSize, setCustomMargin) => {
+    // Size is based on screen width & number of players
+    const overlayWidth = Math.min(900, width * 0.8);
+    console.log(overlayWidth);
+    let newFontSize = Math.min(1.5, Math.max(0.5, 0.75 + 0.25 * Math.floor((overlayWidth)/300)));
+    let newMargin = Math.min(1.5, Math.max(0, 0.25 * Math.floor((overlayWidth - 100)/100)));
+    console.log('overlayWidth:', overlayWidth, ', newFontSize:', newFontSize);
+  setCustomFontSize(newFontSize);
+  setCustomMargin(newMargin);
+};
 
 
 const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
     
+    const { width } = useContext(DimensionsContext);
+    const [customFontSize, setCustomFontSize] = useState(1);
+    const [customMargin, setCustomMargin] = useState(1);
+    useEffect(() => {
+        // Determine the font & margin sizes
+        calculateFontSizeAndMargin(width, setCustomFontSize, setCustomMargin);
+      }, [width]);
 
     // Setup states for all resources (don't want to alter player data until trade is confirmed) //
     const [playerStartFood,  setPlayerStartFood ] = useState(playerData.food);
@@ -65,8 +85,10 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
     const upButtonColor = 'blue';
     const downButtonColor = 'green';
     const disabledButtonColor = 'grey';
-    const iconFontSize = '1.5rem';
-    const txtFontSize = 1;
+    const iconFontSizeModifier = 0.75;
+    const titleFontModifier = 1.5;
+    const subTitleFontModifier = 0.9;
+    const txtFontSizeModifier = 0.75;
 
 
     // Useful components as I am doing a lot of the same things repeatedly.
@@ -145,82 +167,63 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
 
     return (
         // Box to hold everything.
-        <Box 
-            sx={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                bgcolor: 'rgba(0, 0, 0, 0.5)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 1000, // Ensure that the overlay appears in front of the canvas.
-            }}
-        >
+        <Box id="tradeOverlay">
             
-            <Box
+            <Box id="tradeOverlayContent"
                 sx={{
-                    bgcolor: 'white',
-                    padding: 3,
-                    borderRadius: 2,
-                    boxShadow: 3,
-                    maxWidth: '80%',
                     textAlign: 'center',
-                    
                 }}
             >
             {/* Title */}
-            <Typography variant="h4" sx={{paddingY:'1rem'}}>Trading with the bank</Typography>
+            <Typography variant="h4" sx={{fontSize:`${customFontSize*titleFontModifier}rem`, paddingY:'1rem'}}>Trading with the bank</Typography>
             
 
             {/* Split into 2 boxes - one for trading to the bank, the other for trading to the player */}
             <Stack direction='row' spacing={8} sx={{ justifyContent:'center'}}>
 
                 <Box>
-                    <Typography variant="h6">Select resources to give to the bank</Typography>
+                    <Typography variant="h6" sx={{fontSize:`${customFontSize*subTitleFontModifier}rem`}}>Select resources to give to the bank</Typography>
                     <TableContainer component={Paper}>
                         <Table sx={{}} aria-label="trade-to-bank">
                             <TableHead>
                                 <TableRow>
                                     <TableCell></TableCell>
                                     <TableCell>
-                                        <IconDisplay  tooltipTxt='Food' imgSource='images/icons/icons-food.png' alttxt='food' iconFontSize={iconFontSize} />
+                                        <IconDisplay  tooltipTxt='Food' imgSource='images/icons/icons-food.png' alttxt='food' iconFontSize={`${customFontSize*iconFontSizeModifier}rem`} />
                                         </TableCell>
                                     <TableCell>
-                                        <IconDisplay  tooltipTxt='Wood' imgSource='images/icons/icons-wood.png' alttxt='wood' iconFontSize={iconFontSize} />
+                                        <IconDisplay  tooltipTxt='Wood' imgSource='images/icons/icons-wood.png' alttxt='wood' iconFontSize={`${customFontSize*iconFontSizeModifier}rem`} />
                                         </TableCell>
                                     <TableCell>
-                                        <IconDisplay  tooltipTxt='Metal' imgSource='images/icons/icons-metal.png' alttxt='metal' iconFontSize={iconFontSize} />
+                                        <IconDisplay  tooltipTxt='Metal' imgSource='images/icons/icons-metal.png' alttxt='metal' iconFontSize={`${customFontSize*iconFontSizeModifier}rem`} />
                                         </TableCell>
                                     <TableCell>
-                                        <IconDisplay  tooltipTxt='Tech' imgSource='images/icons/icons-tech.png' alttxt='tech' iconFontSize={iconFontSize} />
+                                        <IconDisplay  tooltipTxt='Tech' imgSource='images/icons/icons-tech.png' alttxt='tech' iconFontSize={`${customFontSize*iconFontSizeModifier}rem`} />
                                         </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 <TableRow>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>Player</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>Player</Typography>
                                     </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ playerStartFood }</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ playerStartFood }</Typography>
                                     </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ playerStartWood }</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ playerStartWood }</Typography>
                                     </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ playerStartMetal }</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ playerStartMetal }</Typography>
                                     </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ playerStartTech }</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ playerStartTech }</Typography>
                                     </TableCell>
                                 </TableRow>
 
                                 <TableRow>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>Trade Ratio</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>Trade Ratio</Typography>
                                 </TableCell>
                                 <TableCell>
                                     <Stack direction='column'>
@@ -228,7 +231,7 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
                                             sx={{ cursor: canTradeUpFood ? 'pointer' : 'not-allowed',
                                                   color: canTradeUpFood ? upButtonColor : disabledButtonColor,
                                              }}/>
-                                        <Typography sx={{fontSize: `${txtFontSize}rem`}}>{tradeRatioFood}:{tradeBankRatioFood}</Typography>
+                                        <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{tradeRatioFood}:{tradeBankRatioFood}</Typography>
                                         <ArrowCircleDownIcon onClick={canTradeDownFood ? () => handlePlayerTrade('food', 'down') : null} 
                                             sx={{ cursor: canTradeDownFood ? 'pointer' : 'not-allowed',
                                                   color: canTradeDownFood ? downButtonColor : disabledButtonColor,
@@ -242,7 +245,7 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
                                             sx={{ cursor: canTradeUpWood ? 'pointer' : 'not-allowed',
                                                   color: canTradeUpWood ? upButtonColor : disabledButtonColor,
                                              }}/>
-                                        <Typography sx={{fontSize: `${txtFontSize}rem`}}>{tradeRatioWood}:{tradeBankRatioWood}</Typography>
+                                        <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{tradeRatioWood}:{tradeBankRatioWood}</Typography>
                                         <ArrowCircleDownIcon onClick={canTradeDownWood ? () => handlePlayerTrade('wood', 'down') : null} 
                                             sx={{ cursor: canTradeDownWood ? 'pointer' : 'not-allowed',
                                                   color: canTradeDownWood ? downButtonColor : disabledButtonColor,
@@ -256,7 +259,7 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
                                             sx={{ cursor: canTradeUpMetal ? 'pointer' : 'not-allowed',
                                                   color: canTradeUpMetal ? upButtonColor : 'grey',
                                              }}/>
-                                        <Typography sx={{fontSize: `${txtFontSize}rem`}}>{tradeRatioMetal}:{tradeBankRatioMetal}</Typography>
+                                        <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{tradeRatioMetal}:{tradeBankRatioMetal}</Typography>
                                         <ArrowCircleDownIcon onClick={canTradeDownMetal ? () => handlePlayerTrade('metal', 'down') : null} 
                                             sx={{ cursor: canTradeDownMetal ? 'pointer' : 'not-allowed',
                                                   color: canTradeDownMetal ? downButtonColor : disabledButtonColor,
@@ -270,7 +273,7 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
                                             sx={{ cursor: canTradeUpTech ? 'pointer' : 'not-allowed',
                                                   color: canTradeUpTech ? upButtonColor : 'grey',
                                              }}/>
-                                        <Typography sx={{fontSize: `${txtFontSize}rem`}}>{tradeRatioTech}:{tradeBankRatioTech}</Typography>
+                                        <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{tradeRatioTech}:{tradeBankRatioTech}</Typography>
                                         <ArrowCircleDownIcon onClick={canTradeDownTech ? () => handlePlayerTrade('tech', 'down') : null} 
                                             sx={{ cursor: canTradeDownTech ? 'pointer' : 'not-allowed',
                                                   color: canTradeDownTech ? downButtonColor : disabledButtonColor,
@@ -282,44 +285,44 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
 
                                 <TableRow>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>Bank</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>Bank</Typography>
                                     </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ bankRecFood }</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ bankRecFood }</Typography>
                                     </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ bankRecWood }</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ bankRecWood }</Typography>
                                     </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ bankRecMetal }</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ bankRecMetal }</Typography>
                                     </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ bankRecTech }</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ bankRecTech }</Typography>
                                     </TableCell>
                                 </TableRow>
 
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <Typography sx={{fontSize: `${txtFontSize}rem`, mt:'0.5rem'}}>Resources Available: {resourcesGained}</Typography>
+                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`, mt:'0.5rem'}}>Resources Available: {resourcesGained}</Typography>
                 </Box>
             
 
                 <Box>
-                <Typography variant="h6">Select resources to gain from the bank</Typography>
+                <Typography variant="h6" sx={{fontSize:`${customFontSize*subTitleFontModifier}rem`}}>Select resources to gain from the bank</Typography>
                 <TableContainer component={Paper}>
                         <Table sx={{}} aria-label="trade-to-bank">
                             <TableHead>
                                 <TableRow>
                                     <TableCell></TableCell>
                                     <TableCell>
-                                        <IconDisplay  tooltipTxt='Food' imgSource='images/icons/icons-food.png' alttxt='food' iconFontSize={iconFontSize} />    
+                                        <IconDisplay  tooltipTxt='Food' imgSource='images/icons/icons-food.png' alttxt='food' iconFontSize={`${customFontSize*iconFontSizeModifier}rem`} />    
                                         </TableCell>
                                     <TableCell>
-                                        <IconDisplay  tooltipTxt='Wood' imgSource='images/icons/icons-wood.png' alttxt='wood' iconFontSize={iconFontSize} />
+                                        <IconDisplay  tooltipTxt='Wood' imgSource='images/icons/icons-wood.png' alttxt='wood' iconFontSize={`${customFontSize*iconFontSizeModifier}rem`} />
                                         </TableCell>
                                     <TableCell>
-                                        <IconDisplay  tooltipTxt='Metal' imgSource='images/icons/icons-metal.png' alttxt='tech' iconFontSize={iconFontSize} />
+                                        <IconDisplay  tooltipTxt='Metal' imgSource='images/icons/icons-metal.png' alttxt='tech' iconFontSize={`${customFontSize*iconFontSizeModifier}rem`} />
                                         </TableCell>
                                 </TableRow>
                             </TableHead>
@@ -327,16 +330,16 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
                         <TableBody>
                             <TableRow>
                                 <TableCell>
-                                <Typography sx={{fontSize: `${txtFontSize}rem`}}>Bank</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>Bank</Typography>
                                 </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{bankSendFood}</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{bankSendFood}</Typography>
                                 </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{bankSendWood}</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{bankSendWood}</Typography>
                                 </TableCell>
                                 <TableCell>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}>{bankSendMetal}</Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{bankSendMetal}</Typography>
                                 </TableCell>
                             </TableRow>
 
@@ -347,7 +350,7 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
                                         sx={{ cursor: canTradeBankFoodUp ? 'pointer' : 'not-allowed',
                                             color: canTradeBankFoodUp ? upButtonColor : disabledButtonColor,
                                         }}/>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}><br/></Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}><br/></Typography>
                                     <ArrowCircleDownIcon onClick={canTradeBankFoodDown ? () => handleBankTrade('food', 'down') : null}
                                         sx={{ cursor: canTradeBankFoodDown ? 'pointer' : 'not-allowed',
                                             color: canTradeBankFoodDown ? downButtonColor : disabledButtonColor,
@@ -358,7 +361,7 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
                                         sx={{ cursor: canTradeBankWoodUp ? 'pointer' : 'not-allowed',
                                             color: canTradeBankWoodUp ? upButtonColor : disabledButtonColor,
                                         }}/>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}><br/></Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}><br/></Typography>
                                     <ArrowCircleDownIcon onClick={canTradeBankWoodDown ? () => handleBankTrade('wood', 'down') : null}
                                         sx={{ cursor: canTradeBankWoodDown ? 'pointer' : 'not-allowed',
                                             color: canTradeBankWoodDown ? downButtonColor : disabledButtonColor,
@@ -369,7 +372,7 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
                                         sx={{ cursor: canTradeBankMetalUp ? 'pointer' : 'not-allowed',
                                             color: canTradeBankMetalUp ? upButtonColor : disabledButtonColor,
                                         }}/>
-                                    <Typography sx={{fontSize: `${txtFontSize}rem`}}><br/></Typography>
+                                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}><br/></Typography>
                                     <ArrowCircleDownIcon onClick={canTradeBankMetalDown ? () => handleBankTrade('metal', 'down') : null}
                                         sx={{ cursor: canTradeBankMetalDown ? 'pointer' : 'not-allowed',
                                             color: canTradeBankMetalDown ? downButtonColor : disabledButtonColor,
@@ -379,27 +382,27 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
 
                             <TableRow>
                             <TableCell>
-                                <Typography sx={{fontSize: `${txtFontSize}rem`}}>Player</Typography>
+                                <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>Player</Typography>
                                 </TableCell>
                             <TableCell>
-                                <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ playerRecFood }</Typography>
+                                <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ playerRecFood }</Typography>
                                 </TableCell>
                             <TableCell>
-                                <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ playerRecWood }</Typography>
+                                <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ playerRecWood }</Typography>
                                 </TableCell>
                             <TableCell>
-                                <Typography sx={{fontSize: `${txtFontSize}rem`}}>{ playerRecMetal }</Typography>
+                                <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`}}>{ playerRecMetal }</Typography>
                                 </TableCell>
                             </TableRow>
 
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <Typography sx={{fontSize: `${txtFontSize}rem`, mt:'0.5rem'}}>Resources Taken: {resourcesTaken}</Typography>
+                    <Typography sx={{fontSize: `${customFontSize*txtFontSizeModifier}rem`, mt:'0.5rem'}}>Resources Taken: {resourcesTaken}</Typography>
                 </Box>
             </Stack>
 
-            <Typography variant='h6' sx={{fontSize: `${txtFontSize}rem`, mt:'1rem'}}>
+            <Typography variant='h6' sx={{fontSize:`${customFontSize*txtFontSizeModifier}rem`, mt:'1rem'}}>
                 {resourcesTaken > resourcesGained ? 'Invalid trade - you are requesting more resources from the bank than what you are offering in return.'
                        : resourcesTaken < resourcesGained ? 'You are giving the bank more resources than you need to.' : <br/>}
                 </Typography>
@@ -407,12 +410,12 @@ const TradeOverlay = ({ playerData, onConfirm, onCancel }) => {
             {/* Buttons */}
             <Stack direction="row" justifyContent="center" spacing={2} mt={2}>
                 <Button variant="contained" color="primary" onClick={onCancel}>
-                    Cancel
+                    <Typography sx={{fontSize:`${customFontSize*txtFontSizeModifier}rem`}}>Cancel</Typography>
                 </Button>
                 <Button variant="contained" color="secondary" onClick={confirmTrade}
                     disabled = {resourcesTaken > resourcesGained}
                     >
-                    Confirm
+                    <Typography sx={{fontSize:`${customFontSize*txtFontSizeModifier}rem`}}>Confirm</Typography>
                 </Button>
             </Stack>
 

@@ -1,6 +1,6 @@
 // Function to check if a point is inside a polygon
 // Uses a ray-casting method
-const isPointInPolygon = (point, vertices) => {
+export const isPointInPolygon = (point, vertices) => {
     const [x, y] = point;
     let isInside = false;
     for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
@@ -13,7 +13,7 @@ const isPointInPolygon = (point, vertices) => {
   }
   
   
-  function checkMouseInHex(ColArray, RowArray, xpos, ypos, mapData) {
+export function checkMouseInHex(ColArray, RowArray, xpos, ypos, mapData) {
     //console.log('Checking coords (', xpos, ',', ypos, ') in row arrays ', RowArray, ' and column arrays ', ColArray)
     // Filter the tiles to just those in the row or two rows that need to be checked
     const tilesToCheck = mapData.filter((tile) => (RowArray.includes(tile.row)) && ColArray.includes(tile.col));
@@ -31,7 +31,7 @@ const isPointInPolygon = (point, vertices) => {
     return null;
   }
   
-  export function mouseXY_to_HexID(mouseX, mouseY, tileWidth, tileHeight_full, tileHeight_trim, tilesHOffset, tilesVOffset, boardData, mapData, gamePlayData, actionMenuParams, canvas) {
+export function mouseXY_to_HexID(mouseX, mouseY, tileWidth, tileHeight_full, tileHeight_trim, tilesHOffset, tilesVOffset, boardData, mapData, gamePlayData, actionMenuParams, canvas) {
     // Reset hover
     var hexID = -99;
     // Set the 'hover' property to zero for every tile.
@@ -64,7 +64,7 @@ const isPointInPolygon = (point, vertices) => {
     } else {
       approxCol = Math.floor((mouseX - tileWidth * 0.5 * tilesHOffset) / tileWidth);
     }
-
+    
     // Now check if the mouse is in the action menu
     // Where would the action menu be (based on current player)
     const playerBoxWidth = actionMenuParams.playerBoxWidth;
@@ -111,7 +111,7 @@ const isPointInPolygon = (point, vertices) => {
       } else {
         hexID = checkMouseInHex([approxCol - 1, approxCol, approxCol + 1], [Math.floor(approxRow)-1,Math.floor(approxRow)], mouseX, mouseY, mapData);
       }
-  
+      
       // Now check the intersection of the mouse coords and each tile in the rows.
       if (hexID && hexID >= 0 && hexID <= mapData.length) {
         //console.log('Mouse is over hexID:', hexID);

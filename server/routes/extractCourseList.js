@@ -8,12 +8,12 @@ router.get('/', async (req, res) => {
   try {
 
     // Extract all the questions in a single query
-    const questions = await prisma.questions.findMany({
-      include: {
-        courselist: true, // Include all fields from the courselist table
-      },
-    });
-    res.json(questions);
+    const courseList = await prisma.courselist.findMany({
+        where: {
+          includeind: 1
+        },
+      });
+      res.json(courseList);
 
   } catch (error) {
     // Error handling

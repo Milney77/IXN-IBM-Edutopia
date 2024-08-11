@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Button, Stack, Grid, Tooltip, Card, CardContent} from '@mui/material';
 
 import { DraggableItem, DropTarget } from './dragAndDrop'; 
 
-
+import { DimensionsContext } from './dimensionsContext';
 
 // Font Resizing functions
 // Can handle the screen width in a general sense - but the length of the strings can be quite different, so including this function:
@@ -79,12 +79,12 @@ const QuestionOverlay = ({ question, onResult }) => {
             isAnswerCorrect = correctAnswers.join(',') === userAnswers.join(',')
         }
         //const userAnswers = selectedOptions.map(String);         // Convert the user answer indexes to an array of strings
-        console.log('Ans: ', correctAnswers, 'User: ', userAnswers)
+        //console.log('Ans: ', correctAnswers, 'User: ', userAnswers)
         // Set the correct answer state and set question as answered
         setIsCorrect(isAnswerCorrect);
         setAnswered(true);
         // logging
-        console.log(isAnswerCorrect ? 'Correct!' : 'Incorrect!');
+        //console.log(isAnswerCorrect ? 'Correct!' : 'Incorrect!');
         // console.log('IsCorrect:', isCorrect, ', ShowHint:', showHint)
     }
 
@@ -95,7 +95,7 @@ const QuestionOverlay = ({ question, onResult }) => {
 
     // NEXT button for when user has submitted an answer
     const onNext = () => {
-        console.log('IsCorrect:', isCorrect, ', ShowHint:', showHint);
+        //console.log('IsCorrect:', isCorrect, ', ShowHint:', showHint);
         const answerCorrectInd = isCorrect ? 1 : 0;
         const usedHintInd = showHint ? 1 : 0;
         const questionid = question.questionid;
@@ -130,52 +130,39 @@ const QuestionOverlay = ({ question, onResult }) => {
     const maxCardTitleLength = question.hintcardtitles.reduce((max, cardTitle) => Math.max(max, cardTitle.length), 0);
     const maxCardTextLength = question.hintcardtext.reduce((max, cardText) => Math.max(max, cardText.length), 0);
     
-    const questionFontSize = calculateFontSize(question.questiontext.length, 2.5);
-    const optionFontSize = calculateFontSize(maxOptionLength, 1.5);
-    const optionMarginSize = optionFontSize * 1.5 * 0.5;
-    const hintFontSize = calculateFontSize(maxHintLength, 1.5);
-    const cardTitleFontSize = calculateFontSize(maxCardTitleLength, 1.25);
-    const cardTextFontSize = calculateFontSize(maxCardTextLength, 1);
+    // Set up states to handle when user reszies window
+    const { width } = useContext(DimensionsContext);
+    const [questionFontSize, setquestionFontSize] = useState(2.5);
+    const [optionFontSize, setOptionFontSize ] = useState(1.5);
+    const [optionMarginSize, setOptionMarginSize ] = useState(0.75);
+    const [hintFontSize, setHintFontSize ] = useState(1.5);
+    const [cardTitleFontSize, setCardTitleFontSize ] = useState(1.25);
+    const [cardTextFontSize, setCardTextFontSize ] = useState(1);
 
+    useEffect(() => {
+        setquestionFontSize(calculateFontSize(question.questiontext.length, 2.5));
+        setOptionFontSize(calculateFontSize(maxOptionLength, 1.5));
+        setOptionMarginSize(calculateFontSize(maxOptionLength, 0.75));
+        setHintFontSize(calculateFontSize(maxHintLength, 1.5));
+        setCardTitleFontSize(calculateFontSize(maxCardTitleLength, 1.25));
+        setCardTextFontSize(calculateFontSize(maxCardTextLength, 1));
+    }, [width, question, maxOptionLength, maxHintLength, maxCardTitleLength, maxCardTextLength]);
     //console.log('questionFontSize:', questionFontSize, ', optionFontSize:', optionFontSize, ', optionMarginSize:', optionMarginSize, ', hintFontSize:', hintFontSize, ', cardTitleFontSize:', cardTitleFontSize, ', cardTextFontSize:', cardTextFontSize)
+
+    const badgeIconRef = '/images/badges/' + question.courselist.badgeicon;
 
     return ( 
     
-    <Box 
-        sx={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            bgcolor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000, // Ensure that the overlay appears in front of the canvas.
-        }}
-    >
+    <Box id="questionOverlay">
 
-        <Box
-            sx={{
-                bgcolor: 'white',
-                marginTop: '5rem',
-                padding: 3,
-                borderRadius: 2,
-                boxShadow: 3,
-                maxWidth: '80%',
-                maxHeight: '80%',
-                textAlign: 'center',
-                overflowY: 'auto'
-            }}
-        >
+        <Box id="questionOverlayContent">
             {/* Create a grid to keep the badge on the left, question on the right */}
             <Grid container >
                 <Stack direction='row'>
                     {/* Icon for the skills build course */}
                     <Grid item xs={1} lg={2}>
                         <Box component='img'
-                            src={question.badgeIcon}
+                            src={badgeIconRef}
                             alt={'badge'}
                             sx={{ maxWidth: '80%', maxHeight: '80%' }}>
                         </Box>
@@ -265,7 +252,7 @@ const QuestionOverlay = ({ question, onResult }) => {
 
                         <Grid container justifyContent="space-between" alignItems="center" spacing={2} mt={2}>
                             <Grid item>
-                            <Stack direction='row' spacing={1}>
+                            <Stack direction='row' spacing={1} alignItems='center'>
                                 <Typography variant='h6' sx={{ fontSize:`${questionFontSize}rem`}}>Reward:</Typography>
                                 <Box component='img'
                                     src='images/icons/icons-tech.png'
@@ -290,10 +277,15 @@ const QuestionOverlay = ({ question, onResult }) => {
                                 </Tooltip> : null}
 
                                 <Tooltip title="Click to answer the question">
+                                <span>
                                 <Button variant="contained" color="primary" onClick={onConfirm}
                                     disabled={(question.questiontype === 1 && selectedOptions.length === 0) || (question.questiontype === 2 && availableOptions.length > 0)}
-                                >Confirm</Button>
-                                
+                                >
+                                <Typography variant='h6' sx={{fontSize: `${optionFontSize}rem`}}>
+                                    Confirm
+                                </Typography>
+                                </Button>
+                                </span>
                                 </Tooltip>
                             </Stack>
                             </Grid>
@@ -310,7 +302,9 @@ const QuestionOverlay = ({ question, onResult }) => {
                             </Typography>
                             }   
                             <Button variant="contained" color="primary" onClick={onNext}>
-                                Next
+                               <Typography variant='h6' sx={{fontSize: `${optionFontSize}rem`}}>
+                                    Next
+                                </Typography>
                             </Button>
                         </Stack>
                         }

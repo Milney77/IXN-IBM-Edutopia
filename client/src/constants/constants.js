@@ -65,11 +65,11 @@ export const colourMap = {
 
 
 export const resourceCosts = {
-    house:    {wood: 1,  food: 1,  metal: 4,  tech: 0, },
-    village:  {wood: 2,  food: 2,  metal: 8,  tech: 0, },
-    castle:   {wood: 3,  food: 3,  metal: 12,  tech: 0, },
+    house:    {wood: 0,  food: 2,  metal: 4,  tech: 0, },
+    village:  {wood: 1,  food: 4,  metal: 8,  tech: 0, },
+    castle:   {wood: 2,  food: 6,  metal: 12,  tech: 0, },
     takeover: {wood: 1,  food: 4,  metal: 1,  tech: 0, },
-    expand:   {wood: 4,  food: 1,  metal: 1,  tech: 0, },
+    expand:   {wood: 4,  food: 2,  metal: 0,  tech: 0, },
 }
 
 export const tradingRatios = {
@@ -84,9 +84,9 @@ export const tradingRatios = {
 }
 
 export const initresources = {
-    wood: 10
-    , food: 10
-    , metal: 10
+    wood: 5
+    , food: 5
+    , metal: 5
     , tech: 0
 }
 
@@ -126,13 +126,12 @@ const boardData1 = {
     , evenRowCols: 10
     , oddRowCols: 9
     , maxPlayers: 4
-    , victoryPoints: 10
-    //, victoryPoints: 20
+    , victoryPoints: 20
     , maxCastles: 1
     , maxVillages: 4
     , mapData: [
-          { id: 0, row: 0, col: 0, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
-        , { id: 1, row: 0, col: 1, tileType: 'm', startSquare: 0, structure: 0, currentOwner: 0, }
+          { id: 0, row: 0, col: 0, tileType: 'm', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 1, row: 0, col: 1, tileType: 'f', startSquare: 0, structure: 0, currentOwner: 0, }
         , { id: 2, row: 0, col: 2, tileType: 'm', startSquare: 0, structure: 0, currentOwner: 0, }
         , { id: 3, row: 0, col: 3, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
         , { id: 4, row: 0, col: 4, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
@@ -141,7 +140,7 @@ const boardData1 = {
         , { id: 7, row: 0, col: 7, tileType: 'f', startSquare: 0, structure: 0, currentOwner: 0, }
         , { id: 8, row: 0, col: 8, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
         , { id: 9, row: 0, col: 9, tileType: 'f', startSquare: 0, structure: 0, currentOwner: 0, }
-        , { id: 10, row: 1, col: 0, tileType: 'f', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 10, row: 1, col: 0, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
         , { id: 11, row: 1, col: 1, tileType: 'w', startSquare: 1, structure: 0, currentOwner: 0, }
         , { id: 12, row: 1, col: 2, tileType: 'f', startSquare: 0, structure: 0, currentOwner: 0, }
         , { id: 13, row: 1, col: 3, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
@@ -241,8 +240,36 @@ const boardData2 = {name: 'Base2'
       , { id: 47, row: 4, col: 9, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
 ]};
 
+const boardData3 = {
+    name: 'test'
+    , imageRef: 'board1_basic.png'
+    , rows: 3
+    , evenRowCols: 5
+    , oddRowCols: 6
+    , maxPlayers: 2
+    , victoryPoints: 5
+    , maxCastles: 1
+    , maxVillages: 2
+    , mapData: [
+          { id: 0,  row: 0, col: 0, tileType: 'm', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 1,  row: 0, col: 1, tileType: 'f', startSquare: 0, structure: 1, currentOwner: 0, }
+        , { id: 2,  row: 0, col: 2, tileType: 'm', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 3,  row: 0, col: 3, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 4,  row: 0, col: 4, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 5,  row: 1, col: 0, tileType: 'f', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 6,  row: 1, col: 1, tileType: 'w', startSquare: 1, structure: 0, currentOwner: 0, }
+        , { id: 7,  row: 1, col: 2, tileType: 'f', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 8,  row: 1, col: 3, tileType: 'w', startSquare: 0, structure: 2, currentOwner: 0, }
+        , { id: 9,  row: 1, col: 4, tileType: 'f', startSquare: 2, structure: 0, currentOwner: 0, }
+        , { id: 10, row: 1, col: 5, tileType: 'f', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 11, row: 2, col: 0, tileType: 'm', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 12, row: 2, col: 1, tileType: 'f', startSquare: 0, structure: 1, currentOwner: 0, }
+        , { id: 13, row: 2, col: 2, tileType: 'm', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 14, row: 2, col: 3, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
+        , { id: 15, row: 2, col: 4, tileType: 'w', startSquare: 0, structure: 0, currentOwner: 0, }
+    ]}
 
-export const boards = [boardData1, boardData2];
+export const boards = [boardData1, boardData2, boardData3];
 
 const playerDataInit = [
     {id: 0, name: 'Human Player 1'           , compPlayer: 0, colour: 'b', diff: 0, strat: 'm', wood: 30, food: 30, metal: 30, tech: 0, vp: 0 },
@@ -262,6 +289,8 @@ const gamePlayDataInit = {
     , log: []
     , actionPhaseSet: -1
     , winner: 0
+    , skillsBuildCourses: [1,2,4]
+    , includeQuiz3Questions: 0
 }
 
 
@@ -270,6 +299,7 @@ export const useGameComponents = () => {
     const [mapData, setMapData] = useState(boardData1.mapData);
     const [playerData, setPlayerData] = useState(playerDataInit);
     const [gamePlayData, setGamePlayData] = useState(gamePlayDataInit);
+    const [questionData, setQuestionData] = useState([]);
 
     // UPDATE FUNCTIONS //
     // Load Board Data (when starting a new game)
@@ -310,18 +340,24 @@ export const useGameComponents = () => {
         }));
     }, [setGamePlayData]);
 
+    // Update questions
+    const UpdateQuestions = useCallback((updatedQuestions) => {
+        setQuestionData(updatedQuestions);
+      }, [setQuestionData]);
 
     return {
         boardData
         , mapData
         , playerData
         , gamePlayData
+        , questionData
         , InitBoardData
         , InitPlayerData
         , InitGamePlayData
         , UpdateMapData        
         , UpdatePlayerData
         , UpdateGamePlayData
+        , UpdateQuestions
     };
 
 }

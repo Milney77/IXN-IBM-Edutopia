@@ -3,19 +3,9 @@ CREATE TABLE "courselist" (
     "courseid" INTEGER NOT NULL,
     "coursename" VARCHAR(255) NOT NULL,
     "badgeicon" VARCHAR(100) NOT NULL,
+    "includeind" INTEGER NOT NULL,
 
     CONSTRAINT "coursepk" PRIMARY KEY ("courseid")
-);
-
--- CreateTable
-CREATE TABLE "highscores" (
-    "playerid" SERIAL NOT NULL,
-    "playername" VARCHAR(25) NOT NULL,
-    "boardname" VARCHAR(25) NOT NULL,
-    "numberturns" INTEGER NOT NULL,
-    "dateplayed" TIMESTAMP(6) NOT NULL,
-
-    CONSTRAINT "highscorespk" PRIMARY KEY ("playerid")
 );
 
 -- CreateTable
@@ -24,7 +14,7 @@ CREATE TABLE "questions" (
     "courseid" INTEGER NOT NULL,
     "quiznumber" INTEGER NOT NULL,
     "questiontype" INTEGER NOT NULL,
-    "questiontext" VARCHAR(255) NOT NULL,
+    "questiontext" VARCHAR(400) NOT NULL,
     "options" VARCHAR[],
     "matchoptions" VARCHAR[],
     "optionstoselect" INTEGER,
@@ -40,5 +30,24 @@ CREATE TABLE "questions" (
     CONSTRAINT "questionspk" PRIMARY KEY ("questionid")
 );
 
+-- CreateTable
+CREATE TABLE "questionresponses" (
+    "id" SERIAL NOT NULL,
+    "year" INTEGER NOT NULL,
+    "month" INTEGER NOT NULL,
+    "day" INTEGER NOT NULL,
+    "timesasked" INTEGER NOT NULL,
+    "timescorrect" INTEGER NOT NULL,
+    "timescorrectwithhint" INTEGER NOT NULL,
+    "timesincorrect" INTEGER NOT NULL,
+    "timesincorrectwithhint" INTEGER NOT NULL,
+    "questionid" INTEGER NOT NULL,
+
+    CONSTRAINT "questionresponses_pkey" PRIMARY KEY ("id")
+);
+
 -- AddForeignKey
 ALTER TABLE "questions" ADD CONSTRAINT "questions_courseid_fkey" FOREIGN KEY ("courseid") REFERENCES "courselist"("courseid") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "questionresponses" ADD CONSTRAINT "questionresponses_questionid_fkey" FOREIGN KEY ("questionid") REFERENCES "questions"("questionid") ON DELETE RESTRICT ON UPDATE CASCADE;
