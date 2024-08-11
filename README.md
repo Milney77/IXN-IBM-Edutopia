@@ -13,7 +13,7 @@ npm install
 ```
 
 4 Install Postgresql (see https://www.postgresql.org/).  
-  During installation of Postgresql, you will be asked to provide a username and password.  Keep a note of these, as they will be needed in the following steps.
+  During installation of Postgresql, you may be asked to provide a username for the database superuser (default: postgres), and you <u>will</u> be aksed to provide a password for this database superuser.  Keep a note of these, as they will be needed in the following steps.
 
 5 - Navigate to the root/server folder in the edutopia project
 
