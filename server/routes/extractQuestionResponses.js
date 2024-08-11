@@ -7,13 +7,13 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
   try {
 
-    // Extract all the questions in a single query
-    const questions = await prisma.questions.findMany({
+    // Extract all the question responses in a single query
+    const questionResponses = await prisma.questionresponses.findMany({
       include: {
-        courselist: true, // Include all fields from the courselist table
+        questions: true, // Include all fields from the courselist table
       },
     });
-    res.json(questions);
+    res.json(questionResponses);
 
   } catch (error) {
     // Error handling

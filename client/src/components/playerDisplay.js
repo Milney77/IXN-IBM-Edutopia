@@ -21,6 +21,15 @@ function handleButtonClick(addCurrentInstruction, showQuestionOverlay) {
     showQuestionOverlay();
 }
 
+export const calculateFontSizeAndMargin = (playerInfoWidth, setCustomFontSize, setCustomMargin) => {
+    // Size is based on screen width & number of players
+    let newFontSize = Math.min(1.5, Math.max(0.25, 0.25 + 0.25 * Math.floor((playerInfoWidth)/100)));
+    let newMargin = Math.min(1.5, Math.max(0, 0.25 * Math.floor((playerInfoWidth - 100)/100)));
+    //console.log('playerInfoWidth:', playerInfoWidth, ', newFontSize:', newFontSize);
+  setCustomFontSize(newFontSize);
+  setCustomMargin(newMargin);
+};
+
 // Some code to create 'pulsing' animation behind the picture for the current player
 const pulsingCircleStyle = {
     borderRadius: '25%',
@@ -38,8 +47,7 @@ const pulsingCircleStyle = {
 // Player Box Component - this is called for each player, and shows the player name, victory points and resources.
 // Also, if it is the player's turn, then the skills build button will be clickable.
 const PlayerBox = (props) => {
-    const {playerData, BoxWidth, gamePlayData, addCurrentInstruction, showQuestionOverlay} = props;
-    
+    const {victoryPoints, playerData, BoxWidth, gamePlayData, addCurrentInstruction, showQuestionOverlay} = props;
     // Determine colors
     const colour = colourMap[playerData.colour];
 
@@ -49,18 +57,11 @@ const PlayerBox = (props) => {
 
     const maxIconSize = 2.5;
     // Font Size - Based on screen width & number of players, now updating dymically thanks to the dimension context approach
+    
     useEffect(() => {
         // Determine the font & margin sizes
-        const calculateFontSizeAndMargin = () => {
-            // Size is based on screen width & number of players
-            const playerInfoWidth = width / gamePlayData.numberPlayers;
-            let newFontSize = Math.min(1.5, Math.max(0.25, 0.25 + 0.25 * Math.floor((playerInfoWidth)/100)));
-            let newMargin = Math.min(1.5, Math.max(0, 0.25 * Math.floor((playerInfoWidth - 100)/100)));
-            //console.log('playerInfoWidth:', playerInfoWidth, ', newFontSize:', newFontSize);
-          setCustomFontSize(newFontSize);
-          setCustomMargin(newMargin);
-        };
-        calculateFontSizeAndMargin();
+        const playerInfoWidth = width / gamePlayData.numberPlayers;
+        calculateFontSizeAndMargin(playerInfoWidth, setCustomFontSize, setCustomMargin);
       }, [width, gamePlayData.numberPlayers]);
 
     return (
@@ -139,12 +140,15 @@ const PlayerBox = (props) => {
                                 </Typography>
                         </Grid>
                         <Grid item xs={2} alignItems='center'>
+                            <Tooltip title={'Victory Points - target to win is ' + victoryPoints}>
                             <Stack direction='row' alignItems='center'>
+                                
                                 <StarRateOutlinedIcon sx={{fontSize: `${customFontSize*1.5}rem`,}}/>
                                 <Typography variant="h6" paddingLeft={0.5} sx={{fontSize: `${customFontSize}rem`,}}>
                                     {playerData.vp}
                                 </Typography>
                             </Stack>
+                            </Tooltip>
                         </Grid>
                     </Grid>
 
@@ -220,7 +224,7 @@ const PlayerBox = (props) => {
 
 
 export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstruction }) => {
-    const {playerData, gamePlayData, UpdatePlayerData, UpdateGamePlayData} = gameComponents; 
+    const {boardData, playerData, gamePlayData, questionData, UpdatePlayerData, UpdateGamePlayData, UpdateQuestions} = gameComponents; 
     const { numberPlayers, currentPlayer } = gamePlayData;
     const BoxWidth = `${Math.floor(100 / gamePlayData.numberPlayers)}%`;
 
@@ -252,7 +256,7 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
         setQuestionOverlayVisible(false);
         UpdateGamePlayData('currentPhase', 1);
         // Update question stats
-        setQuestions(prevQuestions => prevQuestions.map(question => {
+        UpdateQuestions(prevQuestions => prevQuestions.map(question => {
             //console.log('question.id', question.id, ', questionid:', questionid)
             if (question.questionid === questionid) {
                 return {...question
@@ -270,12 +274,16 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
     //----- SKILLS BUILD QUESTIONS SECTION -----//
     // First, extract the questions
     const [questions, setQuestions] = useState([]);
+    console.log('Courses: ', gamePlayData.skillsBuildCourses, 'Include Quiz 3:', gamePlayData.includeQuiz3Questions)
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/questions');
+                const response = await axios.get('http://localhost:3001/questions')
+                // Filter the questions based on user selections (NOTE: Move this to the query itself if I have time)
+                const filteredQuestions = response.data.filter(qstn => gamePlayData.skillsBuildCourses.includes(qstn.courseid) &&
+                        (qstn.quiznumber <= 2 || gamePlayData.includeQuiz3Questions === 1));
                 // Add some tracking variables
-                const fetchedQuestions = response.data.map(question => ({
+                const fetchedQuestions = filteredQuestions.map(question => ({
                     ...question,
                     timesAsked: 0
                     , timesCorrectNoHint: 0
@@ -283,7 +291,7 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
                     , timesIncorrectNoHint: 0
                     , timesIncorrectWithHint: 0
                 }))
-                setQuestions(fetchedQuestions);
+                UpdateQuestions(fetchedQuestions);
             } catch (error) {
                 console.error('Error fetching questions:', error);
             }
@@ -302,7 +310,7 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
         const rightLessThanHalf = questions.filter(qstn => qstn.timesAsked > 0 && (qstn.timesCorrectNoHint + qstn.timesCorrectWithHint) / qstn.timesAsked <  0.5);
         const rightMoreThanHalf = questions.filter(qstn => qstn.timesAsked > 0 && (qstn.timesCorrectNoHint + qstn.timesCorrectWithHint) / qstn.timesAsked >= 0.5);
 
-        console.log('NeverAsked:', neverAsked, ', Right <50%:', rightLessThanHalf, ', Right >50%:', rightMoreThanHalf)
+        //console.log('NeverAsked:', neverAsked, ', Right <50%:', rightLessThanHalf, ', Right >50%:', rightMoreThanHalf)
         // Randomly pick from one of these arrays - priority for questions never asked, then those correctly answered <50% of the time, then the rest.
         if (neverAsked.length > 0) {
             return getRandomItem(neverAsked);
@@ -322,11 +330,11 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 width: '100%',
-                bgcolor: 'black'
                 }}
             >
             { playerData.slice(0, gamePlayData.numberPlayers).map(player => (
                     <PlayerBox key={ player.id }
+                        victoryPoints = { boardData.victoryPoints}
                         playerData = { player }
                         BoxWidth = { BoxWidth }
                         images = {images}
@@ -341,7 +349,7 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
             </Box>
             {questionOverlayVisible && (
                 <QuestionOverlay
-                question = {selectQuestion(questions)}
+                question = {selectQuestion(questionData)}
                 onResult={handleQuestionResult}
             />
         )}

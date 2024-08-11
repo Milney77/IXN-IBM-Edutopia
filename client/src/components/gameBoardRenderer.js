@@ -131,7 +131,7 @@ function drawTile(ctx, tileData, images, playerData) {
     }
 
 
-    
+    /*
     // DELETE WHEN DONE
     // Hex ID
     ctx.fillStyle = 'black';
@@ -151,7 +151,8 @@ function drawTile(ctx, tileData, images, playerData) {
     ctx.fillText(tileData.actionable
             , tileData.xPos[0] + (1 - structureSizeRatio) / 2 * tileData.xPos[1] + 20
             , tileData.yPos[0] + (1 - structureSizeRatio) / 2 * tileData.yPos[1] + 40)
-    
+
+            */
 
   } 
 
@@ -246,11 +247,11 @@ function DrawActionMenu(canvas, ctx, images, gamePlayData, playerData, actionMen
 
 
   // Fill in the icons
-  const iconlist = ['icon_action_v2_Research', 'icon_action_v2_Generate', 'icon_action_v2_develop', 
+  const iconlist = ['icon_action_v2_Generate', 'icon_action_v2_develop', 
                     'icon_action_v2_Join', 'icon_action_v2_Trade', 'icon_action_v2_EndTurn'];
 
   ctx.fillStyle = 'white'
-  for (var i = 0; i < 6; i++) {
+  for (var i = 0; i < 5; i++) {
     var icon_xpos = actionMenuIconOffset + xpos + i * actionMenuHeight;
     var icon_ypos = actionMenuYOffset + 0.5 * actionMenuHeight * (1 - actionMenuIconSize);
     const circleRadius = (actionMenuHeight * actionMenuIconSize) / 2;
@@ -285,8 +286,7 @@ function fillCircle(ctx, x, y, rad, colour) {
 
 function addToolTip(ctx, iconx, icony, actionMenuHeight, iconid) {
       const padding = 5;
-      const actionMenuHelpText = ['Research special abilities'
-                              , 'Develop your own hex'
+      const actionMenuHelpText = ['Build on one of your own hexes'
                               , 'Develop an empty, neighbouring hex'
                               , 'Take control of another players hex neighbouring your own'
                               , 'Trade resources with the bank'

@@ -11,15 +11,8 @@ model courselist {
   courseid   Int         @id(map: "coursepk")
   coursename String      @db.VarChar(255)
   badgeicon  String      @db.VarChar(100)
+  includeind Int
   questions  questions[]
-}
-
-model highscores {
-  playerid    Int      @id(map: "highscorespk") @default(autoincrement())
-  playername  String   @db.VarChar(25)
-  boardname   String   @db.VarChar(25)
-  numberturns Int
-  dateplayed  DateTime @db.Timestamp(6)
 }
 
 model questions {
@@ -40,4 +33,19 @@ model questions {
   hintcardtitles  String[]   @db.VarChar
   hintcardtext    String[]   @db.VarChar
   courselist      courselist @relation(fields: [courseid], references: [courseid], onDelete: NoAction, onUpdate: NoAction)
+  questionresponses questionresponses[]
+}
+
+model questionresponses {
+  id                     Int      @id @default(autoincrement())
+  year                   Int
+  month                  Int
+  day                    Int
+  timesasked             Int
+  timescorrect           Int
+  timescorrectwithhint   Int
+  timesincorrect         Int
+  timesincorrectwithhint Int
+  questionid             Int
+  questions              questions @relation(fields: [questionid], references: [questionid])
 }

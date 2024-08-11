@@ -16,7 +16,7 @@ const GameLog = ({ currentInstruction, log, exitToTitle }) => {
   useEffect(() => {
     //console.log('GameLog resizing to : ', width, 'x', height);
     const calculateFontSize = () => {
-      const baseFontSize = 3;
+      const baseFontSize = 2.5;
       const scaleFactor = width / 1920; // Adjust this divisor to control scaling
       return baseFontSize * scaleFactor;
     };
@@ -43,30 +43,35 @@ const GameLog = ({ currentInstruction, log, exitToTitle }) => {
 
   // OUTPUT
   return (
+    <div>
       <Grid container alignItems='center'>
           <Grid item xs={6}>
               <Typography variant='h4' 
                 sx ={{
                   textAlign:'left',
                   paddingX: 2,
-                  fontSize: `${customFontSize}rem`
+                  fontSize: `${customFontSize}rem`,
+                  color: 'white'
                 }}
               >
                 { currentInstruction }
                 </Typography>
           </Grid>
           <Grid item xs = {1}>
-             <Typography variant='h6' sx={{ marginX:0, paddingX:0, paddingY:0, fontSize: `${customFontSize/2}rem` }}>Game Log</Typography>
+             <Typography variant='h6' sx={{ marginX:0, paddingX:0, paddingY:0, color: 'white', fontSize: `${customFontSize/2}rem` }}>Game Log</Typography>
           </Grid>
           <Grid item xs = {4}>
             <Tooltip title="Click to expand game log">
-              <Box id="log" onClick={handleLogClick} sx={{width:'100%', p:0, mt:'0rem', fontSize: `${customFontSize/2}rem`}}>
+              <Box id="log" onClick={handleLogClick} 
+                  sx={{width:'100%', p:0, mt:'0rem', fontSize: `${customFontSize/2}rem`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                   {log.length > 0 && log[log.length - 1]}
               </Box>
             </Tooltip>
           </Grid>
           <Grid item xs={1}>
-              <Button variant='contained' onClick={exitGame}>X</Button>
+              <Tooltip title="Go back to main menu">
+                <Button variant='contained' onClick={exitGame} sx={{color:'white', backgroundColor:'red'}}>X</Button>
+              </Tooltip>
           </Grid>
         
             {isOverlayVisible && (
@@ -83,6 +88,7 @@ const GameLog = ({ currentInstruction, log, exitToTitle }) => {
               </div>
             )}
         </Grid>            
+      </div>
   );
 };
 
