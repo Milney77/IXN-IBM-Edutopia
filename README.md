@@ -20,9 +20,10 @@ npm install
 
 6 - Add an environment file to this subfolder 'root/server'.  This environment file should be called ".env"
 
-7 - Add the following to the .env file, where {Database-User} and {Database-Password} are the username and password you set during installation of Postgresql (and if you changed the port, you need to replace '5432' with the port you chose).
+7 - Add the following to the .env file, where {Database-User} and {Database-Password} are the username and password you set during installation of Postgresql (and if you changed the port, you need to replace '5432' with the port you chose).  By default, express.js will run on port 3001, but if you want it to run on a different port, then change the PORT variable below.
 ```bash
 DATABASE_URL="postgresql://{Database-User}:{Database-Password}@localhost:5432/edutopia?schema=public"
+PORT=3001
 ```
 
 8 - Make sure you are in root/server, and setup Prisma with the following command
