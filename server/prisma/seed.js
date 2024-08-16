@@ -5,25 +5,21 @@ async function main() {
     await prisma.courselist.createMany({
         data: [
             {  
-                courseid: 1,
                 coursename: "Getting Started with Enterprise-Grade AI",
                 badgeicon: "sb_gettingStartedEnterpriseGradeAI.png",
                 includeind: 1
             },
             {  
-                courseid: 2,
                 coursename: "Getting Started with Enterprise Data Science",
                 badgeicon: "sb_gettingStartedEnterpriseGradeDataScience.png",
                 includeind: 1
             },
             {  
-                courseid: 3,
                 coursename: "Getting Started with Threat Intelligence and Hunting",
                 badgeicon: "sb_gettingStartedThreatIntelligence.png",
                 includeind: 0
             },
             {  
-                courseid: 4,
                 coursename: "Journey to Cloud: Envisioning your solution",
                 badgeicon: "sb_journeyToCloud.png",
                 includeind: 1

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model courselist {
-  courseid   Int         @id(map: "coursepk")
+  courseid   Int         @id(map: "coursepk") @default(autoincrement())
   coursename String      @db.VarChar(255)
   badgeicon  String      @db.VarChar(100)
   includeind Int

@@ -4,6 +4,9 @@ const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 require('dotenv').config();
 
+const path = require('path');
+const badgesRouter = require('./routes/badges');
+
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -29,6 +32,13 @@ app.use('/responses', questionResponsesRouter);
 // app.use('/postQuestions', updateQuestionsRouter)
 app.use('/postresponses', updateQuestionResponsesRouter);
 
+
+// Get all the images in the badges folder
+const badgesPath = path.join(__dirname, '../client/public/images/badges');
+console.log('Serving badges from:', badgesPath);
+
+app.use('/badges', express.static(badgesPath));
+app.use('/api', badgesRouter); 
 
 // Standard listening code
 app.listen(port, () => {
