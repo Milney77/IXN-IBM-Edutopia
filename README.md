@@ -8,7 +8,7 @@ Need either npm or yarn.
 
 # INSTALLATION
 
-1 Download the source code from git.
+1 Download the source code from git.  Install node.js and if necessary, npm or yarn.
 
 2 Open up the project in VS Code (recommended) or your editor of choice - make sure you are in the root folder.  You should be able to see 'Client' and 'Server' subfolders, along with this readme.md file.  If you cannot, then you are not in the root folder.
 
