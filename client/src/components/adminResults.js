@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { MenuItem, Select, FormControl, InputLabel, Box, Typography, Button } from '@mui/material';
+import { MenuItem, Select, FormControl, InputLabel, Box, Typography, Stack, Button } from '@mui/material';
 import {Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend} from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
@@ -91,7 +91,7 @@ const Chart = ({ data, customFontSize }) => {
 
 
   return (
-    <div style={{ width: '100%', height: '70vh'}}>
+    <div style={{ width: '100%', height: '65vh'}}>
       <Bar data={chartData} options={options} />
     </div>
   );
@@ -106,13 +106,18 @@ const AdminResults = ({filteredResponses, customFontSize}) => {
           <Box sx={{width: '100%', 
                   height: '100%',
                   display: 'flex', 
+                  flexDirection:'column',
                   alignItems: 'center',
                   justifyContent: 'center', 
                   paddingX:'1rem'}}>
-            {filteredResponses.length > 0 ? 
-              <Chart data={filteredResponses} customFontSize={customFontSize}/>
-              :
-              <Typography sx={{fontSize:'2rem'}}>Error - No data found for this course / quiz / time period.</Typography>}
+            
+              <Typography sx={{fontSize:`${customFontSize*1.5}rem`}}>Question Results</Typography>
+              
+              {filteredResponses.length > 0 ? 
+                <Chart data={filteredResponses} customFontSize={customFontSize}/>
+                :
+                <Typography sx={{fontSize:`${customFontSize*1.5}rem` }}>Error - No data found for this course / quiz / time period.</Typography>}
+            
           </Box>
         </Box>  
       )

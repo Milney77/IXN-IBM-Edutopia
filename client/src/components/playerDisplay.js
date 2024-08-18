@@ -44,6 +44,7 @@ const pulsingCircleStyle = {
   };
 
 
+
 // Player Box Component - this is called for each player, and shows the player name, victory points and resources.
 // Also, if it is the player's turn, then the skills build button will be clickable.
 const PlayerBox = (props) => {
@@ -274,14 +275,19 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
     //----- SKILLS BUILD QUESTIONS SECTION -----//
     // First, extract the questions
     const [questions, setQuestions] = useState([]);
+    const baseUrl = process.env.REACT_APP_API_BASE_URL;
     console.log('Courses: ', gamePlayData.skillsBuildCourses, 'Include Quiz 3:', gamePlayData.includeQuiz3Questions)
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/questions')
-                // Filter the questions based on user selections (NOTE: Move this to the query itself if I have time)
+                const response = await axios.get(`${baseUrl}/questions`)
+                // Filter the questions based on user selections 
+                // Course ID must be in set of course ids that player has included.
+                // Remove all quiz 3 questions if user has selected no quiz 3 question.
+                // Remove any question where usequestion != 1;
                 const filteredQuestions = response.data.filter(qstn => gamePlayData.skillsBuildCourses.includes(qstn.courseid) &&
-                        (qstn.quiznumber <= 2 || gamePlayData.includeQuiz3Questions === 1));
+                        (qstn.quiznumber <= 2 || gamePlayData.includeQuiz3Questions === 1) &&
+                        qstn.usequestion === 1);
                 // Add some tracking variables
                 const fetchedQuestions = filteredQuestions.map(question => ({
                     ...question,

@@ -92,12 +92,13 @@ const MainMenu = ({ startGame }) => {
     const [courselist, setCourseList] = useState([]);
     const [selectedCourses, setSelectedCourses] = useState([1]);
     const [includeQuiz3Questions, setIncludeQuiz3Questions] = useState(false);
-
+    const baseUrl = process.env.REACT_APP_API_BASE_URL;
+    console.log(baseUrl);
     // Extract the course lists (excluding those where includeind !== 1)
     useEffect(() => {
         const fetchCourseList = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/courselist');
+                const response = await axios.get(`${baseUrl}/courselist`);
                 setCourseList(response.data);
             } catch (error) {
                 console.error('Error fetching courselist:', error);

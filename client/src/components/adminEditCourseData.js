@@ -3,22 +3,22 @@ import { MenuItem, Select, FormControl, FormControlLabel, InputLabel, IconButton
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
+// This displays all the badges that are in the /images/badges folder.
 const BadgeSelector = ({ badges, selectedBadge, onSelectBadge }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const visibleBadges = 3; 
-
+    const baseUrl = process.env.REACT_APP_API_BASE_URL;
+    // Functions to handle clicking left & right on badges.
     const handlePrev = () => {
         setCurrentIndex((prevIndex) => 
             Math.max(prevIndex - 1, 0)
         );
     };
-
     const handleNext = () => {
         setCurrentIndex((prevIndex) =>
             Math.min(prevIndex + 1, badges.length - visibleBadges)
         );
     };
-
 
     return (
         <Box sx={{ mb: 4, textAlign: 'center' }}>
@@ -33,7 +33,7 @@ const BadgeSelector = ({ badges, selectedBadge, onSelectBadge }) => {
                         {badges.slice(currentIndex, currentIndex + visibleBadges).map((badge) => (
                             <Grid item xs={2} key={badge}>
                                 <img
-                                    src={`http://localhost:3001/badges/${badge}`}
+                                    src={`${baseUrl}/badges/${badge}`}
                                     alt={badge}
                                     onClick={() => onSelectBadge(badge)}
                                     style={{
@@ -63,8 +63,56 @@ const BadgeSelector = ({ badges, selectedBadge, onSelectBadge }) => {
 };
 
 
+const Overlay = ({message, onConfirm, onClose, isConfirmDialog}) => {
+    return (
+        <Box 
+            sx={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 1000,
+            }}
+        >
+            <Box 
+                sx={{
+                    backgroundColor: 'white',
+                    padding: '20px',
+                    borderRadius: '8px',
+                    textAlign: 'center',
+                }}
+            >
+                <Typography variant="h6" gutterBottom sx={{ whiteSpace: 'pre-line' }}>
+                    {message}
+                </Typography>
+                {isConfirmDialog ? (
+                    <>
+                        <Button variant="contained" color="primary" onClick={onConfirm} sx={{mr: 2}}>
+                            Yes
+                        </Button>
+                        <Button variant="contained" color="secondary" onClick={onClose}>
+                            No
+                        </Button>
+                    </>
+                ) : (
+                    <Button variant="contained" color="primary" onClick={onClose}>
+                        Okay
+                    </Button>
+                )}
+            </Box>
+        </Box>
+    );
+};
 
-const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, onhandleViewClick}) => {
+
+
+
+const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, triggerRefresh, questionData, responseData}) => {
     // Create a courseDetails object that has details of the sellected course, or blank if the user is creating a new course
     const [courseDetails, setCourseDetails] = useState({
         courseid: 0,
@@ -72,6 +120,10 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
         badgeicon: '',
         includeind: 0,
     });
+
+    const [questionCount, setQuestionCount] = useState(0);
+    const [responseCount, setResponseCount] = useState(0);
+    const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
     // Set defaults
     useEffect(()=> {
@@ -82,8 +134,11 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
                 , coursename: coursedata[0].coursename
                 , badgeicon: coursedata[0].badgeicon
                 , includeind: coursedata[0].includeind
-                
             }))
+            const courseQuestions = questionData.filter((question) => question.courseid === coursedata[0].courseid).length;
+            const courseResponses = responseData.filter((response) => response.questions.courseid === coursedata[0].courseid).length;
+            setQuestionCount(courseQuestions);
+            setResponseCount(courseResponses);
         } else {
             setCourseDetails(prevState => ({
                 ...prevState
@@ -91,11 +146,23 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
                 , coursename: ''
                 , badgeicon: ''
                 , includeind: 0
-                
             }))
+            setQuestionCount(0);
+            setResponseCount(0);
         }
     }, [coursedata, editType]);
     
+    // State variables.
+    const [showOverlay, setShowOverlay] = useState(false);
+    const [overlayMessage, setOverlayMessage] = useState('');
+    const [isConfirmDialog, setIsConfirmDialog] = useState(false);
+    
+    const [validationError, setValidationError] = useState('');
+    const [saveError, setSaveError] = useState(''); 
+    const [saveSuccess, setSaveSuccess] = useState(false);
+
+    
+
 
      // Handle input changes
      const handleInputChange = (e) => {
@@ -122,13 +189,13 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
             includeind: checked ? 1 : 0
         }));
     };
-
+    
     // Load all the badges
     const [badges, setBadges] = useState([]);
     useEffect(() => {
         const fetchBadges = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/badges');
+                const response = await fetch(`${baseUrl}/api/badges`);
                 const data = await response.json();
                 setBadges(data);
             } catch (error) {
@@ -140,9 +207,6 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
     }, []);
 
     // Validation and user messaging
-    const [validationError, setValidationError] = useState('');
-    const [saveError, setSaveError] = useState(''); 
-    const [saveSuccess, setSaveSuccess] = useState(false);
     const validateInput = (coursename, badgeicon) => {
         // Checks
         // Cannot be empty
@@ -180,8 +244,8 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
         try {
             // URL depends on if the user is editing or creating a new course
             const url = editType === 'edit' 
-                ? `http://localhost:3001/courselist/${courseDetails.courseid}`
-                : 'http://localhost:3001/courselist';
+                ? `${baseUrl}/courselist/${courseDetails.courseid}`
+                : `${baseUrl}/courselist`;
             // Method depends on if the user is editing or creating a new course
             const method = editType === 'edit' ? 'PUT' : 'POST';
             // Now run the fetch query.
@@ -197,26 +261,72 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
                 console.log('Success:', result);
                 setSaveSuccess(true);
                 setSaveError('');
-                setTimeout(() => {
-                    // Check if handleViewClick is passed correctly
-                    if (typeof onhandleViewClick === 'function') {
-                        onhandleViewClick(); // Call the function passed as a prop
-                    } else {
-                        console.error('onhandleViewClick is not a function');
-                    }
-                }, 2000);
+                triggerRefresh();
+                setOverlayMessage(`Course ${editType === 'create' ? 'saved' : 'updated'} successfully!`);
+                setShowOverlay(true);
             } else {
                 console.error('Failed to save course');
                 setSaveSuccess(false);
                 setSaveError('Failed to save course. Please try again.');
+                setOverlayMessage('Failed to save course. Please try again.');
+                setShowOverlay(true);
             }
         } catch (error) {
             console.error('Error:', error);
             setSaveSuccess(false);
             setSaveError('Failed to save course. Please try again.');
+            setOverlayMessage('Failed to save course. Please try again.');
+            setShowOverlay(true);
         }
     };
 
+    // DELETE COURSE
+    const handleDelete = async () => {
+        setIsConfirmDialog(false);
+        try {
+            const url = `${baseUrl}/courselist/${courseDetails.courseid}`;
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (response.ok) {
+                console.log('Course deleted successfully');
+                setOverlayMessage('Course deleted successfully!');
+                setShowOverlay(true);
+                triggerRefresh(); // Refresh the list after deletion
+            } else {
+                console.error('Failed to delete course');
+                setOverlayMessage('Failed to delete course. Please try again.');
+                setShowOverlay(true);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setOverlayMessage('Failed to delete course. Please try again.');
+            setShowOverlay(true);
+        }
+    
+    };
+
+    const confirmDelete = () => {
+        var messageText;
+        if (questionCount > 0 || responseCount > 0) {
+            messageText = 'Are you sure you want to delete this course? \n This will also delete ' + questionCount + ' questions from the Questions table and ' + responseCount + ' responses from the question responses tables.'
+        } else {
+            messageText = 'Are you sure you want to delete this course?';
+        }
+        setOverlayMessage(messageText);
+        setIsConfirmDialog(true);
+        setShowOverlay(true);
+    };
+
+    const closeOverlay = () => {
+        setShowOverlay(false);
+        setIsConfirmDialog(false);
+    };
+
+    
 
     return (
         <>
@@ -266,23 +376,42 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
                 />
                 </Tooltip>
 
-
+                {/* Buttons */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
                 <Button
                     variant="contained"
                     color="primary"
                     onClick={handleSave}
+                    sx={{ width: 'auto', textTransform: 'none' }}
                     >
                     <Typography sx={{fontSize:`${customFontSize*1}rem`}}>{editType === 'edit' ? 'Save Changes' : 'Create Course'}</Typography>
                 </Button>
-                </Stack>
-            
 
-            {/* Display success or error messages for saving the course data*/}
-            {saveSuccess && <Alert severity="success" sx={{ mt: 2 }}>{'Course ' + (editType === 'create' ? 'saved' : 'updated') + ' successfully!  Redirecting in 2 seconds...'}</Alert>}
-            {saveError && <Alert severity="error" sx={{ mt: 2 }}>{saveError}</Alert>}
+                {editType === 'edit' && (
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={confirmDelete}
+                        sx={{ width: 'auto', textTransform: 'none' }}
+                    >
+                        <Typography sx={{ fontSize: `${customFontSize * 1}rem` }}>
+                            Delete Course
+                        </Typography>
+                    </Button>
+                        )}
+                    </Box>
+                </Stack>
             </Box>
         </Box>
 
+        {showOverlay && (
+                <Overlay
+                    message={overlayMessage}
+                    onConfirm={isConfirmDialog ? handleDelete : closeOverlay}
+                    onClose={closeOverlay}
+                    isConfirmDialog={isConfirmDialog}
+                />
+            )}
 
 </>
     )

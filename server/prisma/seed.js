@@ -27,6 +27,17 @@ async function main() {
         ]
     });
 
+    await prisma.users.createMany({
+        data: [
+            {username: 'IBM'
+             , password: '1234'   
+            }, 
+            {username: 'IBM2'
+                , password: '1234'   
+               }, 
+        ]
+    })
+
     
     await prisma.questions.createMany({
         data: [

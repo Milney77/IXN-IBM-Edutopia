@@ -4,21 +4,12 @@ const router = express.Router();
 
 const prisma = new PrismaClient();
 
-// Get the courses
+// Get the users
 router.get('/', async (req, res) => {
   try {
-    // Extract all the courselists  in a single query
-    //NOTE: includeind is optional - by default, only couses where includeind === 1 will be returned.
-    // But in the IBM edit section, this will return all courses..  
-    const { includeind } = req.query;
     // Query now defaults to only returning course lists where includeind === 1, unless otherwise stated.
-    const courseList = await prisma.courselist.findMany({
-          where: includeind === 'all' 
-                ? {}
-                : { includeind: 1 } ,  
-      });
-      res.json(courseList);
-
+    const userslist = await prisma.users.findMany();
+    res.json(userslist);
   } catch (error) {
     // Error handling
     console.error(error);
@@ -26,19 +17,17 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Create a new course
+// Create a new user
 router.post('/', async (req, res) => {
   try {
-    const { coursename, badgeicon, includeind } = req.body;
-    const newCourse = await prisma.courselist.create({
+    const { username, password } = req.body;
+    const newUser = await prisma.users.create({
       data: {
-        coursename,
-        badgeicon,
-        includeind,
+        username,
+        password,
       },
     });
-
-    res.status(201).json(newCourse);
+    res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -50,18 +39,17 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { coursename, badgeicon, includeind } = req.body;
-    const updatedCourse = await prisma.courselist.update({
+    const { username, password  } = req.body;
+    const updateUser = await prisma.users.update({
       where: {
-        courseid: parseInt(id, 10),
+        id: parseInt(id, 10),
       },
       data: {
-        coursename,
-        badgeicon,
-        includeind,
+        username,
+        password,
       },
     });
-    res.json(updatedCourse);
+    res.json(updateUser);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -73,9 +61,9 @@ router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     console.log(`Received DELETE request for ID: ${id}`);
-    await prisma.courselist.delete({
+    await prisma.users.delete({
       where: {
-        courseid: parseInt(id, 10),
+        id: parseInt(id, 10),
       },
     });
     res.status(204).send(); // Now real data to be returned, as this is just a deletion.
@@ -90,12 +78,11 @@ router.delete('/:id', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
       const { id } = req.params;
-      const course = await prisma.courselist.findUnique({
+      const course = await prisma.users.findUnique({
           where: {
-              courseid: parseInt(id, 10), // Ensure ID is treated as an integer
+              id: parseInt(id, 10), // Ensure ID is treated as an integer
           },
       });
-
       if (course) {
           res.json(course);
       } else {

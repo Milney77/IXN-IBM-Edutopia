@@ -32,7 +32,8 @@ model questions {
   hintcards       Int
   hintcardtitles  String[]   @db.VarChar
   hintcardtext    String[]   @db.VarChar
-  courselist      courselist @relation(fields: [courseid], references: [courseid], onDelete: NoAction, onUpdate: NoAction)
+  usequestion     Int        @default(1) 
+  courselist      courselist @relation(fields: [courseid], references: [courseid], onDelete: Cascade, onUpdate: Cascade)
   questionresponses questionresponses[]
 }
 
@@ -47,5 +48,11 @@ model questionresponses {
   timesincorrect         Int
   timesincorrectwithhint Int
   questionid             Int
-  questions              questions @relation(fields: [questionid], references: [questionid])
+  questions              questions @relation(fields: [questionid], references: [questionid], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model users {
+  id       Int      @id @default(autoincrement())
+  username String   @db.VarChar(50)
+  password String   @db.VarChar(100)
 }

@@ -14,47 +14,35 @@ import AdminEditQuestion from './adminEditQuestionData';
 
 const AdminScreen = ({handleAdminExit}) => {
 
-    // Get the course list
+    // Get the course list, questions and question responses
+    // This needs to be refreshed each time the database is modified
     const [courselist, setCourseList] = useState([]);
-    useEffect(() => {
-        const fetchCourseList = async () => {
-            try {
-                const response = await axios.get('http://localhost:3001/courselist?includeind=all');
-                setCourseList(response.data);
-            } catch (error) {
-                console.error('Error fetching courselist:', error);
-            }
-        };
-        fetchCourseList();
-    }, []);
-
-    // Get the set of questions
     const [questions, setQuestions] = useState([]);
-    useEffect(() => {
-        const fetchQuestions = async () => {
-            try {
-                const response = await axios.get('http://localhost:3001/questions')
-                setQuestions(response.data);
-            } catch (error) {
-                console.error('Error fetching questions:', error);
-            }
-        };
-        fetchQuestions();
-    }, []);
-
-    // Get the question responses
     const [questionResponses, setQuestionResponses] = useState([]);
+    const [refresh, setRefresh] = useState(false);
+    const baseUrl = process.env.REACT_APP_API_BASE_URL;
+
     useEffect(() => {
-        const fetchResponses = async () => {
+        const fetchAllData = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/responses')
-                setQuestionResponses(response.data);
+                const coursesResponse = await axios.get(`${baseUrl}/courselist?includeind=all`);
+                setCourseList(coursesResponse.data);
+                const questionsResponse = await axios.get(`${baseUrl}/questions`)
+                setQuestions(questionsResponse.data);
+                const responseResponse = await axios.get(`${baseUrl}/responses`)
+                setQuestionResponses(responseResponse.data);
             } catch (error) {
-                console.error('Error fetching questions:', error);
+                console.error('Error fetching data:', error);
             }
         };
-        fetchResponses();
-    }, []);
+        fetchAllData();
+    }, [refresh]);
+
+    // Trigger a refresh
+    const triggerRefresh = () => {
+        setRefresh(prev => !prev);
+    };
+
 
     // Responses set to the question response data we extracted.
     const [filteredCourseList, setFilteredCourseList] = useState(courselist);
@@ -286,7 +274,9 @@ const AdminScreen = ({handleAdminExit}) => {
                 editType = {showCourseEdit ? 'edit' : 'create'}
                 customFontSize = {customFontSize}
                 fullCourseList = {courselist}
-                onhandleViewClick = {handleViewClick}
+                triggerRefresh = {triggerRefresh}
+                questionData = {questions}
+                responseData = {questionResponses}
             />
         : null}
 
@@ -297,7 +287,8 @@ const AdminScreen = ({handleAdminExit}) => {
                 courselist = {courselist}
                 editType = {showQuestionEdit ? 'edit' : 'create'}
                 customFontSize = {customFontSize}
-                onhandleViewClick = {handleViewClick}
+                triggerRefresh = {triggerRefresh}
+                responseData = {questionResponses}
             />
         : null}
         

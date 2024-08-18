@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import axios from 'axios';
 import './App.css';
 
 import { ThemeProvider, CssBaseline  } from '@mui/material';
@@ -14,9 +14,10 @@ import { imageSources, initresources, useGameComponents } from './constants/cons
 
 import { DimensionsProvider } from './components/dimensionsContext';
 
-import TitleScreen from './components/titleScreen.js';
+import TitleScreen from './components/titleScreen';
 import MainMenu from './components/mainMenu';
-import AdminScreen from './components/adminController.js';
+import AdminScreen from './components/adminController';
+import LoginOverlay from './components/loginOverlay';
 
 import GameBoardCanvas from './gameBoardCanvas';
 import PlayerDisplay from './components/playerDisplay';
@@ -37,11 +38,18 @@ function App() {
   const [startNewGame, setStartNewGame] = useState(false);
   const [canResume, setCanResume] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  // Admin variables
+  const [isAdmin, setIsAdmin] = useState(true);
   const [showAdmin, setShowAdmin] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [userList, setUserList] = useState([]);
  
   // Set initial values for game components
   const gameComponents = useGameComponents();
   const {boardData, mapData, playerData, gamePlayData, questionData, InitBoardData, InitPlayerData, InitGamePlayData, UpdateMapData, UpdateGamePlayData, UpdateQuestions } = gameComponents; 
+
+  // To avoid hard coding in the local host, it is saved in the .env file - but has to be brought in so the client knows which port to listen to.
+  const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
   // Load the images - makes sure all images are loaded before the game window is presented.
   useEffect(() => {
@@ -114,22 +122,30 @@ function App() {
     setCanResume(true);
   };
 
-
+  // Title screen buttons - defined here, and passed through to the title screen component.
   const handleNewGameClick = () => {
     setStartNewGame(true);
   };
-
   const handleResumeGameClick = () => {
     setIsGameStarted(true);
   };
-
   const handleAdminClick = () => {
-    setShowAdmin(true);
+    if (isAdmin) {
+      setShowAdmin(true);
+    } else { 
+      setShowLogin(true);
+    }
   }
-
   const handleAdminExit = () => {
     setShowAdmin(false);
   }
+
+  
+  // Handle login function
+  const handleLogin = async (username, password) => {
+    
+
+  };
 
   // Function for exiting back to the title screen
   const exitToTitle = (hasWon = false) => {
@@ -200,6 +216,10 @@ function App() {
               />
         )
       ))}
+
+
+      {/* Login overlay */}
+      {showLogin && <LoginOverlay handleClose={() => setShowLogin(false)} handleLogin={handleLogin} />}
       
         {/* TEMP - Just a button to show game data */}
         <div display='flex'>
