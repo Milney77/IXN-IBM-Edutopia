@@ -9,9 +9,11 @@ import QuestionOverlay from './questionOverlay';
 import './custom.css';
 
 // Icons
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
+
 import StarRateOutlinedIcon from '@mui/icons-material/StarRateOutlined';
-import AppsOutageIcon from '@mui/icons-material/AppsOutage';
-import BrowseGalleryOutlinedIcon from '@mui/icons-material/BrowseGalleryOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 
 
@@ -28,6 +30,8 @@ export const calculateFontSizeAndMargin = (playerInfoWidth, setCustomFontSize, s
     //console.log('playerInfoWidth:', playerInfoWidth, ', newFontSize:', newFontSize);
   setCustomFontSize(newFontSize);
   setCustomMargin(newMargin);
+    //console.log('Font: ', newFontSize, ', Margin: ', newMargin)
+
 };
 
 // Some code to create 'pulsing' animation behind the picture for the current player
@@ -56,7 +60,7 @@ const PlayerBox = (props) => {
     const [customFontSize, setCustomFontSize] = useState(1);
     const [customMargin, setCustomMargin] = useState(1);
 
-    const maxIconSize = 2.5;
+    const maxIconSize = 2.5 * (customFontSize) / 1.5
     // Font Size - Based on screen width & number of players, now updating dymically thanks to the dimension context approach
     
     useEffect(() => {
@@ -88,28 +92,39 @@ const PlayerBox = (props) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     }}>
-                { (gamePlayData.currentPlayer === playerData.id && gamePlayData.currentPhase === 0 && playerData.compPlayer === 0) ? (
-                    <Box sx={pulsingCircleStyle} alignItems='center'>
+                    { (gamePlayData.currentPlayer === playerData.id && gamePlayData.currentPhase === 0 && playerData.compPlayer === 0) ? (
+                    <Box sx={{...pulsingCircleStyle, width: `${customFontSize * 3}rem`,
+                            height: `${customFontSize * 3}rem`,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'}}>  
                     <Box
                         component='img'
                         src='images/icons/icon-v2-skillsbuild.png'
                         alt='sb'
-                        sx={{ ...boxStyle, width: '100%', height: '100%', cursor: 'pointer', alignItems:'center', objectFit: 'contain'}}
+                        sx={{
+                            ...boxStyle,
+                            width: '100%',
+                            height: '100%',
+                            cursor: 'pointer',
+                            alignItems: 'center',
+                            objectFit: 'contain',
+                        }}
                         
                         onClick={() => handleButtonClick(addCurrentInstruction, showQuestionOverlay)}
                     ></Box>
                      </Box>
                 ) : (gamePlayData.currentPlayer === playerData.id && gamePlayData.currentPhase === 1 && playerData.compPlayer === 0) ? (
                     <Box>
-                    <AppsOutageIcon sx={{fontSize: `${customFontSize*2}rem`,}}/>
+                    <AddShoppingCartIcon sx={{fontSize: `${customFontSize*2}rem`,}}/>
                     </Box>
                 ) : (gamePlayData.currentPlayer === playerData.id && gamePlayData.currentPhase === 2 && playerData.compPlayer === 0) ? (
                     <Box>
-                    <BrowseGalleryOutlinedIcon sx={{fontSize: `${customFontSize*2}rem`,}}/>
+                    <AccessibilityNewIcon sx={{fontSize: `${customFontSize*2}rem`,}}/>
                     </Box>
                 ) : (gamePlayData.currentPlayer === playerData.id  && playerData.compPlayer === 1) ? (
                     <Box>
-                    <AppsOutageIcon sx={{fontSize: `${customFontSize*2}rem`,}}/>
+                    <PsychologyAltIcon sx={{fontSize: `${customFontSize*2}rem`,}}/>
                     </Box>
                 ) : (
                     <Box>
@@ -191,7 +206,7 @@ const PlayerBox = (props) => {
                                 component='img'
                                 src='images/icons/icons-metal.png'
                                 alt='metal'
-                                sx={{ maxHeight: '3rem', maxWidth: '3rem', width: '100%', height: '100%'}}
+                                sx={{ maxHeight: `${maxIconSize}rem`, maxWidth: `${maxIconSize}rem`, width: '100%', height: '100%'}}
                             ></Box>
                         </Grid>
                         </Tooltip>
@@ -206,7 +221,7 @@ const PlayerBox = (props) => {
                                 component='img'
                                 src='images/icons/icons-tech.png'
                                 alt='tech'
-                                sx={{ maxHeight: '3rem', maxWidth: '3rem', width: '100%', height: '100%'}}
+                                sx={{ maxHeight: `${maxIconSize}rem`, maxWidth: `${maxIconSize}rem`, width: '100%', height: '100%'}}
                             ></Box>
                         </Grid>
                         </Tooltip>
@@ -227,7 +242,10 @@ const PlayerBox = (props) => {
 export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstruction }) => {
     const {boardData, playerData, gamePlayData, questionData, UpdatePlayerData, UpdateGamePlayData, UpdateQuestions} = gameComponents; 
     const { numberPlayers, currentPlayer } = gamePlayData;
+
+    const { width } = useContext(DimensionsContext);
     const BoxWidth = `${Math.floor(100 / gamePlayData.numberPlayers)}%`;
+
 
      // Skills Build Question Overlay
     // This is here as the button that triggers this is in this section too.       
@@ -276,7 +294,7 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
     // First, extract the questions
     const [questions, setQuestions] = useState([]);
     const baseUrl = process.env.REACT_APP_API_BASE_URL;
-    console.log('Courses: ', gamePlayData.skillsBuildCourses, 'Include Quiz 3:', gamePlayData.includeQuiz3Questions)
+    //console.log('Courses: ', gamePlayData.skillsBuildCourses, 'Include Quiz 3:', gamePlayData.includeQuiz3Questions)
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
@@ -316,26 +334,42 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
         const rightLessThanHalf = questions.filter(qstn => qstn.timesAsked > 0 && (qstn.timesCorrectNoHint + qstn.timesCorrectWithHint) / qstn.timesAsked <  0.5);
         const rightMoreThanHalf = questions.filter(qstn => qstn.timesAsked > 0 && (qstn.timesCorrectNoHint + qstn.timesCorrectWithHint) / qstn.timesAsked >= 0.5);
 
+        // Now filter into the 3 quizzes
+        const neverasked1 = neverAsked.filter(qstn => qstn.quiznumber === 1);
+        const neverasked2 = neverAsked.filter(qstn => qstn.quiznumber === 2);
+        const neverasked3 = neverAsked.filter(qstn => qstn.quiznumber === 3);
+
+        const rightLessThanHalf1 = rightLessThanHalf.filter(qstn => qstn.quiznumber === 1);
+        const rightLessThanHalf2 = rightLessThanHalf.filter(qstn => qstn.quiznumber === 2);
+        const rightLessThanHalf3 = rightLessThanHalf.filter(qstn => qstn.quiznumber === 3);
+
+        const rightMoreThanHalf1 = rightMoreThanHalf.filter(qstn => qstn.quiznumber === 1);
+        const rightMoreThanHalf2 = rightMoreThanHalf.filter(qstn => qstn.quiznumber === 2);
+        const rightMoreThanHalf3 = rightMoreThanHalf.filter(qstn => qstn.quiznumber === 3);
+
         //console.log('NeverAsked:', neverAsked, ', Right <50%:', rightLessThanHalf, ', Right >50%:', rightMoreThanHalf)
         // Randomly pick from one of these arrays - priority for questions never asked, then those correctly answered <50% of the time, then the rest.
-        if (neverAsked.length > 0) {
-            return getRandomItem(neverAsked);
-        } else if (rightLessThanHalf.length > 0) {
-            return getRandomItem(rightLessThanHalf);
-        } else {
-            return getRandomItem(rightMoreThanHalf);
-        }
+        if      (neverasked1.length > 0)        {return getRandomItem(neverasked1);}
+        else if (rightLessThanHalf1.length > 0) {return getRandomItem(rightLessThanHalf1);}
+        else if (neverasked2.length > 0)        {return getRandomItem(neverasked2);}
+        else if (rightLessThanHalf2.length > 0) {return getRandomItem(rightLessThanHalf2);}
+        else if (neverasked3.length > 0)        {return getRandomItem(neverasked3);}
+        else if (rightLessThanHalf3.length > 0) {return getRandomItem(rightLessThanHalf3);}
+        else if (rightMoreThanHalf1.length > 0) {return getRandomItem(rightLessThanHalf1);}
+        else if (rightMoreThanHalf2.length > 0) {return getRandomItem(rightLessThanHalf2);}
+        else                                    {return getRandomItem(rightMoreThanHalf3);}
+        
     }
 
 
     return (
-        <div className='playerdisplay'>
+        <Box className='playerdisplay' sx={{display:'flex', alignItems:'center', justifyContent:'center'}}>
            <Box
                 sx={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                width: '100%',
+                width: `${width}px`,
                 }}
             >
             { playerData.slice(0, gamePlayData.numberPlayers).map(player => (
@@ -359,7 +393,7 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
                 onResult={handleQuestionResult}
             />
         )}
-    </div>
+    </Box>
     )
 }
 

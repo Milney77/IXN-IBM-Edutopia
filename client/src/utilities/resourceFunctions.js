@@ -3,11 +3,11 @@ export const CalculateResourcesStructure = (structure) => {
     if (structure === 1) {
       return 1;
     } else if (structure === 2) {
-      return 1;
+      return 2;
     } else if (structure === 3) {
-      return 2;
+      return 3;
     } else if (structure === 4) {
-      return 2;
+      return 3;
     } else {
       return 0;
     }

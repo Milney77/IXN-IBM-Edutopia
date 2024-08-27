@@ -1,14 +1,33 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button, Typography, Backdrop } from '@mui/material';
 
-const LoginOverlay = ({ handleClose, handleLogin }) => {
+const LoginOverlay = ({ handleClose, handleLogin, message }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        // Prevent submission if either field is empty
+        if (username.trim() === '' || password.trim() === '') {
+            setError('Username and password cannot be blank.');
+            return;
+        }
         handleLogin(username, password);
+
+         // Prevent submission if either field is empty
+         if (username.trim() === '' || password.trim() === '') {
+            setError('Username and password cannot be blank.');
+            return;
+        }
+
+        // Reset error before trying to log in
+        setError('');
+
+        handleLogin(username, password);
+           
     };
+
 
     return (
         <Backdrop open={true} sx={{ zIndex: 2000, color: '#fff' }}>
@@ -20,6 +39,12 @@ const LoginOverlay = ({ handleClose, handleLogin }) => {
                 <Typography variant="h6" gutterBottom sx={{color:'black'}}>
                     Admin Login
                 </Typography>
+                 {/* Display error message */}
+                 {error && (
+                    <Typography variant="body2" color="error" gutterBottom>
+                        {error}
+                    </Typography>
+                )}
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label="Username"
@@ -47,6 +72,7 @@ const LoginOverlay = ({ handleClose, handleLogin }) => {
                         </Button>
                     </Box>
                 </form>
+                {message && <Typography sx={{color:'red'}}>{message}</Typography>}  
             </Box>
         </Backdrop>
     );

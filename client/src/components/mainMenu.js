@@ -93,7 +93,6 @@ const MainMenu = ({ startGame }) => {
     const [selectedCourses, setSelectedCourses] = useState([1]);
     const [includeQuiz3Questions, setIncludeQuiz3Questions] = useState(false);
     const baseUrl = process.env.REACT_APP_API_BASE_URL;
-    console.log(baseUrl);
     // Extract the course lists (excluding those where includeind !== 1)
     useEffect(() => {
         const fetchCourseList = async () => {
@@ -385,8 +384,8 @@ const MainMenu = ({ startGame }) => {
     const coursesSelected = selectedCourses.length;
     //console.log(hasHumanPlayer, coursesSelected);
     if (!hasHumanPlayer) {
-      setIsStartDisabled(!hasHumanPlayer);
-      setStartDisabledReason('Must have at least 1 human player')
+      //setIsStartDisabled(!hasHumanPlayer);
+      //setStartDisabledReason('Must have at least 1 human player')
     }
     else if (coursesSelected === 0) {
       setIsStartDisabled(true);
@@ -606,6 +605,7 @@ const MainMenu = ({ startGame }) => {
     {/* START GAME */}
     <Grid item xs={10}>
     <Tooltip title={ isStartDisabled ? startDisabledReason : "Start game!"}>
+      <Box>
         <Button
               variant="contained"
               disabled={isStartDisabled}
@@ -620,6 +620,7 @@ const MainMenu = ({ startGame }) => {
               }}>
           <Typography variant='h3' sx={{ fontSize:`${customFontSize*1.5}rem`, fontFamily: 'Copperplate, Papyrus, fantasy', letterSpacing: 2}}>Start Game</Typography>
         </Button>
+        </Box>
       </Tooltip>
     </Grid>
   

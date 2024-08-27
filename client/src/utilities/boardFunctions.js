@@ -20,8 +20,6 @@ export const BoardInitialisation = (mapData, boardData, tileWidth, tileHeightFul
       mapData[i].xHexVert = [xpos, xpos + tileWidth / 2, xpos + tileWidth, xpos + tileWidth, xpos + tileWidth / 2, xpos];
       mapData[i].yHexVert = [ypos + tileHeightFull * 1 / 4, ypos, ypos + tileHeightFull * 1 / 4
                           , ypos + tileHeightFull * 3 / 4, ypos + tileHeightFull, ypos + tileHeightFull * 3 / 4];
-      // Set the hover flag to zero
-      mapData[i].hover = 0;
 
       // Determine neighbours
       const neighbours_sameRow = mapData.filter((tile) => tile.row === tileData.row && (tile.col + 1 === tileData.col || tile.col - 1 === tileData.col)  && tile.tileType !== 's');

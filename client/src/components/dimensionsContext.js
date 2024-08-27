@@ -18,16 +18,24 @@ export const DimensionsProvider = ({ children }) => {
 
   // When the listeners detect a screen size change, set the width & height to the new screen size
   const updateDimensions = useCallback(() => {
-    setDimensions({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    const aspectRatioWidth = windowHeight * (16 / 9);
+    const aspectRatioHeight = windowWidth * (9 / 16);
+
+    const width = Math.min(windowWidth, aspectRatioWidth);
+    const height = Math.min(windowHeight, aspectRatioHeight);
+
+    setDimensions({ width, height });
   }, []);
 
   // Listeners to detect when the user has changed the screen size.
   useEffect(() => {
     window.addEventListener('resize', updateDimensions);
     document.addEventListener('fullscreenchange', updateDimensions);
+    // Run update dimensions on first render
+    updateDimensions();
     return () => {
       window.removeEventListener('resize', updateDimensions);
       document.removeEventListener('fullscreenchange', updateDimensions);

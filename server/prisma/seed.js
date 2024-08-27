@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -27,16 +28,29 @@ async function main() {
         ]
     });
 
+    // Users - Needs some special treatment for hashing passwords.
+     const users = [
+            {
+            username: 'IBM',
+            password: '123456'
+            },
+            {
+            username: 'IBM2',
+            password: '123456',
+            },
+        ];
+    const saltRounds = 10;
+    // Hash the passwords
+    const hashedUsers = await Promise.all(
+        users.map(async (user) => {
+        const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+        return { ...user, password: hashedPassword };
+        })
+    );
+    // Create the users in the database
     await prisma.users.createMany({
-        data: [
-            {username: 'IBM'
-             , password: '1234'   
-            }, 
-            {username: 'IBM2'
-                , password: '1234'   
-               }, 
-        ]
-    })
+        data: hashedUsers
+    });
 
     
     await prisma.questions.createMany({

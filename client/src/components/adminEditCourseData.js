@@ -233,6 +233,8 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
     }
 
     const handleSave = async (e) => {
+        // Prevent the pressing of 'enter' causing a refresh.
+        e.preventDefault(); 
         // Validate input
         const error = validateInput(courseDetails.coursename, courseDetails.badgeicon);
         if (error) {
@@ -326,7 +328,13 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
         setIsConfirmDialog(false);
     };
 
-    
+    // For better UI experience - disable the user of Enter as form submission
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); 
+            e.target.blur();
+        }
+    };
 
     return (
         <>
@@ -345,6 +353,7 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
                         name="coursename"
                         value={courseDetails.coursename}
                         onChange={handleInputChange}
+                        onKeyDown={handleKeyDown}
                         fullWidth
                         inputProps={{ maxLength: 255 }} 
                         sx={{ mb: 2 }}
@@ -369,7 +378,7 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
                             checked={!!courseDetails.includeind} 
                             onChange={handleCheckBoxChange}
                             color="primary"
-                            sx={{ '& .MuiSvgIcon-root': { fontSize: `${customFontSize}rem` } }} 
+                            sx={{ '& .MuiSvgIcon-root': { fontSize: `${customFontSize}rem` }}} 
                         />
                     }
                     label="Is this course included in the game?"

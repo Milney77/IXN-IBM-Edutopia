@@ -6,9 +6,9 @@ const defaultQdata = {
     , courseid: 0
     , quiznumber: 0
     , questiontype: 1
-    , questiontext: 'Question goes here'
-    , options: ['Answer1', 'Answer2']
-    , matchoptions: ['Match1', 'Match2']
+    , questiontext: ''
+    , options: ['']
+    , matchoptions: ['']
     , optionstoselect: 0
     , answeridx: [0]
     , hintind: 0
@@ -147,7 +147,9 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
         if (name === 'hintcardsbox') {
             setQuestion((prevQuestion) => ({
                 ...prevQuestion,
-                hintcards: checked ? 1 : 0 // Set hintcards to 1 if checked, else set to 0
+                hintcards: checked ? 1 : 0, // Set hintcards to 1 if checked, else set to 0
+                hintcardtitles: (checked && prevQuestion.hintcardtitles.length === 0) ? [''] : prevQuestion.hintcardtitles,
+                hintcardtext: (checked && prevQuestion.hintcardtext.length === 0) ? [''] : prevQuestion.hintcardtext
             }));
         } else {
             setQuestion((prevQuestion) => ({
@@ -299,20 +301,26 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
         const newHintCardText = [...question.hintcardtext];
         newHintCardTitles.splice(index, 1);
         newHintCardText.splice(index, 1);
+        const newHintCards = newHintCardTitles.length;
+        console.log(newHintCards);
         setQuestion((prevQuestion) => ({
             ...prevQuestion,
             hintcardtitles: newHintCardTitles,
             hintcardtext: newHintCardText,
+            hintcards: newHintCards,
         }));
     };
 
     // Add a new hint card
     const handleAddHintCard = () => {
         if (question.hintcardtitles.length < maxHintCards) {
+            const newHintCards = question.hintcardtitles.length + 1;
+            console.log(newHintCards);
             setQuestion((prevQuestion) => ({
                 ...prevQuestion,
                 hintcardtitles: [...prevQuestion.hintcardtitles, ''],
-                hintcardtext: [...prevQuestion.hintcardtext, '']
+                hintcardtext: [...prevQuestion.hintcardtext, ''],
+                hintcards: newHintCards,
             }));
         }
     };
@@ -371,24 +379,26 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
         setValidateAnswersError(answerErrors);
 
         // Match Options Text Fields
-        const matchOptionsErrors = Array(question.matchoptions.length).fill('');
-        const matchOptionsSet = new Set();
-        const invalidOptions = ['option 1', 'option1', 'option 2', 'option2', 'option 3', 'option3', 'option 4', 'option4', 'option 5', 'option5']
-        question.matchoptions.forEach((matchoption, index) => {
-            if (matchoption.trim() === '') {
-                matchOptionsErrors[index] = 'Option cannot be empty.';
-                isValid = false;
-            } else if (invalidOptions.includes(matchoption.trim().toLowerCase())) {
-                matchOptionsErrors[index] = `Option cannot be '${matchoption}'.`;
-                isValid = false;
-            } else if (matchOptionsSet.has(matchoption)) {
-                matchOptionsErrors[index] = 'Match Option is duplicated.';
-                isValid = false;
-            } else {
-                matchOptionsSet.add(matchoption);
-            }
-        });
-        setValidateMatchOptionsError(matchOptionsErrors);
+        if (question.questionType === 2) {
+            const matchOptionsErrors = Array(question.matchoptions.length).fill('');
+            const matchOptionsSet = new Set();
+            const invalidOptions = ['option 1', 'option1', 'option 2', 'option2', 'option 3', 'option3', 'option 4', 'option4', 'option 5', 'option5']
+            question.matchoptions.forEach((matchoption, index) => {
+                if (matchoption.trim() === '') {
+                    matchOptionsErrors[index] = 'Option cannot be empty.';
+                    isValid = false;
+                } else if (invalidOptions.includes(matchoption.trim().toLowerCase())) {
+                    matchOptionsErrors[index] = `Option cannot be '${matchoption}'.`;
+                    isValid = false;
+                } else if (matchOptionsSet.has(matchoption)) {
+                    matchOptionsErrors[index] = 'Match Option is duplicated.';
+                    isValid = false;
+                } else {
+                    matchOptionsSet.add(matchoption);
+                }
+            });
+            setValidateMatchOptionsError(matchOptionsErrors);
+        }
 
          // Hint Texts
          if (question.hintind === 1 && question.hinttxt === '') {
@@ -426,9 +436,9 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
         } else {setValidateAnswers('');}
 
 
-        //console.log('validateCourseError', validateCourseError,'validateQuizError',validateQuizError,'validateTypeError',validateTypeError,'validateQuestionError',validateQuestionError
-        //            ,'validateAnswersError',validateAnswersError,'validateMatchOptionsError',validateMatchOptionsError,'validateHintText0Error',validateHintText0Error
-        //            ,'validateHintCardTitlesError',validateHintCardTitlesError,'validateHintCardTextError', validateHintCardTextError)
+        console.log('validateCourseError', validateCourseError,'validateQuizError',validateQuizError,'validateTypeError',validateTypeError,'validateQuestionError',validateQuestionError
+                    ,'validateAnswersError',validateAnswersError,'validateMatchOptionsError',validateMatchOptionsError,'validateHintText0Error',validateHintText0Error
+                    ,'validateHintCardTitlesError',validateHintCardTitlesError,'validateHintCardTextError', validateHintCardTextError)
 
         return isValid;
         
@@ -440,14 +450,8 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
         //console.log('Save!  Data:', question);
         const canSave = validateData();
         if (canSave) {
-            // Make sure the number of options to select matches the length of the answers array, and hint cards match length of cardtitles array.
-            setQuestion(prevQuestion => ({
-                ...prevQuestion,
-                optionstoselect: prevQuestion.options.length, 
-                hintcards: prevQuestion.hintcardtitles.length 
-            }));
-
             try {
+                console.log('Save!  Data:', question);
                 // URL depends on if the user is editing or creating a new course
                 const url = editType === 'edit' 
                     ? `${baseUrl}/questions/${question.questionid}`
@@ -593,7 +597,7 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
                                 onChange={handleInputChange}
                                 sx={{'.MuiSelect-select': {padding: `${customFontSize*0.25}rem`, }}}
                             >
-                                <MenuItem value={0}><Typography sx={{fontSize:`${customFontSize*valueFontMod}rem`}}>Select a Quiz Number</Typography></MenuItem>
+                                <MenuItem value={0}><Typography sx={{fontSize:`${customFontSize*valueFontMod}rem`}}>Select:</Typography></MenuItem>
                                 <MenuItem value={1}><Typography sx={{fontSize:`${customFontSize*valueFontMod}rem`}}>1</Typography></MenuItem>
                                 <MenuItem value={2}><Typography sx={{fontSize:`${customFontSize*valueFontMod}rem`}}>2</Typography></MenuItem>
                                 <MenuItem value={3}><Typography sx={{fontSize:`${customFontSize*valueFontMod}rem`}}>3</Typography></MenuItem>
@@ -665,6 +669,7 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
                             variant="outlined"
                             name="questiontext"
                             value={question.questiontext}
+                            placeholder='Enter question text'
                             onChange={handleInputChange}
                             fullWidth
                             inputProps={{ maxLength: 400, 

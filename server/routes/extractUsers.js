@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const router = express.Router();
@@ -21,10 +22,14 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { username, password } = req.body;
+    // Hash the password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     const newUser = await prisma.users.create({
       data: {
-        username,
-        password,
+        username: username,
+        password: hashedPassword,
       },
     });
     res.status(201).json(newUser);
@@ -35,28 +40,7 @@ router.post('/', async (req, res) => {
 });
 
 
-// Update existing course details
-router.put('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { username, password  } = req.body;
-    const updateUser = await prisma.users.update({
-      where: {
-        id: parseInt(id, 10),
-      },
-      data: {
-        username,
-        password,
-      },
-    });
-    res.json(updateUser);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// Delete a course
+// Delete a user
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -74,23 +58,65 @@ router.delete('/:id', async (req, res) => {
 });
 
 
-// Testing getting a single course
+// Testing getting a single user
 router.get('/:id', async (req, res) => {
   try {
       const { id } = req.params;
-      const course = await prisma.users.findUnique({
+      const user = await prisma.users.findUnique({
           where: {
               id: parseInt(id, 10), // Ensure ID is treated as an integer
           },
       });
       if (course) {
-          res.json(course);
+          res.json(user);
       } else {
           res.status(404).json({ error: 'Course not found' });
       }
   } catch (error) {
       console.error('Error fetching course:', error);
       res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Login code - this takes the user's username and password and checks if it exists in the database.
+router.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    // Find the user by username
+    const users = await prisma.users.findMany({
+      where: {
+        username: username,
+      },
+    });
+
+    if (users.length === 0) {
+      // If no users with the provided username are found, return a 401 Unauthorized
+      return res.status(401).json({ error: 'Invalid username' });
+    }
+    
+    // Iterate over the users (as username doesn't have to be unique)
+    let user = null;
+    // Using a for loop because forEach may not work with bcrypt (which is asynchronous)
+    for (const u of users) {
+      console.log(password, u.password);
+      const isPasswordValid = await bcrypt.compare(password, u.password);
+      if (isPasswordValid) {
+        user = u;
+        break;
+      }
+    }
+
+    if (!user) {
+      // If no user with the matching password is found, return a 401 Unauthorized
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+
+    // If a user with the correct username and password is found, return success
+    res.json({ message: 'Login successful', user: { id: user.id, username: user.username } });
+
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

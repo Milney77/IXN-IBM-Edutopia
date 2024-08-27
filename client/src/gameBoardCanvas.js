@@ -1,5 +1,7 @@
 // Required imports
-import React, { useRef, useEffect, useState, useCallback, useLayoutEffect, useContext, Button } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useLayoutEffect, useContext } from 'react';
+
+import { Box, Button } from '@mui/material';
 import axios from 'axios';
 
 // Custom imports
@@ -87,9 +89,9 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       }]
       UpdatePlayerData(playerDataUpdates);
       // Add to log
-      const logTxt = `Player ${gamePlayData.currentPlayer + 1} traded: [${outWood ? outWood + ' wood, ' : ''
-                    }${outFood ? outFood + ' food, ' : ''}${outMetal ? outMetal + ' metal, ' : ''}${outTech ? outTech + ' tech, ' : ''
-                    }] for [${inWood ? inWood + ' wood, ' : ''}${inFood ? inFood + ' food, ' : ''}${inMetal ? inMetal + ' metal, ' : ''}]`;
+      const logTxt = `Player ${gamePlayData.currentPlayer + 1} traded: [${outWood ? outWood + ' wood ' : ''
+                    }${outFood ? outFood + ' food ' : ''}${outMetal ? outMetal + ' metal ' : ''}${outTech ? outTech + ' tech ' : ''
+                    }] for [${inWood ? inWood + ' wood ' : ''}${inFood ? inFood + ' food ' : ''}${inMetal ? inMetal + ' metal ' : ''}]`;
       addLog(logTxt);
       UpdateGamePlayData('actionPhaseSet', -1);
       setTradeOverlayVisible(false);
@@ -191,6 +193,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
     // Canvas Height: Either the inner window height, or calculated from the window width (which ever is smaller)
     const canvasWidth = Math.min(canvasWidthBase, Math.floor(canvasHeightBase * widthHeightRatio));
     const canvasHeight = Math.min(canvasHeightBase, Math.floor(canvasWidthBase * (1 / widthHeightRatio)));
+    console.log('Base WxH: (', Math.round(canvasWidthBase), ',', Math.round(canvasHeightBase), ') - Adjust WxH: (', canvasWidth, ',', canvasHeight, ')');
     //const canvasWidth = canvasWidthBase;
     //const canvasHeight = Math.floor(canvasWidthBase / widthHeightRatio);
     setCanvasWidth(canvasWidth);
@@ -330,7 +333,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
     const instructAI3 = 'Player ' + (currentPlayer + 1) + ' is thinking...'; 
 
       
-
+    const baseUrl = process.env.REACT_APP_API_BASE_URL;
     if (gamePlayData.currentPhase === 4) {
       const questionresponses = questionData;
       console.log(questionresponses);
@@ -338,7 +341,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       const onConfirm = async () => {
         // Update the database
         try {
-          await axios.post('http://localhost:3001/responses', { questionresponses: questionresponses });
+          await axios.post(`${baseUrl}/postresponses`, { questionresponses: questionresponses });
           console.log('Question responses updated successfully');
         } catch (error) {
           console.error('Error updating question responses:', error);
@@ -485,12 +488,14 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
   }, [handleMouseMove, handleClick]);
 
   
-    console.log('tileWidth',tileWidth, 'tileHeightFull',tileHeightFull, 'tileHeightTrime',tileHeightTrim, 'tilesHOffset',tilesHOffset, 'tilesVOffset',tilesVOffset, 'actionMenuParams',actionMenuParams) 
-  
+    //console.log('tileWidth',tileWidth, 'tileHeightFull',tileHeightFull, 'tileHeightTrime',tileHeightTrim, 'tilesHOffset',tilesHOffset, 'tilesVOffset',tilesVOffset, 'actionMenuParams',actionMenuParams) 
+  const testEnd = () => {
+    UpdateGamePlayData('currentPhase', 4);
+  }
 
   // Final Output!
   return (
-    <div>
+    <Box> 
       <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
       {overlayVisible && (
         <ConfirmationOverlay
@@ -510,9 +515,9 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
         />
       )}
 
-         
+        
 
-    </div>
+    </Box>
   );
 };
 

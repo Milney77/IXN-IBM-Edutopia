@@ -38,8 +38,7 @@ function App() {
   const [startNewGame, setStartNewGame] = useState(false);
   const [canResume, setCanResume] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
-  // Admin variables
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [userList, setUserList] = useState([]);
@@ -90,6 +89,9 @@ function App() {
         UpdateMapData(tile.id, 'currentOwner', 0);
         UpdateMapData(tile.id, 'structure', 0);
       }
+      // Initialise actionable & hover as zerol
+      UpdateMapData(tile.id, 'actionable', 0);
+      UpdateMapData(tile.id, 'hover', 0);
     })
 
     // Add initial values to all players
@@ -142,10 +144,33 @@ function App() {
 
   
   // Handle login function
+  const [message, setMessage] = useState('');
   const handleLogin = async (username, password) => {
-    
+    try {
+      const response = await axios.post('http://localhost:3001/users/login', {
+        username: username,
+        password: password,
+      });
+      // Handle the response
+      setMessage(`Login successful: Welcome ${response.data.user.username}`);
+      setIsAdmin(true);
+      setShowAdmin(true);
+      setShowLogin(false);
+    } catch (error) {
+      
 
+      if (error.response) {
+        // Error from the server
+        setMessage(error.response.data.error);
+      } else {
+        // Other errors (network issues, etc.)
+        setMessage('An error occurred. Please try again.');
+      }
+    }
   };
+  useEffect(() => {
+    console.log(message);
+  }, [message])
 
   // Function for exiting back to the title screen
   const exitToTitle = (hasWon = false) => {
@@ -180,6 +205,7 @@ function App() {
       <DndProvider backend={HTML5Backend}>
       <DimensionsProvider>
       <>
+      {/* GAME SCREEN */}
       {isGameStarted ? (
         <>
         <PlayerDisplay 
@@ -201,30 +227,29 @@ function App() {
           exitToTitle={exitToTitle}
           />
         </>
-        ) : ( 
+        ) : 
+
         startNewGame ? (
           <MainMenu startGame={startGame} />
-        ) : (
+        ) : 
+        
         showAdmin ? (
           <AdminScreen handleAdminExit={handleAdminExit}/>
-        ) : (
-          <TitleScreen
+        ) : 
+        
+        
+        <TitleScreen
               handleNewGameClick={handleNewGameClick}
               handleResumeGameClick={handleResumeGameClick}
               canResume={canResume}
               handleAdminClick={handleAdminClick}
               />
-        )
-      ))}
-
+      }
 
       {/* Login overlay */}
-      {showLogin && <LoginOverlay handleClose={() => setShowLogin(false)} handleLogin={handleLogin} />}
+      {showLogin && <LoginOverlay handleClose={() => setShowLogin(false)} handleLogin={handleLogin} message={message}/>}
       
-        {/* TEMP - Just a button to show game data */}
-        <div display='flex'>
-          <Button variant='contained' onClick={showData} sx={{marginTop:'1rem' , width:'10rem'}}>SHOW DATA</Button>
-        </div>
+       
         </>
         </DimensionsProvider>
         </DndProvider>
@@ -240,7 +265,10 @@ export default App;
 /*
 
 
-      
+    
+       <div display='flex'>
+       <Button variant='contained' onClick={showData} sx={{marginTop:'1rem' , width:'10rem'}}>SHOW DATA</Button>
+     </div>
 
             
 

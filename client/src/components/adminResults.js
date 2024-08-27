@@ -83,15 +83,12 @@ const Chart = ({ data, customFontSize }) => {
         // Tooltip fonts & display
         titleFont: { family: 'Arial', size: `${customFontSize*16}`},
         bodyFont: { family: 'Arial', size: `${customFontSize*16}`},
-
-
       },
     },
   };
 
-
   return (
-    <div style={{ width: '100%', height: '65vh'}}>
+    <div style={{ width: '100%', height: '60vh'}}>
       <Bar data={chartData} options={options} />
     </div>
   );
@@ -102,7 +99,8 @@ const AdminResults = ({filteredResponses, customFontSize}) => {
 
     if (filteredResponses) {
       return (
-        <Box>
+        <Box sx={{width: '100%', height: '100%'}}
+      >
           <Box sx={{width: '100%', 
                   height: '100%',
                   display: 'flex', 

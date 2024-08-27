@@ -3,13 +3,15 @@ import axios from 'axios';
 import { DimensionsContext } from './dimensionsContext';
 
 import { Box, Typography, Button, Stack, Grid, Tooltip, Divider } from '@mui/material';
-import { format, min, max, startOfWeek, endOfWeek, startOfMonth, endOfMonth, isSameDay, differenceInCalendarDays, isAfter, isBefore, subDays } from 'date-fns';
+import { format, min, max, startOfWeek, endOfWeek, startOfMonth, endOfMonth, isSameDay, differenceInCalendarDays, isAfter, isBefore, subDays, } from 'date-fns';
 
 import AdminFilters from './adminFilters';
 import AdminResults from './adminResults';
 
 import AdminEditCourse from './adminEditCourseData';
 import AdminEditQuestion from './adminEditQuestionData';
+import UsersPage from './adminUsers';
+import AdminTitle from './adminTitle';
 
 
 const AdminScreen = ({handleAdminExit}) => {
@@ -61,7 +63,7 @@ const AdminScreen = ({handleAdminExit}) => {
     // Apply the results of the filtering
     const handleFilterChange = (filter) => {
         const { courseId, quizNumber, questionId, dateFilterOption, selectedMonth } = filter;
-        console.log(courseId, quizNumber, questionId, dateFilterOption, selectedMonth)
+        //console.log(courseId, quizNumber, questionId, dateFilterOption, selectedMonth)
         let filteredq = questions;
         let filteredr = questionResponses;
         let filteredc = courselist;
@@ -127,50 +129,92 @@ const AdminScreen = ({handleAdminExit}) => {
   }, [questions, questionResponses]);
 
     // What is being shown?
-    const [showResults, setShowResults] = useState(true);
+    const [showTitle, setShowTitle] = useState(true);
+    const [showResults, setShowResults] = useState(false);
     const [showCourseEdit, setShowCourseEdit] = useState(false);
     const [showQuestionEdit, setShowQuestionEdit] = useState(false);
     const [showNewCourse, setShowNewCourse] = useState(false);
     const [showNewQuestion, setShowNewQuuestion] = useState(false);
+    const [showUsers, setShowUsers] = useState(false);
+
+    const handleTitleClick = () => {
+        setShowTitle(true);
+        setShowResults(false);
+        setShowCourseEdit(false);
+        setShowQuestionEdit(false);
+        setShowNewCourse(false);
+        setShowNewQuuestion(false);
+        setShowUsers(false);
+    }
 
     const handleViewClick = () => {
+        setShowTitle(false);
         setShowResults(true);
         setShowCourseEdit(false);
         setShowQuestionEdit(false);
         setShowNewCourse(false);
         setShowNewQuuestion(false);
+        setShowUsers(false);
     }
 
     const handleCourseEditClick = () => {
+        setShowTitle(false);
         setShowResults(false);
         setShowCourseEdit(true);
         setShowQuestionEdit(false);
         setShowNewCourse(false);
         setShowNewQuuestion(false);
+        setShowUsers(false);
     }
 
     const handleQuestionEditClick = () => {
+        setShowTitle(false);
         setShowResults(false);
         setShowCourseEdit(false);
         setShowQuestionEdit(true);
         setShowNewCourse(false);
         setShowNewQuuestion(false);
+        setShowUsers(false);
     }
 
     const handleNewCourseClick = () => {
+        setShowTitle(false);
         setShowResults(false);
         setShowCourseEdit(false);
         setShowQuestionEdit(false);
         setShowNewCourse(true);
         setShowNewQuuestion(false);
+        setShowUsers(false);
     }
 
     const handleNewQuestionClick = () => {
+        setShowTitle(false);
         setShowResults(false);
         setShowCourseEdit(false);
         setShowQuestionEdit(false);
         setShowNewCourse(false);
         setShowNewQuuestion(true);
+        setShowUsers(false);
+    }
+
+    const handleUsersClick = () => {
+        setShowTitle(false);
+        setShowResults(false);
+        setShowCourseEdit(false);
+        setShowQuestionEdit(false);
+        setShowNewCourse(false);
+        setShowNewQuuestion(false);
+        setShowUsers(true);
+    }
+    const handleExitClick = () => {
+        setShowTitle(false);
+        setShowResults(true);
+        setShowCourseEdit(false);
+        setShowQuestionEdit(false);
+        setShowNewCourse(false);
+        setShowNewQuuestion(false);
+        setShowUsers(false);
+        handleAdminExit();
     }
 
     const { width, height } = useContext(DimensionsContext);
@@ -199,48 +243,95 @@ const AdminScreen = ({handleAdminExit}) => {
 
     if(courselist && questions && questionResponses) {
         return (
-        <Box sx={{backgroundImage: 'url(/images/other/background_lightfabric.jpg)',
-            backgroundRepeat: 'repeat',
-            backgroundSize: 'auto',
-
+        <Box display='flex'
+            flexDirection='column'
+            justifyContent ='flex-start'
+            alignItems='center'
+            minHeight= '100vh'
+            sx={{backgroundImage: 'url(/images/other/background_lightfabric.jpg)',
+                backgroundRepeat: 'repeat',
+                backgroundSize: 'auto',
             }}>
         {/* TITLE */}
         <Typography variant='h3' sx={{fontSize:`${customFontSize*2}rem`}}>IBM Admin Page</Typography>
 
+        <Box sx={{width:'95%'}}>
         {/* BUTTONS */}
-        <Grid container sx={{marginY: '1rem'}}>
-            <Grid item xs={6} md={2}>
-                <Button variant='contained' onClick={handleViewClick} disabled={showResults}>
-                    <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>View Results</Typography>
-                </Button>
+        <Grid container sx={{marginY: '0.5rem'}} spacing={2}>
+        <Grid item xs={6} md={2}>
+                <Tooltip title="View the title screen">
+                    <Stack direction="column" spacing={1}>
+                        <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>&nbsp;</Typography>
+                        <Button variant='contained' onClick={handleTitleClick} disabled={showTitle}>
+                            <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Title</Typography>
+                        </Button>
+                    </Stack>
+                </Tooltip>
             </Grid> 
+
             <Grid item xs={6} md={2}>
-                <Button variant='contained' onClick={handleCourseEditClick} disabled={showCourseEdit}>
-                    <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Edit Course Data</Typography>
-                </Button>
+                <Tooltip title="View results on how often players answer questions correctly">
+                    <Stack direction="column" spacing={1}>
+                        <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>Player Results</Typography>
+                        <Button variant='contained' onClick={handleViewClick} disabled={showResults}>
+                            <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>View</Typography>
+                        </Button>
+                    </Stack>
+                </Tooltip>
             </Grid> 
+
             <Grid item xs={6} md={2}>
-                <Button variant='contained' onClick={handleQuestionEditClick} disabled={showQuestionEdit}>
-                    <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Edit Question Data</Typography>
-                </Button>
+                <Tooltip title="Edit and create courses to include">
+                    <Stack direction="column" spacing={1}>
+                        <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>Courses</Typography>
+                        <Button variant='contained' onClick={handleCourseEditClick} disabled={showCourseEdit}>
+                            <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Edit</Typography>
+                        </Button>
+                        <Button variant='contained' onClick={handleNewCourseClick} disabled={showNewCourse}>
+                            <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Create</Typography>
+                        </Button>
+                    </Stack>
+                </Tooltip>
             </Grid> 
+
+           
             <Grid item xs={6} md={2}>
-                <Button variant='contained' onClick={handleNewCourseClick} disabled={showNewCourse}>
-                    <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Create Course</Typography>
-                </Button>
+                <Tooltip title="Edit and create questions">
+                    <Stack direction="column" spacing={1}>
+                        <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>Questions</Typography>
+                        <Button variant='contained' onClick={handleQuestionEditClick} disabled={showQuestionEdit}>
+                            <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Edit</Typography>
+                        </Button>
+                        <Button variant='contained' onClick={handleNewQuestionClick} disabled={showNewQuestion}>
+                            <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Create</Typography>
+                        </Button>
+                    </Stack>
+                </Tooltip>
             </Grid>
+
             <Grid item xs={6} md={2}>
-                <Button variant='contained' onClick={handleNewQuestionClick} disabled={showNewQuestion}>
-                    <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Create Question</Typography>
+                <Tooltip title="Edit admin user list">
+                <Stack direction="column" spacing={1}>
+                <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>Users</Typography>
+                <Button variant='contained' onClick={handleUsersClick} disabled={showUsers}>
+                    <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Edit</Typography>
                 </Button>
+                </Stack>
+                </Tooltip>
             </Grid>
+
             <Grid item xs={6} md={2}>
-                <Button variant='contained' onClick={handleAdminExit}>
+            <Tooltip title="Exit to main menu">
+                <Stack direction="column" spacing={1}>
+                <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>&nbsp;</Typography>
+                <Button variant='contained' onClick={handleExitClick}>
                     <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none' }}>Exit to Main Menu</Typography>
                 </Button>
+                </Stack>
+                </Tooltip>
             </Grid>
         </Grid>
-
+        </Box>
 
       <Divider sx={{ borderColor: 'gray', borderStyle: 'dashed', maginY:'15rem' }} />
 
@@ -255,6 +346,12 @@ const AdminScreen = ({handleAdminExit}) => {
             screenType = {showResults ? 'results' : showCourseEdit ? 'courseedit' : 'questionedit'}
             customFontSize =  {customFontSize}
             />
+            : null
+        }
+
+        {/* Title Screen */}
+        {showTitle ? 
+            <AdminTitle customFontSize = {customFontSize}/>
             : null
         }
 
@@ -291,6 +388,12 @@ const AdminScreen = ({handleAdminExit}) => {
                 responseData = {questionResponses}
             />
         : null}
+
+        {/* Users */}
+        {showUsers ? 
+            <UsersPage 
+            customFontSize = {customFontSize}/>
+         : null}
         
 
         <Button variant='contained' onClick={showAdminData}>debugging - DATA</Button>

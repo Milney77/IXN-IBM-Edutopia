@@ -43,7 +43,15 @@ const GameLog = ({ currentInstruction, log, exitToTitle }) => {
 
   // OUTPUT
   return (
-    <div>
+    <Box className='playerdisplay' sx={{display:'flex', alignItems:'center', justifyContent:'center'}}>
+      <Box
+                sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: `${width}px`,
+                }}
+            >
       <Grid container alignItems='center'>
           <Grid item xs={6}>
               <Typography variant='h4' 
@@ -88,7 +96,8 @@ const GameLog = ({ currentInstruction, log, exitToTitle }) => {
               </div>
             )}
         </Grid>            
-      </div>
+        </Box>
+      </Box>
   );
 };
 
