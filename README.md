@@ -1,9 +1,14 @@
 # Welcome to Edutopia
 # A game build to support IBM Skills Build learning
 
+# REQUIREMENTS
+Node.js and postgresql need to be installed.
+Need either npm or yarn.
+
+
 # INSTALLATION
 
-1 Download the source code from git.
+1 Download the source code from git.  Install node.js and if necessary, npm or yarn.
 
 2 Open up the project in VS Code (recommended) or your editor of choice - make sure you are in the root folder.  You should be able to see 'Client' and 'Server' subfolders, along with this readme.md file.  If you cannot, then you are not in the root folder.
 
@@ -26,17 +31,27 @@ DATABASE_URL="postgresql://{Database-User}:{Database-Password}@localhost:5432/ed
 PORT=3001
 ```
 
-8 - Make sure you are in root/server, and setup Prisma with the following command
+8 - While you are still in root/server, enter the following commands to setup Prisma
 ```bash
 npx prisma migrate dev --name 0_init
+npx prisma migrate reset
 ```
 
-9 - To start the app, make sure you are in the root folder, and use the command:
+9 - Navigate to the root/client folder and create another environment file called ".env".
+
+10 - In this file, you will need to add the following.  If you are not using PORT=3001, then change the number after localhost: to the port number you are using.
+```bash
+REACT_APP_API_BASE_URL=http://localhost:3001
+```
+
+11 - To start the app, make sure you are in the root folder, and use the command:
 ```bash
 npm run dev
 ```
 
 NOTES:
 By default, the app will run on http://localhost:3000, unless this is already in use.
+Express JS will want to run on port 3001, unless told otherwise.
+And by default, Postgresql runs on port 5432.
 
 If you are using a Mac, you may need to start your Postgresql service.  It should start automatically on Windows.  And if you are using Linux, you probably don't need any instructions.
