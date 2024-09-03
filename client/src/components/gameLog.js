@@ -8,6 +8,9 @@ import './custom.css';
 const GameLog = ({ currentInstruction, log, exitToTitle }) => {
   // Get the dimensions from the dimension context
   const {width, height} = useContext(DimensionsContext);
+  const maxOverlayWidth = 0.8 * width;
+  const minOverlayWidth = 0.5 * width;
+  
 
   // Set the font size (in rem)
   const [customFontSize, setCustomFontSize] = useState(2);
@@ -78,22 +81,26 @@ const GameLog = ({ currentInstruction, log, exitToTitle }) => {
           </Grid>
           <Grid item xs={1}>
               <Tooltip title="Go back to main menu">
-                <Button variant='contained' onClick={exitGame} sx={{color:'white', backgroundColor:'red'}}>X</Button>
+                <Button variant='contained' onClick={exitGame} sx={{color:'white', backgroundColor:'red'}}>
+                  <Typography variant='h6' sx={{fontSize: `${customFontSize/2}rem`}}>
+                                    X
+                  </Typography>
+                </Button>
               </Tooltip>
           </Grid>
         
             {isOverlayVisible && (
-              <div id="logOverlay">
-                <div id="logOverlayContent">
-                  <div id="closeOverlay" onClick={handleCloseOverlay}>
+              <Box id="logOverlay">
+                <Box id="logOverlayContent" sx={{maxWidth: maxOverlayWidth, minWidth: minOverlayWidth, maxHeight: '800px'}}>
+                  <Box id="closeOverlay" onClick={handleCloseOverlay}>
                     Close [X]
-                  </div>
+                  </Box>
                   <pre id="fullLog">
                     <Typography>{log.join('\n')}
                     </Typography>
                     </pre>
-                </div>
-              </div>
+                </Box>
+              </Box>
             )}
         </Grid>            
         </Box>

@@ -38,7 +38,7 @@ export const calculateResourceRatiosWithAdd = (resources, resourceToAdd, valueTo
 }
 
 // Function for choosing the best resource (after working out what resources are needed based on possible actions)
-export const CalculateBestResource = (resources, strategy) => {
+export const CalculateBestResourceOrig = (resources, strategy) => {
     const targetRatios = aiparameters.find(param => param.strat === strategy).resourceRatios;
     const currRatio  = calculateResourceRatiosWithAdd(resources, 'none', 0 );
     const woodRatio  = calculateResourceRatiosWithAdd(resources, 'wood', 1 );
@@ -48,8 +48,8 @@ export const CalculateBestResource = (resources, strategy) => {
     const foodDiff  = calculateResourcesRatio(targetRatios, currRatio, foodRatio).newScore;
     const metalDiff = calculateResourcesRatio(targetRatios, currRatio, metalRatio).newScore;
     const minDiff = Math.min(woodDiff, foodDiff, metalDiff);
-    //console.log('current:', currRatio, ', wood:', woodRatio, ', food:', foodRatio, ', metal:', metalRatio)
-    //console.log('wood:', woodDiff, ', food:', foodDiff, ', metal:', metalDiff, ', min: ', minDiff);
+    console.log('current:', currRatio, ', wood:', woodRatio, ', food:', foodRatio, ', metal:', metalRatio)
+    console.log('wood:', woodDiff, ', food:', foodDiff, ', metal:', metalDiff, ', min: ', minDiff);
     if (minDiff === woodDiff) {
         return 'wood';
     } else if (minDiff === foodDiff) {
@@ -58,6 +58,39 @@ export const CalculateBestResource = (resources, strategy) => {
         return 'metal';
     }
 }
+
+export const CalculateBestResource = (resources, strategy) => {
+
+  if (strategy === 'e') {
+    // Expansive strategy - pick resources based on a W:F:M ratio of 4:2:0, priority W:F
+    if (resources.wood > 2 * resources.food) {
+      return 'food';
+    } else {
+      return 'wood';
+    }
+  } else if (strategy === 'b') {
+    // Builder strategy - pick resources based on a W:F:M ratio of 1:2:4
+    if (resources.wood < 0.25 * resources.metal && resources.wood < 0.5 * resources.food) {
+      return 'wood';
+    } else if (resources.food < 0.5 * resources.metal) {
+      return 'food';
+    } else {
+      return 'metal';
+    }
+  } else {
+    // Mixed strategy - pick resources based ona  W:F:M ratio of 1:1:1, priorty W:M:F
+    if (resources.wood === Math.min(resources.wood, resources.food, resources.metal)) {
+      return 'wood'; 
+    } else if (resources.food === Math.min(resources.wood, resources.food, resources.metal)) {
+      return 'food'; 
+    } else {
+      return 'metal';
+    }
+  }
+
+}
+
+
 
 
 // Calculate the risk of the hex being taken over by any nearby players (computer or human)

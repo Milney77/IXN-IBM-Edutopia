@@ -19,7 +19,7 @@ import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutl
 
 function handleButtonClick(addCurrentInstruction, showQuestionOverlay) {
     // Here is where we should trigger the overlay for the skills build question.
-    addCurrentInstruction('Answer the question!');    
+    addCurrentInstruction('Player 1 - Answer the Skills Build question');    
     showQuestionOverlay();
 }
 
@@ -139,7 +139,7 @@ const PlayerBox = (props) => {
                 <Stack direction='column'>
                     {/* First Row - Player Name & Victory Points */}
                     <Grid container>
-                        <Grid item xs={10}>
+                        <Grid item xs={9.5}>
                             <Typography
                                     variant="h6"
                                     noWrap
@@ -155,7 +155,7 @@ const PlayerBox = (props) => {
                                     {playerData.name}
                                 </Typography>
                         </Grid>
-                        <Grid item xs={2} alignItems='center'>
+                        <Grid item xs={2.5} alignItems='center'>
                             <Tooltip title={'Victory Points - target to win is ' + victoryPoints}>
                             <Stack direction='row' alignItems='center'>
                                 
@@ -248,10 +248,13 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
 
 
      // Skills Build Question Overlay
+     const [selectedQuestion, setSelectedQuestion] = useState(null);
     // This is here as the button that triggers this is in this section too.       
     const [questionOverlayVisible, setQuestionOverlayVisible] = useState(false);
     const showQuestionOverlay = () => {
+        setSelectedQuestion(selectQuestion(questionData));
         setQuestionOverlayVisible(true);
+        //UpdateGamePlayData('currentPhase', 1);
     };
     
      // Function for handling the result of the skills build question
@@ -343,10 +346,6 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
         const rightLessThanHalf2 = rightLessThanHalf.filter(qstn => qstn.quiznumber === 2);
         const rightLessThanHalf3 = rightLessThanHalf.filter(qstn => qstn.quiznumber === 3);
 
-        const rightMoreThanHalf1 = rightMoreThanHalf.filter(qstn => qstn.quiznumber === 1);
-        const rightMoreThanHalf2 = rightMoreThanHalf.filter(qstn => qstn.quiznumber === 2);
-        const rightMoreThanHalf3 = rightMoreThanHalf.filter(qstn => qstn.quiznumber === 3);
-
         //console.log('NeverAsked:', neverAsked, ', Right <50%:', rightLessThanHalf, ', Right >50%:', rightMoreThanHalf)
         // Randomly pick from one of these arrays - priority for questions never asked, then those correctly answered <50% of the time, then the rest.
         if      (neverasked1.length > 0)        {return getRandomItem(neverasked1);}
@@ -355,12 +354,11 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
         else if (rightLessThanHalf2.length > 0) {return getRandomItem(rightLessThanHalf2);}
         else if (neverasked3.length > 0)        {return getRandomItem(neverasked3);}
         else if (rightLessThanHalf3.length > 0) {return getRandomItem(rightLessThanHalf3);}
-        else if (rightMoreThanHalf1.length > 0) {return getRandomItem(rightLessThanHalf1);}
-        else if (rightMoreThanHalf2.length > 0) {return getRandomItem(rightLessThanHalf2);}
-        else                                    {return getRandomItem(rightMoreThanHalf3);}
+        else                                    {return getRandomItem(rightMoreThanHalf);}
         
     }
 
+    //console.log(width);
 
     return (
         <Box className='playerdisplay' sx={{display:'flex', alignItems:'center', justifyContent:'center'}}>
@@ -389,7 +387,7 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
             </Box>
             {questionOverlayVisible && (
                 <QuestionOverlay
-                question = {selectQuestion(questionData)}
+                question = {selectedQuestion}
                 onResult={handleQuestionResult}
             />
         )}

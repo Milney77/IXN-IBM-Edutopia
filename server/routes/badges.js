@@ -7,7 +7,6 @@ const router = express.Router();
 // Route to get the list of badge images
 router.get('/badges', (req, res) => {
     const badgesDir = path.join(__dirname, '../../client/public/images/badges');
-
     fs.readdir(badgesDir, (err, files) => {
         if (err) {
             return res.status(500).json({ error: 'Unable to scan directory' });

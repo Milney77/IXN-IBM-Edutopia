@@ -99,7 +99,7 @@ UpdateGamePlayData('actionPhaseSet', -1);
 }
 
 // DEVELOP NEIGHBOURING HEXES
-else if (gamePlayData.actionPhaseSet === 2 || (mousePos.type === 'hex' && mapData[mousePos.id].actionable === 2)) {
+else if ((mousePos.type === 'hex' && mapData[mousePos.id].actionable === 2)) {
 if (mousePos.type === 'hex' && mapData[mousePos.id].actionable === 2) {
 // Player is developing hex.
 hexid = mousePos.id;

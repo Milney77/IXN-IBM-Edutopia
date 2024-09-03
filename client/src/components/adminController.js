@@ -258,12 +258,12 @@ const AdminScreen = ({handleAdminExit}) => {
         <Box sx={{width:'95%'}}>
         {/* BUTTONS */}
         <Grid container sx={{marginY: '0.5rem'}} spacing={2}>
-        <Grid item xs={6} md={2}>
+            <Grid item xs={6} md={2}>
                 <Tooltip title="View the title screen">
-                    <Stack direction="column" spacing={1}>
-                        <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>&nbsp;</Typography>
-                        <Button variant='contained' onClick={handleTitleClick} disabled={showTitle}>
-                            <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Title</Typography>
+                    <Stack direction="column" alignItems='center' spacing={1} sx={{border: '1px solid #ccc', borderRadius: '8px', padding: `${customFontSize*0.25}rem`}}>
+                        <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>Instructions</Typography>
+                        <Button variant='contained' onClick={handleTitleClick} disabled={showTitle} sx={{width: '80%', alignSelf: 'center'}}>
+                            <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>View</Typography>
                         </Button>
                     </Stack>
                 </Tooltip>
@@ -271,9 +271,9 @@ const AdminScreen = ({handleAdminExit}) => {
 
             <Grid item xs={6} md={2}>
                 <Tooltip title="View results on how often players answer questions correctly">
-                    <Stack direction="column" spacing={1}>
+                    <Stack direction="column" alignItems='center' spacing={1} sx={{border: '1px solid #ccc', borderRadius: '8px', padding: `${customFontSize*0.25}rem`}}>
                         <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>Player Results</Typography>
-                        <Button variant='contained' onClick={handleViewClick} disabled={showResults}>
+                        <Button variant='contained' onClick={handleViewClick} disabled={showResults} sx={{width: '80%', alignSelf: 'center'}}>
                             <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>View</Typography>
                         </Button>
                     </Stack>
@@ -282,12 +282,12 @@ const AdminScreen = ({handleAdminExit}) => {
 
             <Grid item xs={6} md={2}>
                 <Tooltip title="Edit and create courses to include">
-                    <Stack direction="column" spacing={1}>
+                    <Stack direction="column" alignItems='center' spacing={1} sx={{border: '1px solid #ccc', borderRadius: '8px', padding: `${customFontSize*0.25}rem`}}>
                         <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>Courses</Typography>
-                        <Button variant='contained' onClick={handleCourseEditClick} disabled={showCourseEdit}>
+                        <Button variant='contained' onClick={handleCourseEditClick} disabled={showCourseEdit} sx={{width: '80%', alignSelf: 'center'}}>
                             <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Edit</Typography>
                         </Button>
-                        <Button variant='contained' onClick={handleNewCourseClick} disabled={showNewCourse}>
+                        <Button variant='contained' onClick={handleNewCourseClick} disabled={showNewCourse} sx={{width: '80%', alignSelf: 'center'}}>
                             <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Create</Typography>
                         </Button>
                     </Stack>
@@ -297,12 +297,12 @@ const AdminScreen = ({handleAdminExit}) => {
            
             <Grid item xs={6} md={2}>
                 <Tooltip title="Edit and create questions">
-                    <Stack direction="column" spacing={1}>
+                    <Stack direction="column" alignItems='center' spacing={1} sx={{border: '1px solid #ccc', borderRadius: '8px', padding: `${customFontSize*0.25}rem`}}>
                         <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>Questions</Typography>
-                        <Button variant='contained' onClick={handleQuestionEditClick} disabled={showQuestionEdit}>
+                        <Button variant='contained' onClick={handleQuestionEditClick} disabled={showQuestionEdit} sx={{width: '80%', alignSelf: 'center'}}>
                             <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Edit</Typography>
                         </Button>
-                        <Button variant='contained' onClick={handleNewQuestionClick} disabled={showNewQuestion}>
+                        <Button variant='contained' onClick={handleNewQuestionClick} disabled={showNewQuestion} sx={{width: '80%', alignSelf: 'center'}}>
                             <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Create</Typography>
                         </Button>
                     </Stack>
@@ -311,9 +311,9 @@ const AdminScreen = ({handleAdminExit}) => {
 
             <Grid item xs={6} md={2}>
                 <Tooltip title="Edit admin user list">
-                <Stack direction="column" spacing={1}>
+                <Stack direction="column" alignItems='center' spacing={1} sx={{border: '1px solid #ccc', borderRadius: '8px', padding: `${customFontSize*0.25}rem`}}>
                 <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>Users</Typography>
-                <Button variant='contained' onClick={handleUsersClick} disabled={showUsers}>
+                <Button variant='contained' onClick={handleUsersClick} disabled={showUsers} sx={{width: '80%', alignSelf: 'center'}}>
                     <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none'}}>Edit</Typography>
                 </Button>
                 </Stack>
@@ -322,10 +322,10 @@ const AdminScreen = ({handleAdminExit}) => {
 
             <Grid item xs={6} md={2}>
             <Tooltip title="Exit to main menu">
-                <Stack direction="column" spacing={1}>
-                <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>&nbsp;</Typography>
-                <Button variant='contained' onClick={handleExitClick}>
-                    <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none' }}>Exit to Main Menu</Typography>
+                <Stack direction="column" alignItems='center' spacing={1} sx={{border: '1px solid #ccc', borderRadius: '8px', padding: `${customFontSize*0.25}rem`}}>
+                <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`}}>Go to Title Screen</Typography>
+                <Button variant='contained' onClick={handleExitClick} sx={{width: '80%', alignSelf: 'center'}}>
+                    <Typography variant='h3' sx={{fontSize:`${customFontSize*0.75}rem`, textTransform: 'none' }}>Exit</Typography>
                 </Button>
                 </Stack>
                 </Tooltip>

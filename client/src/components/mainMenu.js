@@ -47,8 +47,8 @@ const MainMenu = ({ startGame }) => {
             , name: ['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5', 'Player 6']
             , colour: ['r', 'b', 'g', 'y', 'p', 't']
             , compPlayer: 1
-            , diff: 4
-            , strat: ['m', 'e', 'b', 'm']
+            , diff: 2
+            , strat: ['m', 'e', 'b', 'm', 'e', 'b']
           }
 
     // Handle number of players - set the number and set the array for the player details
@@ -57,40 +57,55 @@ const MainMenu = ({ startGame }) => {
           {id: 0, name: playerDefault.name[0], compPlayer: 0, colour: playerDefault.colour[0], diff: playerDefault.diff, strat: playerDefault.strat[0]}, 
           {id: 1, name: playerDefault.name[1], compPlayer: playerDefault.compPlayer, colour: playerDefault.colour[1], diff: playerDefault.diff, strat: playerDefault.strat[1]}, 
            ]);
+
     // Update number of players when the board data changes
-    useEffect(() => {
+    //useEffect(() => {
       // Update maxPlayers based on selected board
-      if (boardData) {
-        const newMaxPlayers = boardData.maxPlayers;
-        // Adjust number of players if it exceeds the new max players
-        if (numberPlayers > newMaxPlayers) {
-          setNumberPlayers(newMaxPlayers);
-        }
-      }
-    }, [currentBoard]);
+    // if (boardData) {
+    //    const newMaxPlayers = boardData.maxPlayers;
+    //    // Adjust number of players if it exceeds the new max players
+    //    if (numberPlayers > newMaxPlayers) {
+    //      setNumberPlayers(newMaxPlayers);
+    //    }
+    //  }
+    //}, [currentBoard]);
           
     // Function to handle changing the number of players
     const handleNumberPlayersChange = (event) => {
       const count = parseInt(event.target.value);
       setNumberPlayers(count);
-      setPlayerDetails(
-          Array.from({ length: count }, (_, idx) => (
-          {id: idx
-            , name: playerDefault.name[idx]
-            , compPlayer: idx === 0 ? 0 : playerDefault.compPlayer
-            , colour: playerDefault.colour[idx]
-            , diff: playerDefault.diff
-            , strat: playerDefault.strat[idx]
-          }
-      )));
     };
+
+    // Number of players can be changed either by changing the drop down, or by changing the board.  So create a function to update the player list, then call
+    // it whenever number of players changes.
+    const updatePlayerDetails = (count) => {
+      //console.log(playerDetails);
+      setPlayerDetails((prevDetails) => 
+        Array.from({ length: count }, (_, idx) => {
+          // Is there any existing data for this player?
+          const existingPlayer = prevDetails[idx];
+          // Use defaults if there is no existing data.
+          return {
+            id: idx,
+            name: existingPlayer ? existingPlayer.name : playerDefault.name[idx], 
+            compPlayer: existingPlayer ? existingPlayer.compPlayer : (idx === 0 ? 0 : playerDefault.compPlayer),
+            colour: existingPlayer ? existingPlayer.colour : playerDefault.colour[idx], 
+            diff: existingPlayer ? existingPlayer.diff : playerDefault.diff,
+            strat: existingPlayer ? existingPlayer.strat : playerDefault.strat[idx] 
+          }
+        })
+      );
+    };
+    useEffect(() => {
+      updatePlayerDetails(numberPlayers);
+    }, [numberPlayers])
 
     // Logging
     //console.log('Players:', numberPlayers, ', Player Array: ', playerDetails)
 
     // Get the list of courses
     const [courselist, setCourseList] = useState([]);
-    const [selectedCourses, setSelectedCourses] = useState([1]);
+    const [selectedCourses, setSelectedCourses] = useState(courselist.slice(0, boardData.minQuizzes).map(course => course.courseid));
     const [includeQuiz3Questions, setIncludeQuiz3Questions] = useState(false);
     const baseUrl = process.env.REACT_APP_API_BASE_URL;
     // Extract the course lists (excluding those where includeind !== 1)
@@ -106,6 +121,17 @@ const MainMenu = ({ startGame }) => {
         fetchCourseList();
     }, []);
     //console.log(courselist, selectedCourses);
+
+    // Additional bit of code that sets courses to min number of courses for the board and number of players defaults to the maximum.
+    useEffect(() => {
+      const slicedCourseListIds = courselist.slice(0, boardData.minQuizzes).map(course => course.courseid);;
+      //console.log(boardData.minQuizzes, boardData.maxPlayers, courselist, slicedCourseListIds);
+      setSelectedCourses(slicedCourseListIds);
+      setNumberPlayers(boardData.maxPlayers);
+    }, [boardData, courselist])
+
+
+
 
     // Function to handle the checkbox change for each couse
     const handleCheckboxChange = (courseid) => {
@@ -160,12 +186,17 @@ const MainMenu = ({ startGame }) => {
       }    
 
       // Name Change (Human players only)
+      // User presses enter or tab
       const handleKeyPress = (event) => {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' || event.key === 'Tab') {
           handlePlayerNameChange(event.target.value);
         }
       };
-
+      // User clicks out of text field.
+      const handleBlur = (event) => {
+        handlePlayerNameChange(event.target.value);
+      }
+      // Udpate data.
       const handlePlayerNameChange = (name) => {
         const updatedPlayers = [...playerDetails];
         updatedPlayers[idx].name = name;
@@ -251,6 +282,7 @@ const MainMenu = ({ startGame }) => {
               fullWidth
               defaultValue={player.name}
               onKeyDown={handleKeyPress}
+              onBlur={handleBlur}
               inputProps={{ maxLength: 25 }}
               sx={{
                 fontSize: `${customFontSize * 0.75}rem`,
@@ -387,9 +419,9 @@ const MainMenu = ({ startGame }) => {
       //setIsStartDisabled(!hasHumanPlayer);
       //setStartDisabledReason('Must have at least 1 human player')
     }
-    else if (coursesSelected === 0) {
+    else if (coursesSelected < boardData.minQuizzes * 0) {
       setIsStartDisabled(true);
-      setStartDisabledReason('Must select at least 1 skills build course')
+      setStartDisabledReason('Have to select at least ' + boardData.minQuizzes + ' Skills Build Courses.')
     }
     else if (hasHumanPlayer && coursesSelected > 0) {
       setIsStartDisabled(false);
@@ -452,7 +484,7 @@ const MainMenu = ({ startGame }) => {
       </Box>
     </Grid>
     <Grid item xs={10} sm={4} alignSelf="flex-start">
-      <Typography sx={{color: 'white', fontSize: `${customFontSize*0.75}rem`}}>Board Details</Typography>
+      
       <TableContainer sx={{
           backgroundImage: 'url(/images/other/background_lightfabric.jpg)',
           backgroundRepeat: 'repeat',
@@ -495,6 +527,16 @@ const MainMenu = ({ startGame }) => {
                 <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>{ boardData.maxVillages + ' / ' + boardData.maxCastles }</Typography>
               </TableCell>
             </TableRow>
+
+            <TableRow>
+              <TableCell>
+                <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>Min Courses to Include</Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>{ boardData.minQuizzes }</Typography>
+              </TableCell>
+            </TableRow>
+
           </TableBody>
         </Table>
       </TableContainer>
@@ -552,6 +594,7 @@ const MainMenu = ({ startGame }) => {
              {'Select Number of Players (max ' + boardData.maxPlayers + ')'}
         </Typography>
         <FormControl  sx={{ marginLeft:'2rem', height: 'auto', backgroundColor:'white' }}>
+         { numberPlayers <= boardData.maxPlayers &&
           <Select
             labelId="number-of-players-label"
             value={numberPlayers}
@@ -562,7 +605,7 @@ const MainMenu = ({ startGame }) => {
             {[...Array(boardData.maxPlayers - 1).keys()].map(n => (
               <MenuItem key={n + 2} value={n + 2}>{n + 2}</MenuItem>
             ))}
-          </Select>
+          </Select>}
         </FormControl>
       </Stack>
     </Grid>

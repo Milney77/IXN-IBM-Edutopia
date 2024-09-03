@@ -94,6 +94,7 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
     const [validateHintCardTitlesError, setValidateHintCardTitlesError] = useState(['']);
     const [validateHintCardTextError, setValidateHintCardTextError] = useState(['']);
     // Other validation
+    const [notEnoughAnswerError, setNotEnoughAnswerError] = useState('');
     const [validateAnswers, setValidateAnswers] = useState('');
     const [showOverlay, setShowOverlay] = useState(false);
     const [overlayMessage, setOverlayMessage] = useState('');
@@ -429,11 +430,21 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
          setValidateHintCardTitlesError(hintCardTitleErrors);
          setValidateHintCardTextError(hintCardTextErrors);
 
+        // Chech there are at least 2 answer options
+        if (question.options.length <= 1) {
+            setNotEnoughAnswerError('You have to provide at least 2 options for answers to the question.');
+            isValid = false;
+        } else {
+            setNotEnoughAnswerError('');
+        }
+
+
         // Check that there is at least 1 correct answer (multi-choice only)
         if (question.answeridx.length === 0) {
             setValidateAnswers('You need to have at least 1 correct answer!');
             isValid = false;
         } else {setValidateAnswers('');}
+
 
 
         console.log('validateCourseError', validateCourseError,'validateQuizError',validateQuizError,'validateTypeError',validateTypeError,'validateQuestionError',validateQuestionError
@@ -730,16 +741,24 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
                             </Grid>
                         </Grid>
                         ))}
-                        {validateAnswers && (
+
+                        {(validateAnswers || notEnoughAnswerError) ? (
                             <>
-                                <Grid item xs={8}></Grid>
-                                <Grid item xs={2}>
-                                    <FormHelperText sx={{ color: 'red' }}>{validateAnswers}</FormHelperText>
-                                </Grid>
-                                <Grid item xs={2}></Grid>
+                            <Grid item xs={8}>
+                            <FormHelperText sx={{ color: 'red' }}>
+                                    {notEnoughAnswerError ? notEnoughAnswerError : null}
+                                </FormHelperText>
+                            </Grid>
+                            <Grid item xs={2}>
+                                <FormHelperText sx={{ color: 'red' }}>
+                                    {validateAnswers ? validateAnswers : null}
+                                </FormHelperText>
+                            </Grid>
+                            <Grid item xs={2}></Grid>
                             </>
-                        )}
-                        
+                        ) : null
+                        }
+
                             
                         <Grid item xs={12}>
                             {question.options.length < maxNumberAnswers && (
@@ -989,7 +1008,7 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
                         onClick={handleSave}
                         sx={{ width: 'auto', textTransform: 'none' }}
                         >
-                        <Typography sx={{fontSize:`${customFontSize*1}rem`}}>{editType === 'edit' ? 'Save Changes' : 'Create Course'}</Typography>
+                        <Typography sx={{fontSize:`${customFontSize*1}rem`}}>{editType === 'edit' ? 'Save Changes' : 'Create Question'}</Typography>
                     </Button>
 
                     {editType === 'edit' && (

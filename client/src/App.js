@@ -168,9 +168,6 @@ function App() {
       }
     }
   };
-  useEffect(() => {
-    console.log(message);
-  }, [message])
 
   // Function for exiting back to the title screen
   const exitToTitle = (hasWon = false) => {

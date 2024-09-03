@@ -29,9 +29,11 @@ router.post('/', async (req, res) => {
           questionid: response.questionid,
         },
       });
-
+      
       // Did the previous query return any data?
       if (existingResponse) {
+        //console.log('Existing response')
+        console.log(existingResponse);
         // Yes - So update the existing record.
         await prisma.questionresponses.update({
           where: {
@@ -42,10 +44,11 @@ router.post('/', async (req, res) => {
             timescorrect: existingResponse.timescorrect + response.timesCorrectNoHint,
             timescorrectwithhint: existingResponse.timescorrectwithhint + response.timesCorrectWithHint,
             timesincorrect: existingResponse.timesincorrect + response.timesIncorrectNoHint,
-            timesincorrectwithhint: existingResponse.timeincorrectwithhint + response.timesIncorrectWithHint,
+            timesincorrectwithhint: existingResponse.timesincorrectwithhint + response.timesIncorrectWithHint,
           },
         });
       } else {
+        //console.log('New response')
         // No, data for this question, day, month & year doesn't exist, so add it to the dB.
         await prisma.questionresponses.create({
           data: {

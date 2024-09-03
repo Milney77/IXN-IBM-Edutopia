@@ -161,7 +161,7 @@ export const CalculateHexStatus = (currentPlayer, mapData) => {
         isAllowed = false;
         disallowReason = "Cannot take over a players' starting square";
       // Have to have greater structure strength than defender.
-      } else if (attackPlayerStruct <= defendPlayerStruct) {
+      } else if (attackPlayerStruct < defendPlayerStruct) {
         isAllowed = false;
         disallowReason = "Attacker structure strength (" + attackPlayerStruct + ") is not greater than defender strength (" + defendPlayerStruct + ")";
       } 

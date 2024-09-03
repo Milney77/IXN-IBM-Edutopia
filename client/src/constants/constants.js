@@ -78,8 +78,8 @@ export const colourMap = {
 
 export const resourceCosts = {
     house:    {wood: 0,  food: 2,  metal: 4,  tech: 0, },
-    village:  {wood: 2,  food: 2,  metal: 6,  tech: 0, },
-    castle:   {wood: 4,  food: 4,  metal: 8,  tech: 0, },
+    village:  {wood: 1,  food: 3,  metal: 6,  tech: 0, },
+    castle:   {wood: 2,  food: 4,  metal: 8,  tech: 0, },
     takeover: {wood: 2,  food: 4,  metal: 2,  tech: 0, },
     expand:   {wood: 4,  food: 2,  metal: 0,  tech: 0, },
 }
@@ -92,7 +92,7 @@ export const tradingRatios = {
     tradeBankRatioFood: 1,
     tradeBankRatioWood: 1,
     tradeBankRatioMetal: 1,
-    tradeBankRatioTech: 20
+    tradeBankRatioTech: 50
 }
 
 export const initresources = {
@@ -104,21 +104,21 @@ export const initresources = {
 
 export const aiparameters = [
     { strat: 'e'
-      , resourceRatios: {woodRatio:  0.666, foodRatio:  0.167, metalRatio: 0.167}
+      , resourceRatios: {woodRatio:  0.5, foodRatio:  0.25, metalRatio: 0.25}
       , minTiles: 4
       , structureToHexRatio: 1.25
-      , buildWeight: -0.5
-      , expandWeight: 0.5
+      , buildWeight: -0.25
+      , expandWeight: 0.25
     },
     { strat: 'b'
-        , resourceRatios: {woodRatio:  0.167, foodRatio:  0.167, metalRatio: 0.666}
+        , resourceRatios: {woodRatio:  0.25, foodRatio:  0.25, metalRatio: 0.5}
         , minTiles: 2
-        , structureToHexRatio: 2
-        , buildWeight: 0.5
-        , expandWeight: -0.5
+        , structureToHexRatio: 1.75
+        , buildWeight: 0.25
+        , expandWeight: -0.25
       },
       { strat: 'm'
-        , resourceRatios: {woodRatio:  0.417, foodRatio:  0.166, metalRatio: 0.417}
+        , resourceRatios: {woodRatio:  0.333, foodRatio:  0.333, metalRatio: 0.333}
         , minTiles: 3
         , structureToHexRatio: 1.5
         , buildWeight: 0

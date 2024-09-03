@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography, Stack} from '@mui/material';
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
 
 const UsersPage = ({customFontSize}) => {
@@ -118,7 +118,6 @@ const UsersPage = ({customFontSize}) => {
           <TableHead sx={{ borderBottom: '2px solid #ccc', backgroundColor: 'transparent' }}>
             <TableRow>
               <TableCell sx={{ textAlign: 'center' }}>Username</TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>Password</TableCell>
               <TableCell sx={{ textAlign: 'center' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -126,7 +125,6 @@ const UsersPage = ({customFontSize}) => {
             {users.map((user) => (
               <TableRow key={user.id}>
                 <TableCell sx={{ textAlign: 'center' }}>{user.username}</TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>{'*'.repeat(user.password.length)}</TableCell>
                 <TableCell>
                     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                     <Button variant="contained" color="secondary" onClick={() => handleOpenDialog(user.id)} 
@@ -178,12 +176,14 @@ const UsersPage = ({customFontSize}) => {
             error={!!newConfirmPasswordError}
             helperText={newConfirmPasswordError}
           />
-          <Button variant="contained" color="primary" onClick={handleAddUser}>
-            Confirm
+          <Stack direction='row' spacing={2} justifyContent='center'>
+            <Button variant="contained" color="primary" onClick={handleAddUser}>
+              Confirm
+            </Button>
+            <Button variant="contained" color="secondary" onClick={() => setShowAddUserForm(false)}>
+              Cancel
           </Button>
-          <Button variant="contained" color="secondary" onClick={() => setShowAddUserForm(false)}>
-            Cancel
-        </Button>
+        </Stack>
         </Box>
       )}
 

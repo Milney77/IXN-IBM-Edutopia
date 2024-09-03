@@ -1,12 +1,12 @@
 // Function to check if a point is inside a polygon
 // Uses a ray-casting method
-export const isPointInPolygon = (point, vertices) => {
+export const isPointInHex = (point, vertices) => {
     const [x, y] = point;
     let isInside = false;
     for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
-      const [xi, yi] = vertices[i];
-      const [xj, yj] = vertices[j];
-      const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      const [x1, y1] = vertices[i];
+      const [x2, y2] = vertices[j];
+      const intersect = ((y1 > y) !== (y2 > y)) && (x < (x2 - x1) * (y - y1) / (y2 - y1) + x1);
       if (intersect) isInside = !isInside;
     }
     return isInside;
@@ -22,7 +22,7 @@ export function checkMouseInHex(ColArray, RowArray, xpos, ypos, mapData) {
     for (var j = 0; j < tilesToCheck.length; j++) {
       const tileData = tilesToCheck[j];
       // Pass the x&y coords and the verticies of the current tile being checked to the polygon checker
-      if (tileData && isPointInPolygon([xpos, ypos], tileData.xHexVert.map((x, i) => [x, tileData.yHexVert[i]]))) {
+      if (tileData && isPointInHex([xpos, ypos], tileData.xHexVert.map((x, i) => [x, tileData.yHexVert[i]]))) {
         tileData.hover = 1;
         return tileData.id;
       }
@@ -69,16 +69,16 @@ export function mouseXY_to_HexID(mouseX, mouseY, tileWidth, tileHeight_full, til
     // Where would the action menu be (based on current player)
     const playerBoxWidth = actionMenuParams.playerBoxWidth;
     const customMargin = actionMenuParams.customMargin;
-
+    const widthAdj = Math.max(0, actionMenuParams.screenwidthCanvas - actionMenuParams.screenwidthDimContext ) / 2;
     var amXpos;
     var amYpos = actionMenuParams.yOffset;
     if (gamePlayData.currentPlayer === gamePlayData.numberPlayers - 1) {
         // Show it on the left of player display box
-        amXpos = canvas.width - actionMenuParams.width - customMargin * 16; 
+        amXpos = canvas.width - actionMenuParams.width - customMargin * 16 - widthAdj; 
         //console.log(canvas.width, actionMenuParams.width, customMargin)
     } else {
         // Show it on the left of player display box
-        amXpos = gamePlayData.currentPlayer * playerBoxWidth + customMargin * 16; 
+        amXpos = widthAdj + gamePlayData.currentPlayer * playerBoxWidth + customMargin * 16 ; 
     }
     //console.log('actionMenuParams.xOffset1', actionMenuParams.xOffset1, ', actionMenuParams.XOffset2', actionMenuParams.actionMenuXOffset2, ', canvaswidth: ', canvas.width);
     //console.log('Mouse XY: (', mouseX, ',', mouseY, '), Menu XYWH: (', amXpos, ',', amYpos, ',', actionMenuParams.width, ',', actionMenuParams.height);

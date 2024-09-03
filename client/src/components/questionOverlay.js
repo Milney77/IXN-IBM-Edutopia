@@ -7,9 +7,7 @@ import { DimensionsContext } from './dimensionsContext';
 
 // Font Resizing functions
 // Can handle the screen width in a general sense - but the length of the strings can be quite different, so including this function:
-function calculateFontSize (maxTextLength, baseFontSize) {
-    // Get the screen width
-    const screenWidth = window.innerWidth;
+function calculateFontSize (maxTextLength, baseFontSize, screenWidth) {
     // Get a screen width level
     var screenSizeLevel = Math.max(0.6, Math.min(1, 0.6 + 0.1 * Math.floor((screenWidth - 800)/200)));
     // Text Length level
@@ -131,31 +129,35 @@ const QuestionOverlay = ({ question, onResult }) => {
     const maxCardTextLength = question.hintcardtext.reduce((max, cardText) => Math.max(max, cardText.length), 0);
     
     // Set up states to handle when user reszies window
-    const { width } = useContext(DimensionsContext);
+    const { width, height } = useContext(DimensionsContext);
+    const [overlayWidth, setOverlayWidth] = useState(width * 0.8);
+    const [overlayHeight, setOverlayHeight] = useState(height * 0.8);
     const [questionFontSize, setquestionFontSize] = useState(2.5);
     const [optionFontSize, setOptionFontSize ] = useState(1.5);
     const [optionMarginSize, setOptionMarginSize ] = useState(0.75);
     const [hintFontSize, setHintFontSize ] = useState(1.5);
     const [cardTitleFontSize, setCardTitleFontSize ] = useState(1.25);
     const [cardTextFontSize, setCardTextFontSize ] = useState(1);
-
+    console.log('Screen WxH: (', width, ',', height, '), Overlay WxH: (', overlayWidth, ',', overlayHeight, ')');
     useEffect(() => {
-        setquestionFontSize(calculateFontSize(question.questiontext.length, 2.5));
-        setOptionFontSize(calculateFontSize(maxOptionLength, 1.5));
-        setOptionMarginSize(calculateFontSize(maxOptionLength, 0.75));
-        setHintFontSize(calculateFontSize(maxHintLength, 1.5));
-        setCardTitleFontSize(calculateFontSize(maxCardTitleLength, 1.25));
-        setCardTextFontSize(calculateFontSize(maxCardTextLength, 1));
+        setquestionFontSize(calculateFontSize(question.questiontext.length, 2.5, width));
+        setOptionFontSize(calculateFontSize(maxOptionLength, 1.5, width));
+        setOptionMarginSize(calculateFontSize(maxOptionLength, 0.75, width));
+        setHintFontSize(calculateFontSize(maxHintLength, 1.5, width));
+        setCardTitleFontSize(calculateFontSize(maxCardTitleLength, 1.25, width));
+        setCardTextFontSize(calculateFontSize(maxCardTextLength, 1, width));
+        setOverlayWidth(width * 0.8);
+        setOverlayHeight(height * 0.8);
     }, [width, question, maxOptionLength, maxHintLength, maxCardTitleLength, maxCardTextLength]);
     //console.log('questionFontSize:', questionFontSize, ', optionFontSize:', optionFontSize, ', optionMarginSize:', optionMarginSize, ', hintFontSize:', hintFontSize, ', cardTitleFontSize:', cardTitleFontSize, ', cardTextFontSize:', cardTextFontSize)
 
     const badgeIconRef = '/images/badges/' + question.courselist.badgeicon;
 
+    
     return ( 
     
     <Box id="questionOverlay">
-
-        <Box id="questionOverlayContent">
+        <Box id="questionOverlayContent" sx={{maxWidth: overlayWidth }}>
             {/* Create a grid to keep the badge on the left, question on the right */}
             <Grid container >
                 <Stack direction='row'>

@@ -40,9 +40,9 @@ const BadgeSelector = ({ badges, selectedBadge, onSelectBadge }) => {
                                         width: '100%',
                                         cursor: 'pointer',
                                         border: selectedBadge === badge ? '2px solid blue' : '2px solid transparent',
-                                        opacity: selectedBadge === badge ? 1 : 0.5, // Grey out non-selected badges
-                                        filter: selectedBadge === badge ? 'none' : 'grayscale(100%)', // Optional: Add grayscale filter to non-selected badges
-                                        transition: 'opacity 0.3s ease, filter 0.3s ease', // Smooth transition
+                                        opacity: selectedBadge === badge ? 1 : 0.5, 
+                                        filter: selectedBadge === badge ? 'none' : 'grayscale(100%)', 
+                                        transition: 'opacity 0.3s ease, filter 0.3s ease', 
                                         borderRadius: '4px',
                                     }}
                                 />
@@ -202,7 +202,6 @@ const AdminEditCourse = ({coursedata, editType, customFontSize, fullCourseList, 
                 console.error('Error fetching badges:', error);
             }
         };
-
         fetchBadges();
     }, []);
 

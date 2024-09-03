@@ -177,18 +177,22 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
   
   // ---------------------------------------------------------------------------------- //
   // ----------------------------- DYNAMIC CANVAS EFFECTS ----------------------------- //
+  const { width, height } = useContext(DimensionsContext);
+
   const updateDimensions = useCallback(() => {
     const canvas = canvasRef.current;
 
     if (!canvas) return; // Ensure canvas is available
 
     // Some constants
-    const widthHeightRatio = 16 / 7.3;
+    const widthHeightRatio = 16 / 7.5;
     const tileHeightRatioFull = 288.0 / 250.0;
     const tileHeight_trimmRatio = 0.87;
+    const gameBoardHeightPct = 0.82;
 
+    //const canvasWidthBase = ;
     const canvasWidthBase = window.innerWidth;
-    const canvasHeightBase = window.innerHeight;
+    const canvasHeightBase = window.innerHeight * gameBoardHeightPct;
     // Canvas Width:  Either the inner window width, or calculated from the window height (which ever is smaller)
     // Canvas Height: Either the inner window height, or calculated from the window width (which ever is smaller)
     const canvasWidth = Math.min(canvasWidthBase, Math.floor(canvasHeightBase * widthHeightRatio));
@@ -206,12 +210,14 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
     setTileHeightFull(newTileHeightFull);
     setTileHeightTrim(newTileHeightTrim);
 
-    const playerInfoWidth = canvasWidth / gamePlayData.numberPlayers;
-    const customMargin = playerInfoWidth <= 200 ? 1 : playerInfoWidth <= 300 ? 1 : playerInfoWidth <= 400 ? 1.5 : 2;
-    const actionMenuWidth = Math.floor(canvasWidth / 5);
+    const playerInfoWidth = width / gamePlayData.numberPlayers;
+    const customMargin = Math.min(1.5, Math.max(0, 0.25 * Math.floor((playerInfoWidth - 100)/100)));
+    const actionMenuWidth = Math.floor(width / 5);
     const actionMenuHeight = Math.floor(actionMenuWidth / 5);
-    const playerBoxWidth = Math.floor(canvasWidth / gamePlayData.numberPlayers);
+    const playerBoxWidth = Math.floor(width / gamePlayData.numberPlayers);
     const newActionMenuParams = {
+      screenwidthCanvas: canvasWidth,
+      screenwidthDimContext: width,
       width: actionMenuWidth,
       height: actionMenuHeight,
       playerBoxWidth: playerBoxWidth,
@@ -223,8 +229,9 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       iconOffset: 0.25,
       iconHover: [0, 0, 0, 0, 0, 0]
     };
+    //console.log(newActionMenuParams);
     setActionMenuParams(newActionMenuParams);
-  }, [boardData, gamePlayData.numberPlayers]);
+  }, [boardData, gamePlayData.numberPlayers, width, height]);
 
   // UseLayoutEffect - this is needed to trigger the update dimensions on the initial render (so not when a user re-sizes the window)
   useLayoutEffect(() => {
@@ -232,8 +239,9 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
   }, [updateDimensions]);
 
   // Add listeners for when the screen is resized or fullscreen status changes
-  const { width, height } = useContext(DimensionsContext);
+  
   useEffect(() => {
+    //console.log('Updating...  Width: ', width, ', Height: ', height);
     updateDimensions();
   }, [width, height]);
 
@@ -243,7 +251,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
   const initialMount = useRef(true);
 
   const [isComputerThinking, setIsComputerThinking] = useState(false);
-  
+  const computerThinkingTime = 1;
 
   useEffect(() => {
     if (initialMount.current) {
@@ -270,22 +278,29 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       PerformAction(bestAction, boardData, mapData, playerData, gamePlayData, UpdateMapData, UpdatePlayerData, UpdateGamePlayData, addLog);
       calculateVictoryPoints(boardData, gamePlayData, mapData, playerData, UpdateGamePlayData, UpdatePlayerData);
       setIsComputerThinking(false);
-    }, 1000);
+    }, computerThinkingTime);
   }
 
   const computerChooseResource = (boardData, mapData, playerData, gamePlayData) => {
     // Some useful constants
+    
     const currentPlayer = gamePlayData.currentPlayer;
     const currentResources = {wood: playerData[currentPlayer].wood, food: playerData[currentPlayer].food, metal: playerData[currentPlayer].metal }
     const freeResources = playerData[currentPlayer].diff;
+    console.log('Current Resources: ', currentResources, 'free: ', freeResources);
 
     // Holder for resources chosen based on actions
     const resourcesChosenAction = {wood: 0, food: 0, metal: 0};
     // Rank & score actions as normal
     const scoredactions = ComputerRankActions(boardData, mapData, playerData, gamePlayData);
     const availableActions = ComputerSelectAction(scoredactions, boardData, mapData, playerData, gamePlayData);
-    // Now take the top 3 availabeActions, and check if any that the player could do if they chose the right resources
-    const top3Actions = availableActions.slice(0, 3).filter((action)=> -1 * action.resourceCalcs.shortfall <= freeResources);
+    // Find any actions the computer can't do
+    const availableActionsNeedResources = availableActions.filter((action) => action.resourceCalcs.shortfall < 0);
+    // Any actions that would be possible to do if the computer chooses the right resources?
+    const possibleActions = availableActionsNeedResources.filter((action) => action.resourceCalcs.shortfall >= (-1 * freeResources));
+    console.log('Available: ', availableActions, 'Insufficient Resource Actions:', availableActionsNeedResources, ' Potential: ', possibleActions);
+    // Now take the top 5 availabeActions, and check if any that the player could do if they chose the right resources
+    const top3Actions = availableActions.slice(0,5).filter((action)=> action.resourceCalcs.shortfall < 0);
     // If there is at least one action in the top 3 that needs resources, then use this to determine which resources to get
     if (top3Actions.length > 0) {
       const topAction = top3Actions[0];
@@ -346,7 +361,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
         } catch (error) {
           console.error('Error updating question responses:', error);
         }
-        ReturnToMainMenu();
+        //ReturnToMainMenu();
       };
       showOverlay('Player ' + (gamePlayData.winner) + ' has won the game!', null, onConfirm, true);
     }
@@ -377,7 +392,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
           UpdateGamePlayData('currentPhase', 2)
           var logTxt = 'Player ' + (currentPlayer + 1) + ' has chosen the following resources: [wood: ' + resourcesChosen.wood + ', food:' + resourcesChosen.food + ', metal: ' + resourcesChosen.metal + ']'
           addLog(logTxt);
-        }, 1000);
+        }, computerThinkingTime);
 
       } else if (gamePlayData.currentPhase === 2) {
         // Action phase
@@ -392,7 +407,6 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
           addCurrentInstruction(instructTxt1);
         } else if (gamePlayData.currentPhase === 1) {
           // Generate Resources 
-          // TODO:  See if I can delay this without triggering multiple entries to the log
           addCurrentInstruction(instructTxt2);
           generateResources(gamePlayData, mapData, playerData, UpdatePlayerData, UpdateGamePlayData, addLog);
           // Pause for a second to allow for resource animation
@@ -430,11 +444,10 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       // Initialize the board
       BoardInitialisation(mapData, boardData, tileWidth, tileHeightFull, tileHeightTrim, tilesHOffset, tilesVOffset);
 
-      // Game loop
+      // Render loop
       const fps = 30;
       const interval = 1000 / fps;
       let lastTime = 0;
-
       const gameLoop = (timestamp) => {
         if (timestamp - lastTime >= interval) {
           DrawBoard(canvas, ctx, images, mapData, playerData, gamePlayData, actionMenuParams);
@@ -452,9 +465,10 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
       const mouseY = event.clientY - rect.top;
-      mouseXY_to_HexID(mouseX, mouseY, tileWidth, tileHeightFull, tileHeightTrim, tilesHOffset, tilesVOffset,
+      const mousePos = mouseXY_to_HexID(mouseX, mouseY, tileWidth, tileHeightFull, tileHeightTrim, tilesHOffset, tilesVOffset,
                         boardData, mapData, gamePlayData, actionMenuParams, canvas
       );
+      //console.log(mousePos);
     }, [tileWidth, tileHeightFull, tileHeightTrim, tilesHOffset, tilesVOffset, boardData, mapData, gamePlayData, actionMenuParams, canvasRef]);
 
   // Mouse Click Function - same as mouse move function - have to work out where the mouse is - but then this triggers the handle mouse click function
@@ -515,8 +529,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
         />
       )}
 
-        
-
+      <Button onClick={testEnd}>END GAME</Button>
     </Box>
   );
 };

@@ -22,8 +22,9 @@ export const DrawBoard = (canvas, ctx, images, mapData, playerData, gamePlayData
 
     // Highlight tiles
     for (let i = 0; i < mapData.length; i++) {
-      highlightTile(ctx, mapData[i], images, mapData, playerData, gamePlayData);
+      highlightTile(ctx, mapData[i], images, mapData, playerData, gamePlayData, canvas);
     }
+    
 
     // Draw the action menu
     if (gamePlayData.currentPhase === 2 && playerData[gamePlayData.currentPlayer].compPlayer === 0) {
@@ -79,7 +80,7 @@ export const DrawBoard = (canvas, ctx, images, mapData, playerData, gamePlayData
 
 
 
-function drawTile(ctx, tileData, images, playerData) {
+function drawTile(ctx, tileData, images, playerData, canvaswidth) {
     // Back to black - only need this while I have the grid above.
     ctx.strokeStyle = 'black'
     
@@ -158,7 +159,7 @@ function drawTile(ctx, tileData, images, playerData) {
   } 
 
 
-function highlightTile(ctx, tileData, images, mapData, playerData, gamePlayData) {
+function highlightTile(ctx, tileData, images, mapData, playerData, gamePlayData, canvas) {
     // Hexes that are hovered over
     if (tileData.hover === 1) {
       ctx.beginPath();
@@ -202,7 +203,8 @@ function highlightTile(ctx, tileData, images, mapData, playerData, gamePlayData)
       const tiptext2 = 'Action: ' + actionType;
       const tiptext3 = 'Cost : [' + (actionCost.wood > 0 ? actionCost.wood + ' wood ' : '') + (actionCost.food > 0 ? actionCost.food + ' food ' : '') + (actionCost.metal > 0 ? actionCost.metal + ' metal ' : '') + ']'
       // Positioning parameters
-      const middlePoint = {x: tileData.xHexVert[1], y: tileData.yHexVert[1]};
+      const topPoint = {x: tileData.xHexVert[1], y: tileData.yHexVert[1]};
+      const bottomPoint = {x: tileData.xHexVert[4], y: (tileData.yHexVert[1] + tileData.yHexVert[4]) / 2};
       const padding = 5;
       const textheight = 18;
       ctx.font = '18px Arial';
@@ -225,10 +227,16 @@ function highlightTile(ctx, tileData, images, mapData, playerData, gamePlayData)
         tipboxWidth = padding * 2 + Math.max(tiptext1length, tiptext2length, tiptext3length);
       }
       
-      // Tips will always go at the top of the hex (defined )
+      // Tips will always go at the top of the hex - unless its the first row, then it goes in the middle
       // But horizon position - needs to be contained in the screen width;
-      const tipPosX = middlePoint.x - Math.floor(tipboxWidth / 2);
-      const tipPosY = middlePoint.y - Math.floor(tipboxHeight / 2);
+      const tipPosX = Math.min( canvas.width - tipboxWidth, Math.max(0, topPoint.x - Math.floor(tipboxWidth / 2)));
+      var tipPosY;
+      if (tileData.row === 0) {
+        tipPosY = bottomPoint.y - Math.floor(tipboxHeight / 2);
+      } else {
+        tipPosY = topPoint.y - Math.floor(tipboxHeight / 2);
+      }
+      
 
       // Draw tooltip background
       ctx.fillStyle = '#333333'; // This should be pretty similar to the tooltip background in MaterialUI's built in tooltips.
@@ -283,42 +291,47 @@ function hexToRgba(hex, opacity) {
 
 
 function DrawActionMenu(canvas, ctx, images, gamePlayData, playerData, actionMenuParams) {
-
   const actionMenuWidth = actionMenuParams.width;
   const actionMenuHeight = actionMenuParams.height;
   const actionMenuYOffset = actionMenuParams.yOffset;
   const actionMenuIconSize = actionMenuParams.iconSize;
   const actionMenuIconOffset = actionMenuParams.iconOffset;
   const playerBoxWidth = actionMenuParams.playerBoxWidth;
-  //console.log(actionMenuParams);
-  var customMargin;
-  if (playerBoxWidth <= 200) {
-    customMargin = 1;
-  } else if (playerBoxWidth <= 300) {
-    customMargin = 1;
-  } else if (playerBoxWidth <= 400) {
-      customMargin = 1.5;
-  } else {
-      customMargin = 2;
-  }
+  const canvasWidth = actionMenuParams.screenwidthCanvas;
+  const dimContextWidth = actionMenuParams.screenwidthDimContext;
+
   
+  //console.log(actionMenuParams);
+  var customMargin = Math.min(1.5, Math.max(0, 0.25 * Math.floor((playerBoxWidth - 100)/100)));
+  
+  //var customMargin;
+  //if (playerBoxWidth <= 200) {
+  //  customMargin = 1;
+  //} else if (playerBoxWidth <= 300) {
+  //  customMargin = 1;
+  //} else if (playerBoxWidth <= 400) {
+  //    customMargin = 1.5;
+  //{ else {
+  //    customMargin = 2;
+  //}
   ctx.strokeStyle = colourMap[playerData[gamePlayData.currentPlayer].colour].border;
   
   ctx.fillStyle = colourMap[playerData[gamePlayData.currentPlayer].colour].background;
 
 
   // Determine where to show the menu
+  const widthAdj = Math.max(0, (canvasWidth - dimContextWidth)) / 2;
   var xpos;
   if (gamePlayData.currentPlayer === gamePlayData.numberPlayers - 1) {
       // Show on the left of screen 
-      xpos = canvas.width - actionMenuWidth - customMargin * 16; 
+      xpos = canvas.width - actionMenuWidth - customMargin * 16 - widthAdj; 
   } else {
       // Show it on the right of screen
-      xpos = gamePlayData.currentPlayer * playerBoxWidth + customMargin * 16; 
+      xpos = widthAdj + gamePlayData.currentPlayer * playerBoxWidth + customMargin * 16 ; 
   }
   ctx.strokeRect(xpos, actionMenuYOffset, actionMenuWidth, actionMenuHeight)
   ctx.fillRect(xpos, actionMenuYOffset, actionMenuWidth, actionMenuHeight)
-
+  //console.log('X:', xpos, ', Width Adj:', widthAdj, ', CurrPlayer: ', gamePlayData.currentPlayer, ',Box Width: ', playerBoxWidth, ', Margin:', customMargin);
 
   // Fill in the icons
   const iconlist = ['icon_action_v2_Build', 'icon_action_v2_develop', 
@@ -327,15 +340,24 @@ function DrawActionMenu(canvas, ctx, images, gamePlayData, playerData, actionMen
   ctx.fillStyle = 'white'
   for (var i = 0; i < 5; i++) {
     var icon_xpos = actionMenuIconOffset + xpos + i * actionMenuHeight;
-    var icon_ypos = actionMenuYOffset + 0.5 * actionMenuHeight * (1 - actionMenuIconSize);
+    var icon_ypos = actionMenuYOffset + 1 * actionMenuHeight * (1 - actionMenuIconSize);
     const circleRadius = (actionMenuHeight * actionMenuIconSize) / 2;
-    if (actionMenuParams.iconHover[i] === 1) {
-      fillCircle(ctx, icon_xpos + circleRadius, icon_ypos + circleRadius, circleRadius-1, colourMap[playerData[gamePlayData.currentPlayer].colour].border)
-      // Add tool tip
-      addToolTip(ctx, icon_xpos, icon_ypos, actionMenuHeight, i);
-    } 
+    
     drawCircle(ctx, icon_xpos + circleRadius, icon_ypos + circleRadius, circleRadius, colourMap[playerData[gamePlayData.currentPlayer].colour].border)
     ctx.drawImage(images[iconlist[i]], icon_xpos + 0.25 * circleRadius, icon_ypos + 0.25 * circleRadius, circleRadius * 1.5 , circleRadius * 1.5 )
+  }
+
+  // Highlighting
+  for (var i = 0; i < 5; i++) {
+    var icon_xpos = actionMenuIconOffset + xpos + i * actionMenuHeight;
+    var icon_ypos = actionMenuYOffset + 0.75 * actionMenuHeight * (1 - actionMenuIconSize);
+    const circleRadius = (actionMenuHeight * actionMenuIconSize) / 2;
+    if (actionMenuParams.iconHover[i] === 1) {
+    fillCircle(ctx, icon_xpos + circleRadius, icon_ypos + circleRadius, circleRadius-1, colourMap[playerData[gamePlayData.currentPlayer].colour].border)
+    // Add tool tip
+    ctx.drawImage(images[iconlist[i]], icon_xpos + 0.25 * circleRadius, icon_ypos + 0.25 * circleRadius, circleRadius * 1.5 , circleRadius * 1.5 )
+    addToolTip(ctx, icon_xpos, icon_ypos, actionMenuHeight, i);
+    } 
   }
 
     
