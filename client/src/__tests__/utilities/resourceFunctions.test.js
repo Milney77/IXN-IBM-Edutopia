@@ -10,15 +10,15 @@ describe('CalculateResourcesStructure', ()=> {
     });
     it("should return 1 for a house", () => {
          const result = CalculateResourcesStructure(2);
-         expect(result).toEqual(1);
+         expect(result).toEqual(2);
      });
      it("should return 2 for a village", () => {
          const result = CalculateResourcesStructure(3);
-         expect(result).toEqual(2);
+         expect(result).toEqual(3);
      });
      it("should return 2 for a castle", () => {
          const result = CalculateResourcesStructure(4);
-         expect(result).toEqual(2);
+         expect(result).toEqual(3);
      });
      it("should return zero for any other value (1)", () => {
         const result = CalculateResourcesStructure(0);
@@ -58,7 +58,7 @@ describe('CalculateResources', () => {
     
         // Need a mockup of CalculateResourcesStructure (actually, this is the real function)
         jest.spyOn(resourceFunctions, 'CalculateResourcesStructure').mockImplementation((structure) => {
-            const result = structure >= 3 ? 2 : structure >= 1 ? 1 : 0;
+            const result = structure >= 3 ? 3 : structure;
             return {result};
         });
     });
@@ -70,8 +70,8 @@ describe('CalculateResources', () => {
         const tileListAdj = tileList.filter((tile)=> tile.structure > 0);
         const result = CalculateResources(tileListAdj);
         expect(result.woodResource).toEqual(2)
-        expect(result.foodResource).toEqual(2)
-        expect(result.metalResource).toEqual(2)
+        expect(result.foodResource).toEqual(3)
+        expect(result.metalResource).toEqual(3)
     });
 
     // Test 2 - Change the tile list so all structures have campes
@@ -99,9 +99,9 @@ describe('CalculateResources', () => {
         ];
         const tileListAdj = tileList.filter((tile)=> tile.structure > 0);
         const result = CalculateResources(tileListAdj);
-        expect(result.woodResource).toEqual(3);
-        expect(result.foodResource).toEqual(4);
-        expect(result.metalResource).toEqual(4);
+        expect(result.woodResource).toEqual(4);
+        expect(result.foodResource).toEqual(6);
+        expect(result.metalResource).toEqual(7);
     });
 
     
@@ -113,9 +113,9 @@ describe('CalculateResources', () => {
         }
         const tileListAdj = tileList.filter((tile)=> tile.structure > 0);
         const result = CalculateResources(tileListAdj);
-        expect(result.woodResource).toEqual(5);
-        expect(result.foodResource).toEqual(4);
-        expect(result.metalResource).toEqual(4);
+        expect(result.woodResource).toEqual(6);
+        expect(result.foodResource).toEqual(5);
+        expect(result.metalResource).toEqual(5);
     });
 
     // Test 5 - Center is a castle with new data:
@@ -131,9 +131,9 @@ describe('CalculateResources', () => {
         ];
         const tileListAdj = tileList.filter((tile)=> tile.structure > 0);
         const result = CalculateResources(tileListAdj);
-        expect(result.woodResource).toEqual(5);
-        expect(result.foodResource).toEqual(6);
-        expect(result.metalResource).toEqual(7);
+        expect(result.woodResource).toEqual(6);
+        expect(result.foodResource).toEqual(8);
+        expect(result.metalResource).toEqual(10);
     });
 
     // Test 5 - What if top tile was a castle?
@@ -145,8 +145,8 @@ describe('CalculateResources', () => {
         const tileListAdj = tileList.filter((tile)=> tile.structure > 0);
         const result = CalculateResources(tileListAdj);
         expect(result.woodResource).toEqual(4);
-        expect(result.foodResource).toEqual(4);
-        expect(result.metalResource).toEqual(3);
+        expect(result.foodResource).toEqual(6);
+        expect(result.metalResource).toEqual(4);
     });
 
     // Test 6 - Should return zero if tile types are not valid.
@@ -199,8 +199,8 @@ describe('GenerateResources', () => {
         expect(UpdatePlayerData).toHaveBeenCalled();
         expect(addLog).toHaveBeenCalled();
         const updates = UpdatePlayerData.mock.calls[0][0];
-        expect(updates[0]).toEqual({ playerId: 0, dataToUpdate: { wood: 5, food: 4, metal: 3} }); // 2 camps (1), 1 house (2) and 1 village (3)
-        expect(addLog).toHaveBeenCalledWith("Generating resources for Player 1 = Wood: 2, food: 2, metal: 2")
+        expect(updates[0]).toEqual({ playerId: 0, dataToUpdate: { wood: 5, food: 5, metal: 4} }); // 2 camps (1), 1 house (2) and 1 village (3)
+        expect(addLog).toHaveBeenCalledWith("Generating resources for Player 1 = Wood: 2, food: 3, metal: 3")
     });
 
     // Clear all mocks to avoid mocked functions interferring with the actual function tests

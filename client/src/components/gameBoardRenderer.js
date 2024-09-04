@@ -17,6 +17,8 @@ export const DrawBoard = (canvas, ctx, images, mapData, playerData, gamePlayData
     // Draw the tiles
     for (let i = 0; i < mapData.length; i++) {
         //drawTile(ctx, boardStructure[rows][cols], rows, cols, tileWidth, tileHeight_full, tileHeight_trim, images);
+        console.log(i);
+        console.log('drawTile:', drawTile);
         drawTile(ctx, mapData[i], images, playerData);
       }
 
@@ -80,7 +82,7 @@ export const DrawBoard = (canvas, ctx, images, mapData, playerData, gamePlayData
 
 
 
-function drawTile(ctx, tileData, images, playerData, canvaswidth) {
+export function drawTile(ctx, tileData, images, playerData, canvaswidth) {
     // Back to black - only need this while I have the grid above.
     ctx.strokeStyle = 'black'
     
@@ -159,7 +161,7 @@ function drawTile(ctx, tileData, images, playerData, canvaswidth) {
   } 
 
 
-function highlightTile(ctx, tileData, images, mapData, playerData, gamePlayData, canvas) {
+export function highlightTile(ctx, tileData, images, mapData, playerData, gamePlayData, canvas) {
     // Hexes that are hovered over
     if (tileData.hover === 1) {
       ctx.beginPath();
@@ -255,7 +257,7 @@ function highlightTile(ctx, tileData, images, mapData, playerData, gamePlayData,
  }
 
 
- function opaqueGreyHex(ctx, tileData) {
+ export function opaqueGreyHex(ctx, tileData) {
       ctx.beginPath();
       for (var j = 0; j < 6; j++) {
         ctx.lineTo(tileData.xHexVert[j], tileData.yHexVert[j]);
@@ -265,7 +267,7 @@ function highlightTile(ctx, tileData, images, mapData, playerData, gamePlayData,
       ctx.fill();
  }
 
-function opaquePlayerColour(ctx, tileData, playerFillCol) {
+export function opaquePlayerColour(ctx, tileData, playerFillCol) {
     ctx.beginPath();
     for (var j = 0; j < 6; j++) {
       ctx.lineTo(tileData.xHexVert[j], tileData.yHexVert[j]);
@@ -276,7 +278,7 @@ function opaquePlayerColour(ctx, tileData, playerFillCol) {
 }
 
 
-function hexToRgba(hex, opacity) {
+export function hexToRgba(hex, opacity) {
   // Remove the hash at the start if it's there
   hex = hex.replace('#', '');
 
@@ -290,7 +292,7 @@ function hexToRgba(hex, opacity) {
 }
 
 
-function DrawActionMenu(canvas, ctx, images, gamePlayData, playerData, actionMenuParams) {
+export function DrawActionMenu(canvas, ctx, images, gamePlayData, playerData, actionMenuParams) {
   const actionMenuWidth = actionMenuParams.width;
   const actionMenuHeight = actionMenuParams.height;
   const actionMenuYOffset = actionMenuParams.yOffset;
@@ -364,7 +366,7 @@ function DrawActionMenu(canvas, ctx, images, gamePlayData, playerData, actionMen
 }
 
 
-function drawCircle(ctx, x, y, rad, colour) {
+export function drawCircle(ctx, x, y, rad, colour) {
     ctx.beginPath();
     ctx.arc(x, y, rad, 0, 2 * Math.PI);
     ctx.strokeStyle = colour;
@@ -372,7 +374,7 @@ function drawCircle(ctx, x, y, rad, colour) {
     ctx.stroke();
 }
 
-function fillCircle(ctx, x, y, rad, colour) {
+export function fillCircle(ctx, x, y, rad, colour) {
   ctx.beginPath();
   ctx.arc(x, y, rad, 0, 2 * Math.PI);
   ctx.strokeStyle = colour;
@@ -380,7 +382,7 @@ function fillCircle(ctx, x, y, rad, colour) {
   ctx.fill();
 }
 
-function addToolTip(ctx, iconx, icony, actionMenuHeight, iconid) {
+export function addToolTip(ctx, iconx, icony, actionMenuHeight, iconid) {
       const padding = 5;
       const actionMenuHelpText = ['Build - Upgrade a structure on your own hex'
                               , 'Develop - Take over an empty adjacent hex'

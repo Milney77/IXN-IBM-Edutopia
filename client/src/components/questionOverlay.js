@@ -41,9 +41,12 @@ const QuestionOverlay = ({ question, onResult }) => {
     const [availableOptions, setAvailableOptions] = useState([]);
 
     useEffect(() => {
+        // Adding in a check because testing needs it
+        if (question?.matchoptions) {
         const shuffled = [...question.matchoptions].map((option, index) => ({ id: index, text: option })).sort(() => Math.random() - 0.5);
         setShuffledMatchOptions(shuffled);
         setAvailableOptions(shuffled);
+        }
       }, [question.matchoptions]);
 
     // Function to handle selection changes.

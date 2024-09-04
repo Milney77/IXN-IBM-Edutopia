@@ -17,7 +17,7 @@ import StarRateOutlinedIcon from '@mui/icons-material/StarRateOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 
 
-function handleButtonClick(addCurrentInstruction, showQuestionOverlay) {
+export function handleButtonClick(addCurrentInstruction, showQuestionOverlay) {
     // Here is where we should trigger the overlay for the skills build question.
     addCurrentInstruction('Player 1 - Answer the Skills Build question');    
     showQuestionOverlay();
@@ -248,7 +248,7 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
 
 
      // Skills Build Question Overlay
-     const [selectedQuestion, setSelectedQuestion] = useState(null);
+    const [selectedQuestion, setSelectedQuestion] = useState(null);
     // This is here as the button that triggers this is in this section too.       
     const [questionOverlayVisible, setQuestionOverlayVisible] = useState(false);
     const showQuestionOverlay = () => {
@@ -385,12 +385,16 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
                     />))}
                
             </Box>
+            
             {questionOverlayVisible && (
                 <QuestionOverlay
                 question = {selectedQuestion}
                 onResult={handleQuestionResult}
+                // Adding a test
+                data-testid="question-overlay"
             />
-        )}
+ )}
+       
     </Box>
     )
 }
@@ -398,4 +402,13 @@ export const PlayerDisplay = ({ images, gameComponents, addLog, addCurrentInstru
 export default PlayerDisplay;
 
     
-    
+    /*
+{questionOverlayVisible && (
+ <QuestionOverlay
+                question = {selectedQuestion}
+                onResult={handleQuestionResult}
+                // Adding a test
+                data-testid="question-overlay"
+            />
+ )}
+    */

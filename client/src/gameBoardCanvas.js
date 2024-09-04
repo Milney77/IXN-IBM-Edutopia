@@ -229,7 +229,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       iconOffset: 0.25,
       iconHover: [0, 0, 0, 0, 0, 0]
     };
-    //console.log(newActionMenuParams);
+    console.log(newActionMenuParams);
     setActionMenuParams(newActionMenuParams);
   }, [boardData, gamePlayData.numberPlayers, width, height]);
 

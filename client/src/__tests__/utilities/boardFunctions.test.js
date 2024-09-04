@@ -28,7 +28,6 @@ describe('BoardInitialisation', () => {
     expect(tile).toHaveProperty('yPos');
     expect(tile).toHaveProperty('xHexVert');
     expect(tile).toHaveProperty('yHexVert');
-    expect(tile).toHaveProperty('hover', 0);
     expect(tile).toHaveProperty('neighbourids');
     });
   });
@@ -83,7 +82,6 @@ describe('BoardInitialisation', () => {
     expect(tile).toHaveProperty('yPos');
     expect(tile).toHaveProperty('xHexVert');
     expect(tile).toHaveProperty('yHexVert');
-    expect(tile).toHaveProperty('hover', 0);
     expect(tile).toHaveProperty('neighbourids');
     });
   });

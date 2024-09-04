@@ -7,19 +7,22 @@ module.exports = {
         setupFilesAfterEnv: ['<rootDir>/client/src/setupTests.js'],
         moduleFileExtensions: ['js', 'jsx'],
         transform: {
-          '^.+\\.[tj]sx?$': 'babel-jest'
+          '^.+\\.[tj]sx?$': 'babel-jest',
         },
-        transformIgnorePatterns: ['/node_modules/'],
+        transformIgnorePatterns: [   "/node_modules/(?!(@mui|react-dnd|react-dnd-html5-backend|lodash-es|other-module)/)" ],
+        moduleNameMapper: {
+          '\\.(css|less|scss|sass)$': '<rootDir>/client/src/__mocks__/mockCSS.js',
+        },
       },
       {
         displayName: 'server',
         testEnvironment: 'node',
-        testMatch: ['<rootDir>/server/src/**/__tests__/**/*.(spec|test).[jt]s?(x)'],
+        testMatch: ['<rootDir>/server/**/__tests__/**/*.(spec|test).[jt]s?(x)'],
         moduleFileExtensions: ['js'],
         transform: {
           '^.+\\.[tj]sx?$': 'babel-jest'
         },
-        transformIgnorePatterns: ['/node_modules/'],
+        transformIgnorePatterns: [ "/node_modules/(?!(@mui|react-dnd|react-dnd-html5-backend|some-other-esm-library)/)"],
       },
       {
         displayName: 'integration',
@@ -29,7 +32,7 @@ module.exports = {
         transform: {
           '^.+\\.[tj]sx?$': 'babel-jest'
         },
-        transformIgnorePatterns: ['/node_modules/'],
+        transformIgnorePatterns: [ "/node_modules/(?!(@mui|react-dnd|react-dnd-html5-backend|some-other-esm-library)/)"],
       }
     ]
   };

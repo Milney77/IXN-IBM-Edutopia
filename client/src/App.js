@@ -246,7 +246,7 @@ function App() {
       {/* Login overlay */}
       {showLogin && <LoginOverlay handleClose={() => setShowLogin(false)} handleLogin={handleLogin} message={message}/>}
       
-       
+        <Button onClick={showData}>SHOW DATA</Button>
         </>
         </DimensionsProvider>
         </DndProvider>

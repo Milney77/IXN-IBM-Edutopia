@@ -91,7 +91,7 @@ describe('ComputerRankActions', () => {
 
     // Call the function
     const result = ComputerRankActions(boardData, mapData, playerData, gamePlayData);
-    console.log(result)
+    //console.log(result)
 
     // Assertions
 

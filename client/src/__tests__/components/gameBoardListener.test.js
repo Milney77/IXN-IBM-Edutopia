@@ -1,24 +1,24 @@
-import { isPointInPolygon, checkMouseInHex, mouseXY_to_HexID} from '../../components/gameBoardListener';
+import { isPointInHex, checkMouseInHex, mouseXY_to_HexID} from '../../components/gameBoardListener';
 
 
 
-describe('isPointInPolygon', () => {
+describe('isPointInHex', () => {
     // Test 1 - Testing points within a square
     it("Testing a square polygon", () => {
         const verticies = [[0, 0], [0, 20], [20, 20], [20, 0]];
         // True cases
-        expect(isPointInPolygon([0 , 0 ], verticies)).toEqual(true);
-        expect(isPointInPolygon([5 , 5 ], verticies)).toEqual(true);
-        expect(isPointInPolygon([15, 5 ], verticies)).toEqual(true);
-        expect(isPointInPolygon([19, 0 ], verticies)).toEqual(true);
-        expect(isPointInPolygon([19, 19], verticies)).toEqual(true);
+        expect(isPointInHex([0 , 0 ], verticies)).toEqual(true);
+        expect(isPointInHex([5 , 5 ], verticies)).toEqual(true);
+        expect(isPointInHex([15, 5 ], verticies)).toEqual(true);
+        expect(isPointInHex([19, 0 ], verticies)).toEqual(true);
+        expect(isPointInHex([19, 19], verticies)).toEqual(true);
         
         // False Cases
-        expect(isPointInPolygon([20 , 0 ], verticies)).toEqual(false);
-        expect(isPointInPolygon([-1, 0 ], verticies)).toEqual(false);
-        expect(isPointInPolygon([1, 22], verticies)).toEqual(false);
-        expect(isPointInPolygon([20, 20], verticies)).toEqual(false);
-        expect(isPointInPolygon([21, 23], verticies)).toEqual(false);
+        expect(isPointInHex([20 , 0 ], verticies)).toEqual(false);
+        expect(isPointInHex([-1, 0 ], verticies)).toEqual(false);
+        expect(isPointInHex([1, 22], verticies)).toEqual(false);
+        expect(isPointInHex([20, 20], verticies)).toEqual(false);
+        expect(isPointInHex([21, 23], verticies)).toEqual(false);
         
     });
 
@@ -26,17 +26,17 @@ describe('isPointInPolygon', () => {
     it("Testing a hexagonal polygon", () => {
         const verticies = [[10, 0], [20, 5], [20, 25], [10, 30], [0, 25], [0, 20]];
         // True cases
-        expect(isPointInPolygon([10, 10], verticies)).toEqual(true);
-        expect(isPointInPolygon([10, 20], verticies)).toEqual(true);
-        expect(isPointInPolygon([10, 29], verticies)).toEqual(true);
-        expect(isPointInPolygon([10, 24], verticies)).toEqual(true);
+        expect(isPointInHex([10, 10], verticies)).toEqual(true);
+        expect(isPointInHex([10, 20], verticies)).toEqual(true);
+        expect(isPointInHex([10, 29], verticies)).toEqual(true);
+        expect(isPointInHex([10, 24], verticies)).toEqual(true);
         
         // False Cases
-        expect(isPointInPolygon([0 , 0 ], verticies)).toEqual(false);
-        expect(isPointInPolygon([20, 4 ], verticies)).toEqual(false);
-        expect(isPointInPolygon([28, 28], verticies)).toEqual(false);
-        expect(isPointInPolygon([28, 3 ], verticies)).toEqual(false);
-        expect(isPointInPolygon([25, 20], verticies)).toEqual(false);
+        expect(isPointInHex([0 , 0 ], verticies)).toEqual(false);
+        expect(isPointInHex([20, 4 ], verticies)).toEqual(false);
+        expect(isPointInHex([28, 28], verticies)).toEqual(false);
+        expect(isPointInHex([28, 3 ], verticies)).toEqual(false);
+        expect(isPointInHex([25, 20], verticies)).toEqual(false);
 
     });
 
@@ -44,17 +44,17 @@ describe('isPointInPolygon', () => {
 
 
 describe('checkMouseInHex ', () => {
-    let originalIsPointInPolygon;
+    let originalisPointInHex;
 
-    // Save the original implementation of isPointInPolygon
+    // Save the original implementation of isPointInHex
     beforeAll(() => {
-        originalIsPointInPolygon = isPointInPolygon;
+        originalisPointInHex = isPointInHex;
     });
 
     let tileData;
     beforeEach(() => {
-        // Mock isPointInPolygon for these tests
-        jest.spyOn(require('../../components/gameBoardListener'), 'isPointInPolygon').mockImplementation((point, vertices) => {
+        // Mock isPointInHex for these tests
+        jest.spyOn(require('../../components/gameBoardListener'), 'isPointInHex').mockImplementation((point, vertices) => {
             return true;
         });
 
@@ -100,7 +100,7 @@ describe('checkMouseInHex ', () => {
 
     afterEach(() => {
         // Restore the original implementation after each test
-        require('../../components/gameBoardListener').isPointInPolygon.mockRestore();
+        require('../../components/gameBoardListener').isPointInHex.mockRestore();
     });
 
     it('should return the correct id for different points', () => {
@@ -122,7 +122,7 @@ describe('checkMouseInHex ', () => {
 
     afterAll(() => {
         // Restore the original implementation after all tests
-        require('../../components/gameBoardListener').isPointInPolygon = originalIsPointInPolygon;
+        require('../../components/gameBoardListener').isPointInHex = originalisPointInHex;
     });
 
 });
@@ -168,6 +168,8 @@ describe('mouseXY_to_HexID', () => {
   const tilesHOffset = 1;
   const tilesVOffset = 0.25
   const actionMenuParams = {
+    "screenwidthCanvas": 1920,
+    "screenwidthDimContext": 1920,
     "width": 346,
     "height": 69,
     "playerBoxWidth": 692,
