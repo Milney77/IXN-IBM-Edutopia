@@ -1,8 +1,8 @@
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+//const { PrismaClient } = require('@prisma/client');
+const prisma = require('../prismaClient');
 const router = express.Router();
-
-const prisma = new PrismaClient();
+//const prisma = new PrismaClient();
 
 // Get the courses
 router.get('/', async (req, res) => {
@@ -13,9 +13,19 @@ router.get('/', async (req, res) => {
     const { includeind } = req.query;
     // Query now defaults to only returning course lists where includeind === 1, unless otherwise stated.
     const courseList = await prisma.courselist.findMany({
-          where: includeind === 'all' 
-                ? {}
-                : { includeind: 1 } ,  
+      where: {
+        // If includeind is 'all' then no filtering is applied
+        ...(includeind !== 'all' && {
+          // Course has been flagged as to be included.
+          includeind: 1,  
+          // Ensure there is at least one question with quiznumber === 1
+          questions: {
+            some: {
+              quiznumber: 1
+            }
+          }
+        })
+      },  
       });
       res.json(courseList);
 

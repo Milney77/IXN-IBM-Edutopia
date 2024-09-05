@@ -222,13 +222,13 @@ const MainMenu = ({ startGame }) => {
 
         return (
         <>
-          <Grid item xs={1} sx={{padding:'0rem'}}>
+          <Grid item xs={3} lg={1} sx={{padding:'0rem'}}>
             <Typography variant='h6' sx={{fontSize:`${customFontSize*0.75}rem`}}>
                   {playerNumber}
               </Typography>
           </Grid>
 
-          <Grid item xs={1}>
+          <Grid item xs={3} lg={1}>
             <Checkbox
                 checked={player.compPlayer === 0}
                 onChange={handlePlayerCompChange}
@@ -236,7 +236,7 @@ const MainMenu = ({ startGame }) => {
               />
           </Grid>
 
-          <Grid item xs={2}>
+          <Grid item xs={6} lg={2}>
             <FormControl fullWidth sx={{paddingX:'1rem'}} >
               <Select
                 labelId={`colour-label-${idx}`}
@@ -271,12 +271,12 @@ const MainMenu = ({ startGame }) => {
 
           {player.compPlayer === 0 ? (
             <>
-            <Grid item xs={2.5}>
+            <Grid item xs={4} lg={2.5}>
               <Typography variant="h6" align='left'sx={{fontSize:`${customFontSize*0.75}rem`, paddingLeft: `${customFontSize*0.75}rem`}}>
                   Name (25 char limit):
               </Typography>
             </Grid>
-            <Grid item xs={5.5}>
+            <Grid item xs={8} lg={5.5}>
               <Tooltip title = "Enter a player name here (max of 25 characters)">
               <TextField
               fullWidth
@@ -306,7 +306,7 @@ const MainMenu = ({ startGame }) => {
             
             ) : 
             <>
-            <Grid item xs={1}>
+            <Grid item xs={2} lg={1.5}>
                 <Tooltip title={
                     <div>
                       How many free resources does the computer player get each turn?
@@ -320,7 +320,7 @@ const MainMenu = ({ startGame }) => {
                   </Typography>
                 </Tooltip>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={3} lg={2}>
               <FormControl fullWidth sx={{ marginX: `${customFontSize*0.5}rem`}}>
                 <Select
                   labelId={`difficulty-label-${idx}`}
@@ -342,9 +342,9 @@ const MainMenu = ({ startGame }) => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={1}></Grid>
+            <Grid item xs={1} lg={0.5}></Grid>
 
-            <Grid item xs={1}>
+            <Grid item xs={2} lg={1.5}>
             <Tooltip title={
                     <div>
                       What is the computer behaviour?
@@ -358,7 +358,7 @@ const MainMenu = ({ startGame }) => {
                 </Typography>
                 </Tooltip>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={3} lg={2}>
               <FormControl fullWidth sx={{ }}>
                 <Select
                   value={player.strat}
@@ -379,7 +379,7 @@ const MainMenu = ({ startGame }) => {
                 </Select>
               </FormControl>
               </Grid>
-              <Grid item xs={1}></Grid>
+              <Grid item xs={1} lg={0.5}></Grid>
             </>
           }
         
@@ -461,7 +461,7 @@ const MainMenu = ({ startGame }) => {
             Select Board
         </Typography>
     </Grid>
-    <Grid item xs={12} sm={8}>
+    <Grid item xs={12} lg={8}>
       <Box display="flex" alignItems="center" justifyContent="center" >
         <IconButton onClick={handleBoardLeftClick} size="large" sx={{color:'white'}}>
           <ArrowBack fontSize="inherit" color='white'/>
@@ -483,7 +483,7 @@ const MainMenu = ({ startGame }) => {
         </IconButton>
       </Box>
     </Grid>
-    <Grid item xs={10} sm={4} alignSelf="flex-start">
+    <Grid item xs={10} lg={4} alignSelf="flex-start">
       
       <TableContainer sx={{
           backgroundImage: 'url(/images/other/background_lightfabric.jpg)',

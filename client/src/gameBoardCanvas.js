@@ -529,7 +529,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
         />
       )}
 
-      <Button onClick={testEnd}>END GAME</Button>
+      
     </Box>
   );
 };

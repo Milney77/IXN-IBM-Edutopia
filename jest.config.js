@@ -19,24 +19,12 @@ module.exports = {
         testEnvironment: 'node',
         testMatch: ['<rootDir>/server/**/__tests__/**/*.(spec|test).[jt]s?(x)'],
         moduleFileExtensions: ['js'],
-        transform: {
-          '^.+\\.[tj]sx?$': 'babel-jest'
-        },
-        transformIgnorePatterns: [ "/node_modules/(?!(@mui|react-dnd|react-dnd-html5-backend|some-other-esm-library)/)"],
+        transform: {},
+        transformIgnorePatterns: [ "/node_modules/"],
+        //transform: {'^.+\\.[tj]sx?$': 'babel-jest'},
+        //transformIgnorePatterns: [ "/node_modules/(?!(@mui|react-dnd|react-dnd-html5-backend|some-other-esm-library)/)"],
       },
-      {
-        displayName: 'integration',
-        testEnvironment: 'node',
-        testMatch: ['<rootDir>/tests/integration/**/*.(spec|test).[jt]s?(x)'],
-        moduleFileExtensions: ['js'],
-        transform: {
-          '^.+\\.[tj]sx?$': 'babel-jest'
-        },
-        transformIgnorePatterns: [ "/node_modules/(?!(@mui|react-dnd|react-dnd-html5-backend|some-other-esm-library)/)"],
-      }
     ]
   };
 
   
-// Debugging
-console.log('Jest Config Loaded: Using babel-jest for transformation');

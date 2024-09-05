@@ -4,7 +4,6 @@ import { resourceCosts } from '../constants/constants';
 // Rending the board
 const structureSizeRatio = 0.4;
 
-
 export const DrawBoard = (canvas, ctx, images, mapData, playerData, gamePlayData, actionMenuParams) => {
 
     // Clear board
@@ -17,8 +16,6 @@ export const DrawBoard = (canvas, ctx, images, mapData, playerData, gamePlayData
     // Draw the tiles
     for (let i = 0; i < mapData.length; i++) {
         //drawTile(ctx, boardStructure[rows][cols], rows, cols, tileWidth, tileHeight_full, tileHeight_trim, images);
-        console.log(i);
-        console.log('drawTile:', drawTile);
         drawTile(ctx, mapData[i], images, playerData);
       }
 

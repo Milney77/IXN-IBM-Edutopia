@@ -20,7 +20,6 @@ const questionResponsesRouter = require('./routes/extractQuestionResponses.js')
 const updateQuestionResponsesRouter = require('./routes/updateQuestionResponses.js')
 const usersRouter = require('./routes/extractUsers.js')
 
-
 // Use the routes
 app.use('/questions', questionsRouter);
 app.use('/courselist', courseListRouter);
@@ -28,11 +27,8 @@ app.use('/responses', questionResponsesRouter);
 app.use('/postresponses', updateQuestionResponsesRouter);
 app.use('/users', usersRouter)
 
-
 // Get all the images in the badges folder
 const badgesPath = path.join(__dirname, '../client/public/images/badges');
-console.log('Serving badges from:', badgesPath);
-
 app.use('/badges', express.static(badgesPath));
 app.use('/api', badgesRouter); 
 

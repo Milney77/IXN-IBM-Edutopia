@@ -29,14 +29,10 @@ async function main() {
     });
 
     // Users - Needs some special treatment for hashing passwords.
-     const users = [
+    const users = [
             {
             username: 'IBM',
-            password: '123456'
-            },
-            {
-            username: 'IBM2',
-            password: '123456',
+            password: '$2b$10$9rJedEEG1rf32kApO6ZheuN5K08bOULmtI8c5TOX3UiI9MBf91ND2'
             },
         ];
     const saltRounds = 10;
@@ -49,7 +45,7 @@ async function main() {
     );
     // Create the users in the database
     await prisma.users.createMany({
-        data: hashedUsers
+        data: password
     });
 
     

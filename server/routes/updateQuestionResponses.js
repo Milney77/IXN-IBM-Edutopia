@@ -1,8 +1,6 @@
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../prismaClient');
 const router = express.Router();
-
-const prisma = new PrismaClient();
 
 router.post('/', async (req, res) => {
   // Get the question data from the gameBoardCanvas

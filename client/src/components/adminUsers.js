@@ -62,6 +62,12 @@ const UsersPage = ({customFontSize}) => {
     setNewPasswordError('');
     setNewConfirmPasswordError('');
 
+    // Username cannot already exist
+    if (users.some((user) => user.username === newUser.username)) {
+      setNewUserNameError('Username already taken');
+      isValid = false;
+    }
+
     // Username cannot be empty
     if (newUser.username.trim() === '') {
         setNewUserNameError('Username is required');
@@ -143,6 +149,9 @@ const UsersPage = ({customFontSize}) => {
       <Button variant="contained" color="primary" onClick={() => setShowAddUserForm(true)}>
         Add User
       </Button>
+      <Button onClick={()=>console.log(users)} color="secondary" autoFocus>
+        Show Data
+      </Button>
 
       {/* Add User Form */}
       {showAddUserForm && (
@@ -207,6 +216,8 @@ const UsersPage = ({customFontSize}) => {
           <Button onClick={handleDeleteUser} color="secondary" autoFocus>
             Delete
           </Button>
+
+          
         </DialogActions>
       </Dialog>
 

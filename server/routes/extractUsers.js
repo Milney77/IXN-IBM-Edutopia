@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+//const { PrismaClient } = require('@prisma/client');
+const prisma = require('../prismaClient');
 const router = express.Router();
-
-const prisma = new PrismaClient();
+//const prisma = new PrismaClient();
 
 // Get the users
 router.get('/', async (req, res) => {
@@ -91,14 +91,13 @@ router.post('/login', async (req, res) => {
 
     if (users.length === 0) {
       // If no users with the provided username are found, return a 401 Unauthorized
-      return res.status(401).json({ error: 'Invalid username' });
+      return res.status(401).json({ error: 'Invalid Username or Password' });
     }
     
     // Iterate over the users (as username doesn't have to be unique)
     let user = null;
     // Using a for loop because forEach may not work with bcrypt (which is asynchronous)
     for (const u of users) {
-      console.log(password, u.password);
       const isPasswordValid = await bcrypt.compare(password, u.password);
       if (isPasswordValid) {
         user = u;
@@ -108,7 +107,7 @@ router.post('/login', async (req, res) => {
 
     if (!user) {
       // If no user with the matching password is found, return a 401 Unauthorized
-      return res.status(401).json({ error: 'Invalid password' });
+      return res.status(401).json({ error: 'Invalid Username or password' });
     }
 
     // If a user with the correct username and password is found, return success

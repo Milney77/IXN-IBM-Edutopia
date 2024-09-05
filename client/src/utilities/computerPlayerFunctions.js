@@ -38,6 +38,7 @@ export const calculateResourceRatiosWithAdd = (resources, resourceToAdd, valueTo
 }
 
 // Function for choosing the best resource (after working out what resources are needed based on possible actions)
+// NO LONGER USED, but kept in case I want to go back to it.
 export const CalculateBestResourceOrig = (resources, strategy) => {
     const targetRatios = aiparameters.find(param => param.strat === strategy).resourceRatios;
     const currRatio  = calculateResourceRatiosWithAdd(resources, 'none', 0 );

@@ -24,6 +24,7 @@ function calculateFontSize (maxTextLength, baseFontSize, screenWidth) {
 
 const QuestionOverlay = ({ question, onResult }) => {
 
+    console.log(question);
     // Create some states that are used for various purposes
     // For selection options
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -40,9 +41,11 @@ const QuestionOverlay = ({ question, onResult }) => {
     const [shuffledMatchOptions, setShuffledMatchOptions] = useState([]);
     const [availableOptions, setAvailableOptions] = useState([]);
 
+
+    
     useEffect(() => {
-        // Adding in a check because testing needs it
-        if (question?.matchoptions) {
+        // Adding in a check because testing needs
+        if (question.matchoptions.length > 1) {
         const shuffled = [...question.matchoptions].map((option, index) => ({ id: index, text: option })).sort(() => Math.random() - 0.5);
         setShuffledMatchOptions(shuffled);
         setAvailableOptions(shuffled);
@@ -192,11 +195,12 @@ const QuestionOverlay = ({ question, onResult }) => {
                                         type={question.optionstoselect === 1 ? 'radio' : 'checkbox'}
                                         name="options"
                                         value={index}
+                                        id={`option-${index}`}  // Adding this to allow the label to trigger the handleOptionChange function
                                         checked={selectedOptions.includes(index.toString())}
                                         onChange={handleOptionChange}
                                         style={{ marginTop: `${optionFontSize*0.5}rem`, height: `${optionFontSize}rem` }}
                                     />
-                                    <label>
+                                    <label htmlFor={`option-${index}`}>
                                         <Typography variant='h6' align='left' sx={{fontSize:`${optionFontSize}rem`, marginLeft: '0.5rem'}}>
                                              {<span>
                                              <b>{alphabet[index]}:  </b>{option}

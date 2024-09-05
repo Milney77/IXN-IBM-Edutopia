@@ -42,7 +42,7 @@ export const DimensionsProvider = ({ children }) => {
     };
   }, [updateDimensions]);
 
-  // Export.
+  // Make the dimensions state variable accessible by all child components.
   return (
     <DimensionsContext.Provider value={dimensions}>
       {children}

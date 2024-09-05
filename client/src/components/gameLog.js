@@ -13,14 +13,14 @@ const GameLog = ({ currentInstruction, log, exitToTitle }) => {
   
 
   // Set the font size (in rem)
-  const [customFontSize, setCustomFontSize] = useState(2);
+  const [customFontSize, setCustomFontSize] = useState(2.5 * width / 1920);
 
   // Dynamically update font size as the screen width changes
   useEffect(() => {
     //console.log('GameLog resizing to : ', width, 'x', height);
     const calculateFontSize = () => {
       const baseFontSize = 2.5;
-      const scaleFactor = width / 1920; // Adjust this divisor to control scaling
+      const scaleFactor = width / 1920; 
       return baseFontSize * scaleFactor;
     };
     setCustomFontSize(calculateFontSize());

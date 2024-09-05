@@ -25,13 +25,13 @@ export function handleButtonClick(addCurrentInstruction, showQuestionOverlay) {
 
 export const calculateFontSizeAndMargin = (playerInfoWidth, setCustomFontSize, setCustomMargin) => {
     // Size is based on screen width & number of players
-    let newFontSize = Math.min(1.5, Math.max(0.25, 0.25 + 0.25 * Math.floor((playerInfoWidth)/100)));
-    let newMargin = Math.min(1.5, Math.max(0, 0.25 * Math.floor((playerInfoWidth - 100)/100)));
+    //const newFontSize = 1.5 * playerInfoWidth / 960;
+    const newFontSize = Math.min(1.5, Math.max(0.25, 0.25 + 0.25 * Math.floor((playerInfoWidth)/100)));
+    const newMargin = Math.min(1.5, Math.max(0, 0.25 * Math.floor((playerInfoWidth - 100)/100)));
     //console.log('playerInfoWidth:', playerInfoWidth, ', newFontSize:', newFontSize);
-  setCustomFontSize(newFontSize);
-  setCustomMargin(newMargin);
+    setCustomFontSize(newFontSize);
+    setCustomMargin(newMargin);
     //console.log('Font: ', newFontSize, ', Margin: ', newMargin)
-
 };
 
 // Some code to create 'pulsing' animation behind the picture for the current player
