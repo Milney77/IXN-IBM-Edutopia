@@ -22,7 +22,7 @@ import LoginOverlay from './components/loginOverlay';
 import GameBoardCanvas from './gameBoardCanvas';
 import PlayerDisplay from './components/playerDisplay';
 import GameLog from './components/gameLog';
-
+import HowToPlayOverlay from './components/howToPlayOverlay.js'
 
 
 function App() {
@@ -42,7 +42,8 @@ function App() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [userList, setUserList] = useState([]);
- 
+  const [showHowToGuide, setShowHowToGuide] = useState(false); 
+
   // Set initial values for game components
   const gameComponents = useGameComponents();
   const {boardData, mapData, playerData, gamePlayData, questionData, InitBoardData, InitPlayerData, InitGamePlayData, UpdateMapData, UpdateGamePlayData, UpdateQuestions } = gameComponents; 
@@ -142,6 +143,13 @@ function App() {
     setShowAdmin(false);
   }
 
+  const handleHowToOpen = () => {
+    console.log('Open How to guide')
+    setShowHowToGuide(true);
+  }
+  const handleHowToClose = () => {
+    setShowHowToGuide(false);
+  }
   
   // Handle login function
   const [message, setMessage] = useState('');
@@ -222,6 +230,8 @@ function App() {
           currentInstruction = {currentInstruction}
           log={log}
           exitToTitle={exitToTitle}
+          handleHowToOpenClick={handleHowToOpen}
+          handleHowToCloseClick={handleHowToClose}
           />
         </>
         ) : 
@@ -240,13 +250,16 @@ function App() {
               handleResumeGameClick={handleResumeGameClick}
               canResume={canResume}
               handleAdminClick={handleAdminClick}
+              handleHowToOpenClick={handleHowToOpen}
               />
       }
 
       {/* Login overlay */}
       {showLogin && <LoginOverlay handleClose={() => setShowLogin(false)} handleLogin={handleLogin} message={message}/>}
       
-        <Button onClick={showData}>SHOW DATA</Button>
+      {/* How to Guide overlay */}
+      {showHowToGuide && <HowToPlayOverlay handleHowToClose={handleHowToClose}/>}
+        
         </>
         </DimensionsProvider>
         </DndProvider>
@@ -260,13 +273,9 @@ export default App;
 
 
 /*
-
-
-    
-       <div display='flex'>
-       <Button variant='contained' onClick={showData} sx={{marginTop:'1rem' , width:'10rem'}}>SHOW DATA</Button>
-     </div>
-
-            
-
+CODE GRAVEYEARD
+-- to be resurrected as needed
+<div display='flex'>
+  <Button variant='contained' onClick={showData} sx={{marginTop:'1rem' , width:'10rem'}}>SHOW DATA</Button>
+</div>
 */

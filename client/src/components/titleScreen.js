@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { DimensionsContext } from './dimensionsContext';
 import { Typography, Box, Stack, Button } from '@mui/material';
 
-const TitleMenu = ({ handleNewGameClick, handleResumeGameClick, canResume, handleAdminClick }) => {
+const TitleMenu = ({ handleNewGameClick, handleResumeGameClick, canResume, handleAdminClick, handleHowToOpenClick }) => {
 
     const { width, height } = useContext(DimensionsContext);
     const [customFontSize, setCustomFontSize] = useState(1);
@@ -21,7 +21,7 @@ const TitleMenu = ({ handleNewGameClick, handleResumeGameClick, canResume, handl
       };
       calculateFontSize();
     }, [width, height]);
-    console.log('W:', width, ', H:', height, ', Font:', customFontSize, ', Margin:', customMargin);
+    //console.log('W:', width, ', H:', height, ', Font:', customFontSize, ', Margin:', customMargin);
     const TileBox = ({ imageref, textref, top, bottom, left, right }) => {
       return (
         <Box
@@ -116,7 +116,7 @@ const TitleMenu = ({ handleNewGameClick, handleResumeGameClick, canResume, handl
           <Box sx={{ marginTop: '1rem', marginBottom: '2rem' }}>
             <Button
               variant="contained"
-              onClick={()=>console.log('Click')}
+              onClick={handleHowToOpenClick}
               sx={{marginTop: '1rem', padding: '1rem 2rem', borderRadius: '20px', border: '2px solid rgb(25, 118, 210)', textTransform: 'none',
                 fontFamily: 'Copperplate, Papyrus, fantasy',
                 '&:disabled': {
@@ -131,7 +131,6 @@ const TitleMenu = ({ handleNewGameClick, handleResumeGameClick, canResume, handl
             </Button>
           </Box>
         </Stack>
-
         </Box>
       </Box>
 

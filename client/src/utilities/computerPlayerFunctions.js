@@ -49,8 +49,8 @@ export const CalculateBestResourceOrig = (resources, strategy) => {
     const foodDiff  = calculateResourcesRatio(targetRatios, currRatio, foodRatio).newScore;
     const metalDiff = calculateResourcesRatio(targetRatios, currRatio, metalRatio).newScore;
     const minDiff = Math.min(woodDiff, foodDiff, metalDiff);
-    console.log('current:', currRatio, ', wood:', woodRatio, ', food:', foodRatio, ', metal:', metalRatio)
-    console.log('wood:', woodDiff, ', food:', foodDiff, ', metal:', metalDiff, ', min: ', minDiff);
+    //console.log('current:', currRatio, ', wood:', woodRatio, ', food:', foodRatio, ', metal:', metalRatio)
+    //console.log('wood:', woodDiff, ', food:', foodDiff, ', metal:', metalDiff, ', min: ', minDiff);
     if (minDiff === woodDiff) {
         return 'wood';
     } else if (minDiff === foodDiff) {
@@ -102,7 +102,7 @@ export const calculateTakeOverRisk = (tiledata, mapData, currentPlayer) => {
     // that hex is as risk of being taken over
     if (tiledata.structure === 4 || tiledata.startSquare === (currentPlayer + 1)) {
       // Tile either has a castle on it, or is the player's starting square.  No risk.
-      return [[], 0, 0];  
+      return [[], 0];  
     } else {
       // Go through all the neighbours:
       if (tiledata.neighbourids) {
@@ -125,19 +125,16 @@ export const calculateTakeOverRisk = (tiledata, mapData, currentPlayer) => {
       
       const playerStrength = playerStructStrength[(currentPlayer+1)];
       // Now get counts for the number of players with a structure strength equal to, and greater than the current player
-      let equalStrengthCount = 0;
-      let greaterStrengthCount = 0;
+      let equalorgreaterStrengthCount = 0;
       Object.entries(playerStructStrength).forEach(([player, strength]) => {
         if (parseInt(player) !== (currentPlayer + 1)) {
-          if (strength === playerStrength) {
-            equalStrengthCount += 1;
-          } else if (strength > playerStrength) {
-            greaterStrengthCount += 1;
+          if (strength >= playerStrength) {
+            equalorgreaterStrengthCount += 1;
           }
         }
       });
 
-      return [playerStructStrength, equalStrengthCount, greaterStrengthCount];
+      return [playerStructStrength, equalorgreaterStrengthCount];
     }
    
   }
@@ -258,7 +255,17 @@ export const calculateTakeOverRisk = (tiledata, mapData, currentPlayer) => {
        
       const w4_resourcesRatio = Math.min(1, Math.max(-1, 1 - (action.scoreResourceRatioChange.newScore * 1) ));
 
-      const w5_takeoverRisk1 = (action.takeOverRisk_prebuild[1] > 0 && action.takeOverRisk_pstbuild[2] === 0) ? -1 : (action.takeOverRisk_pstbuild[2] > 0 ? -2 : 0)
+      let w5_takeoverRisk1;
+      if (action.action !== 'build') {
+        // Check the risk that this new settlement will be taken over
+        w5_takeoverRisk1 =  action.takeOverRisk_pstbuild[1] > 0 ? -2 : 
+                            (action.takeOverRisk_prebuild[1] > 0 && action.takeOverRisk_pstbuild[1] === 0) ? -1 : 0;
+      } else {
+        // Check if the build action will help prevent a takeover 
+        w5_takeoverRisk1 =  action.takeOverRisk_pstbuild[1] > 0 ? 4 : 
+                            action.takeOverRisk_prebuild[1] > 0 ? 2 : 0;
+      }
+                                
 
       const w6_actionType = action.action === 'takeover' ? 3 : action.action === 'build' ? buildWeight : expandWeight;
 
@@ -359,7 +366,7 @@ export const calculateTakeOverRisk = (tiledata, mapData, currentPlayer) => {
         UpdatePlayerData(playerDataUpdates);
         // Update the board data
         UpdateMapData(hexid, 'currentOwner', (currentPlayer + 1));
-        UpdateMapData(hexid, 'structure', Math.max(1, mapData[hexid].structure - 1));
+        UpdateMapData(hexid, 'structure', 1);
         // Add to log
         logTxt = 'Player ' + (currentPlayer + 1) + ' has taken over hex ' + hexid;
         addLog(logTxt);

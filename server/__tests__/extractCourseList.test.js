@@ -83,7 +83,7 @@ jest.mock('../prismaClient', () => {
   });
 
   // DELETE
-  it('should delete a course by ID', async () => {
+  it('D - should delete a course by ID', async () => {
     
     prismaMock.courselist.delete.mockResolvedValue({});
   

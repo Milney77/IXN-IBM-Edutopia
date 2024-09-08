@@ -463,9 +463,11 @@ const MainMenu = ({ startGame }) => {
     </Grid>
     <Grid item xs={12} lg={8}>
       <Box display="flex" alignItems="center" justifyContent="center" >
-        <IconButton onClick={handleBoardLeftClick} size="large" sx={{color:'white'}}>
-          <ArrowBack fontSize="inherit" color='white'/>
-        </IconButton>
+        <Tooltip title="Previous Map">
+          <IconButton onClick={handleBoardLeftClick} size="large" sx={{color:'white'}}>
+            <ArrowBack fontSize="inherit" color='white'/>
+          </IconButton>
+        </Tooltip>
         <Box sx={{
             width: '70%',
             display: 'flex',
@@ -478,9 +480,11 @@ const MainMenu = ({ startGame }) => {
             sx={{objectFit: 'contain', width: '100%', height: '100%' }}
             ></Box>
         </Box>
+        <Tooltip title="Next Map">
         <IconButton onClick={handleBoardRightClick} size="large" sx={{color:'white'}}>
           <ArrowForward fontSize="inherit" />
         </IconButton>
+        </Tooltip>
       </Box>
     </Grid>
     <Grid item xs={10} lg={4} alignSelf="flex-start">
@@ -503,7 +507,9 @@ const MainMenu = ({ startGame }) => {
 
             <TableRow>
               <TableCell>
-                <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>Max Players</Typography>
+                <Tooltip title="Maximum number of players allowed for this map">
+                  <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>Max Players</Typography>
+                </Tooltip>
               </TableCell>
               <TableCell align="center">
                 <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>{ boardData.maxPlayers }</Typography>
@@ -512,7 +518,9 @@ const MainMenu = ({ startGame }) => {
 
             <TableRow>
               <TableCell>
+                <Tooltip title="The victory point target needed to reach EDUTOPIA and win the game!">
                 <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>Victory Points</Typography>
+                </Tooltip>
               </TableCell>
               <TableCell align="center">
                 <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>{ boardData.victoryPoints }</Typography>
@@ -521,7 +529,9 @@ const MainMenu = ({ startGame }) => {
 
             <TableRow>
               <TableCell>
+              <Tooltip title="Maximum number of villages and castles that are allowed per player">
                 <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>Max Villages / Castles</Typography>
+                </Tooltip>
               </TableCell>
               <TableCell align="center">
                 <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>{ boardData.maxVillages + ' / ' + boardData.maxCastles }</Typography>
@@ -530,7 +540,9 @@ const MainMenu = ({ startGame }) => {
 
             <TableRow>
               <TableCell>
+                <Tooltip title="Minimum number of skills build courses required to be selected for this map.">
                 <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>Min Courses to Include</Typography>
+                </Tooltip>
               </TableCell>
               <TableCell align="center">
                 <Typography sx={{fontSize: `${customFontSize*0.75}rem`}}>{ boardData.minQuizzes }</Typography>

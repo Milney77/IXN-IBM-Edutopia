@@ -205,8 +205,9 @@ export function highlightTile(ctx, tileData, images, mapData, playerData, gamePl
       const topPoint = {x: tileData.xHexVert[1], y: tileData.yHexVert[1]};
       const bottomPoint = {x: tileData.xHexVert[4], y: (tileData.yHexVert[1] + tileData.yHexVert[4]) / 2};
       const padding = 5;
-      const textheight = 18;
-      ctx.font = '18px Arial';
+      // Screen based fonts
+      const textheight = 18 * canvas.width / 1920 ;
+      ctx.font = `${18 * canvas.width / 1920}px Arial`;
 
       // Determine size
       const tiptext1length = ctx.measureText(tiptext1).width;

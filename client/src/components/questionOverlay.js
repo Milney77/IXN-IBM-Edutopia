@@ -9,7 +9,7 @@ import { DimensionsContext } from './dimensionsContext';
 // Can handle the screen width in a general sense - but the length of the strings can be quite different, so including this function:
 function calculateFontSize (maxTextLength, baseFontSize, screenWidth) {
     // Get a screen width level
-    var screenSizeLevel = Math.max(0.6, Math.min(1, 0.6 + 0.1 * Math.floor((screenWidth - 800)/200)));
+    var screenSizeLevel = Math.max(0.25, Math.min(1, 0.6 + 0.1 * Math.floor((screenWidth - 800)/200)));
     // Text Length level
     var textSizeLevel = Math.max(0.7, Math.min(1, 0.7 + 0.1 * Math.floor((400 - maxTextLength)/100)));
 
@@ -24,7 +24,7 @@ function calculateFontSize (maxTextLength, baseFontSize, screenWidth) {
 
 const QuestionOverlay = ({ question, onResult }) => {
 
-    console.log(question);
+    //console.log(question);
     // Create some states that are used for various purposes
     // For selection options
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -144,7 +144,7 @@ const QuestionOverlay = ({ question, onResult }) => {
     const [hintFontSize, setHintFontSize ] = useState(1.5);
     const [cardTitleFontSize, setCardTitleFontSize ] = useState(1.25);
     const [cardTextFontSize, setCardTextFontSize ] = useState(1);
-    console.log('Screen WxH: (', width, ',', height, '), Overlay WxH: (', overlayWidth, ',', overlayHeight, ')');
+    //console.log('Screen WxH: (', width, ',', height, '), Overlay WxH: (', overlayWidth, ',', overlayHeight, ')');
     useEffect(() => {
         setquestionFontSize(calculateFontSize(question.questiontext.length, 2.5, width));
         setOptionFontSize(calculateFontSize(maxOptionLength, 1.5, width));
@@ -280,7 +280,10 @@ const QuestionOverlay = ({ question, onResult }) => {
                             <Stack direction='row' spacing={4}>
                                 { !showHint && question.hintind === 1 ? 
                                 <Tooltip title="A hint will reduce your reward to just one tech point">
-                                <Button variant="contained" color="secondary" onClick={onHint}>Hint
+                                <Button variant="contained" color="secondary" onClick={onHint}>
+                                <Typography variant='h6' sx={{fontSize: `${optionFontSize}rem`}}>
+                                    Hint
+                                </Typography>
                                             <img src='images/icons/icons-tech.png' alt='techpoints' style={{width: `${questionFontSize}rem`, height: `${questionFontSize}rem`}}/>
                                 </Button>
                                 </Tooltip> : null}

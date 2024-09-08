@@ -197,7 +197,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
     // Canvas Height: Either the inner window height, or calculated from the window width (which ever is smaller)
     const canvasWidth = Math.min(canvasWidthBase, Math.floor(canvasHeightBase * widthHeightRatio));
     const canvasHeight = Math.min(canvasHeightBase, Math.floor(canvasWidthBase * (1 / widthHeightRatio)));
-    console.log('Base WxH: (', Math.round(canvasWidthBase), ',', Math.round(canvasHeightBase), ') - Adjust WxH: (', canvasWidth, ',', canvasHeight, ')');
+    //console.log('Base WxH: (', Math.round(canvasWidthBase), ',', Math.round(canvasHeightBase), ') - Adjust WxH: (', canvasWidth, ',', canvasHeight, ')');
     //const canvasWidth = canvasWidthBase;
     //const canvasHeight = Math.floor(canvasWidthBase / widthHeightRatio);
     setCanvasWidth(canvasWidth);
@@ -229,7 +229,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       iconOffset: 0.25,
       iconHover: [0, 0, 0, 0, 0, 0]
     };
-    console.log(newActionMenuParams);
+    //console.log(newActionMenuParams);
     setActionMenuParams(newActionMenuParams);
   }, [boardData, gamePlayData.numberPlayers, width, height]);
 
@@ -251,7 +251,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
   const initialMount = useRef(true);
 
   const [isComputerThinking, setIsComputerThinking] = useState(false);
-  const computerThinkingTime = 1;
+  const computerThinkingTime = 1000;
 
   useEffect(() => {
     if (initialMount.current) {
@@ -272,7 +272,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
     } else {
       bestAction = possibleActions[0];
     }
-    console.log('Scored Actions:', showActionData(scoredactions), ', Available Actions:', showActionData(availableActions), ', Possible Actions:', showActionData(possibleActions), ', Best Action: ', showActionData([bestAction]));
+    //console.log('Scored Actions:', showActionData(scoredactions), ', Available Actions:', showActionData(availableActions), ', Possible Actions:', showActionData(possibleActions), ', Best Action: ', showActionData([bestAction]));
     // Simulate 'thinking' time
     setTimeout(() => {
       PerformAction(bestAction, boardData, mapData, playerData, gamePlayData, UpdateMapData, UpdatePlayerData, UpdateGamePlayData, addLog);
@@ -287,7 +287,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
     const currentPlayer = gamePlayData.currentPlayer;
     const currentResources = {wood: playerData[currentPlayer].wood, food: playerData[currentPlayer].food, metal: playerData[currentPlayer].metal }
     const freeResources = playerData[currentPlayer].diff;
-    console.log('Current Resources: ', currentResources, 'free: ', freeResources);
+    //console.log('Current Resources: ', currentResources, 'free: ', freeResources);
 
     // Holder for resources chosen based on actions
     const resourcesChosenAction = {wood: 0, food: 0, metal: 0};
@@ -298,7 +298,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
     const availableActionsNeedResources = availableActions.filter((action) => action.resourceCalcs.shortfall < 0);
     // Any actions that would be possible to do if the computer chooses the right resources?
     const possibleActions = availableActionsNeedResources.filter((action) => action.resourceCalcs.shortfall >= (-1 * freeResources));
-    console.log('Available: ', availableActions, 'Insufficient Resource Actions:', availableActionsNeedResources, ' Potential: ', possibleActions);
+    //console.log('Available: ', availableActions, 'Insufficient Resource Actions:', availableActionsNeedResources, ' Potential: ', possibleActions);
     // Now take the top 5 availabeActions, and check if any that the player could do if they chose the right resources
     const top3Actions = availableActions.slice(0,5).filter((action)=> action.resourceCalcs.shortfall < 0);
     // If there is at least one action in the top 3 that needs resources, then use this to determine which resources to get
@@ -307,7 +307,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       resourcesChosenAction.wood = Math.max(0, topAction.resourceCalcs.wood * -1);
       resourcesChosenAction.food = Math.max(0, topAction.resourceCalcs.food * -1);
       resourcesChosenAction.metal = Math.max(0, topAction.resourceCalcs.metal * -1);
-      console.log('Action driving resource choice: ', showActionData([topAction]), ', top Actions:', showActionData(top3Actions));
+      //console.log('Action driving resource choice: ', showActionData([topAction]), ', top Actions:', showActionData(top3Actions));
     }
 
     // Now choose the rest of the resources based on the target resource ratio for that player
@@ -329,7 +329,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       remainingResources -= 1;
     }
     const resourcesChosen = {wood: newResources.wood - currentResources.wood, food: newResources.food - currentResources.food, metal: newResources.metal - currentResources.metal }
-    console.log('chosen resources:', resourcesChosen);
+    //console.log('chosen resources:', resourcesChosen);
     return resourcesChosen;
   }
 
@@ -349,15 +349,16 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
 
       
     const baseUrl = process.env.REACT_APP_API_BASE_URL;
+    
     if (gamePlayData.currentPhase === 4) {
       const questionresponses = questionData;
-      console.log(questionresponses);
+      //console.log(questionresponses);
       // Someone has won the game
       const onConfirm = async () => {
         // Update the database
         try {
-          await axios.post(`${baseUrl}/postresponses`, { questionresponses: questionresponses });
-          console.log('Question responses updated successfully');
+          await axios.post(`${baseUrl}/responses`, { questionresponses: questionresponses });
+          //console.log('Question responses updated successfully');
         } catch (error) {
           console.error('Error updating question responses:', error);
         }
@@ -369,7 +370,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       // Slightly different phase structure for computer - phase 0 is generate resources, phase 1 is collect extra resources, phase 2 is action phase
       if (gamePlayData.currentPhase === 0) {
         // Collect resources
-        console.log("COMPUTER PLAYER DEBUGGING - Player ", currentPlayer + 1, ', Strategy:', playerData[currentPlayer].strat);
+        //console.log("COMPUTER PLAYER DEBUGGING - Player ", currentPlayer + 1, ', Strategy:', playerData[currentPlayer].strat);
         addCurrentInstruction(instructAI1);
         generateResources(gamePlayData, mapData, playerData, UpdatePlayerData, UpdateGamePlayData, addLog);
         setTimeout(() => UpdateGamePlayData('currentPhase', 1), 1000);
@@ -405,6 +406,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
         if (gamePlayData.currentPhase === 0) {
           // IBM Skills Build course
           addCurrentInstruction(instructTxt1);
+          calculateVictoryPoints(boardData, gamePlayData, mapData, playerData, UpdateGamePlayData, UpdatePlayerData)
         } else if (gamePlayData.currentPhase === 1) {
           // Generate Resources 
           addCurrentInstruction(instructTxt2);
@@ -480,7 +482,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
       const mousePos = mouseXY_to_HexID(mouseX, mouseY, tileWidth, tileHeightFull, tileHeightTrim, tilesHOffset, tilesVOffset,
                                         boardData, mapData, gamePlayData, actionMenuParams, canvas );
       if (mousePos) {
-        console.log('Clicked:', mousePos);
+        //console.log('Clicked:', mousePos);
         handleMouseClick(mousePos, boardData, gamePlayData, mapData, playerData
           , UpdateGamePlayData, UpdateMapData, UpdatePlayerData
           , addCurrentInstruction, addLog, showOverlay, ValidateMove );
@@ -529,7 +531,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
         />
       )}
 
-      
+    
     </Box>
   );
 };
@@ -537,3 +539,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
 
 
 export default GameBoardCanvas;
+
+/*
+  <Button onClick={testEnd} >END GAME</Button>
+*/

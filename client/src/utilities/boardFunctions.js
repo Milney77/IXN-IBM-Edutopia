@@ -152,6 +152,7 @@ export const CalculateHexStatus = (currentPlayer, mapData) => {
           defendPlayerStruct += mapData[tileid].structure;
         }
       })
+      console.log('Start Square Ind:', mapData[hexid].startSquare, 'Num Players:', numberPlayers)
       // Check 1 - Can't take over a castle
       if (mapData[hexid].structure === 4) {
         isAllowed = false;

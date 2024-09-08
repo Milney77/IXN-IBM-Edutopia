@@ -303,7 +303,7 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
         newHintCardTitles.splice(index, 1);
         newHintCardText.splice(index, 1);
         const newHintCards = newHintCardTitles.length;
-        console.log(newHintCards);
+        //console.log(newHintCards);
         setQuestion((prevQuestion) => ({
             ...prevQuestion,
             hintcardtitles: newHintCardTitles,
@@ -316,7 +316,7 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
     const handleAddHintCard = () => {
         if (question.hintcardtitles.length < maxHintCards) {
             const newHintCards = question.hintcardtitles.length + 1;
-            console.log(newHintCards);
+            //console.log(newHintCards);
             setQuestion((prevQuestion) => ({
                 ...prevQuestion,
                 hintcardtitles: [...prevQuestion.hintcardtitles, ''],
@@ -447,10 +447,6 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
 
 
 
-        console.log('validateCourseError', validateCourseError,'validateQuizError',validateQuizError,'validateTypeError',validateTypeError,'validateQuestionError',validateQuestionError
-                    ,'validateAnswersError',validateAnswersError,'validateMatchOptionsError',validateMatchOptionsError,'validateHintText0Error',validateHintText0Error
-                    ,'validateHintCardTitlesError',validateHintCardTitlesError,'validateHintCardTextError', validateHintCardTextError)
-
         return isValid;
         
     }
@@ -462,7 +458,7 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
         const canSave = validateData();
         if (canSave) {
             try {
-                console.log('Save!  Data:', question);
+                //console.log('Save!  Data:', question);
                 // URL depends on if the user is editing or creating a new course
                 const url = editType === 'edit' 
                     ? `${baseUrl}/questions/${question.questionid}`
@@ -1050,3 +1046,8 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
 
 export default AdminEditQuestion;
 
+/* CODE GRAVEYARD
+console.log('validateCourseError', validateCourseError,'validateQuizError',validateQuizError,'validateTypeError',validateTypeError,'validateQuestionError',validateQuestionError
+                    ,'validateAnswersError',validateAnswersError,'validateMatchOptionsError',validateMatchOptionsError,'validateHintText0Error',validateHintText0Error
+                    ,'validateHintCardTitlesError',validateHintCardTitlesError,'validateHintCardTextError', validateHintCardTextError)
+*/

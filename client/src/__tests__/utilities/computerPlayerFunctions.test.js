@@ -255,35 +255,35 @@ describe('calculateTakeOverRisk', () => {
         const tileData = {id: 0, currentOwner: 1, structure: 4, startSquare: 0, neighbourids: [1,2,3,4,5,6]}
         mapData.push(tileData);
         const result = calculateTakeOverRisk(tileData, mapData, 0);
-        expect(result).toEqual( [[], 0, 0] );
+        expect(result).toEqual( [[], 0] );
     });
 
     it('should return no risk if tile is players starting tile', () => {
         const tileData = {id: 0, currentOwner: 1, structure: 1, startSquare: 1, neighbourids: [1,2,3,4,5,6]}
         mapData.push(tileData);
         const result = calculateTakeOverRisk(tileData, mapData, 0);
-        expect(result).toEqual( [[], 0, 0] );
+        expect(result).toEqual( [[], 0] );
     });
 
     it('should return correct results from tile array when 2 players have greater strength & 1 player has equal strength', () => {
         const tileData = {id: 0, currentOwner: 1, structure: 1, startSquare: 0, neighbourids: [1,2,3,4,5,6]}
         mapData.push(tileData);
         const result = calculateTakeOverRisk(tileData, mapData, 0);
-        expect(result).toEqual( [{'1': 1, '2': 2, '3' : 3, '4' : 1}, 1, 2] );
+        expect(result).toEqual( [{'1': 1, '2': 2, '3' : 3, '4' : 1}, 3] );
     });
 
     it('should return correct results from tile array when 1 player have greater strength & 1 player has equal strength', () => {
         const tileData = {id: 0, currentOwner: 1, structure: 2, startSquare: 0, neighbourids: [1,2,3,4,5,6]}
         mapData.push(tileData);
         const result = calculateTakeOverRisk(tileData, mapData, 0);
-        expect(result).toEqual( [{'1': 2, '2': 2, '3' : 3, '4' : 1}, 1, 1] );
+        expect(result).toEqual( [{'1': 2, '2': 2, '3' : 3, '4' : 1}, 2] );
     });
 
     it('should return correct results from tile array when 1 player has equal strength', () => {
         const tileData = {id: 0, currentOwner: 1, structure: 3, startSquare: 0, neighbourids: [1,2,3,4,5,6]}
         mapData.push(tileData);
         const result = calculateTakeOverRisk(tileData, mapData, 0);
-        expect(result).toEqual( [{'1': 3, '2': 2, '3' : 3, '4' : 1}, 1, 0] );
+        expect(result).toEqual( [{'1': 3, '2': 2, '3' : 3, '4' : 1}, 1] );
     });
 
     it('should return correct results from tile array when no player has equal strength', () => {
@@ -296,7 +296,7 @@ describe('calculateTakeOverRisk', () => {
                  , {id: 6, currentOwner: 4, structure: 1, startSquare: 0, neighbourids: [0]}]
         mapData.push(tileData);
         const result = calculateTakeOverRisk(tileData, mapData, 0);
-        expect(result).toEqual( [{'1': 3, '2': 2, '3' : 2, '4' : 1}, 0, 0] );
+        expect(result).toEqual( [{'1': 3, '2': 2, '3' : 2, '4' : 1}, 0] );
     });
 
     // Clear all mocks to avoid mocked functions interferring with the actual function tests

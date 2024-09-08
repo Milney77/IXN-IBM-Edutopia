@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
       // Did the previous query return any data?
       if (existingResponse) {
         //console.log('Existing response')
-        console.log(existingResponse);
+        //console.log(existingResponse);
         // Yes - So update the existing record.
         await prisma.questionresponses.update({
           where: {

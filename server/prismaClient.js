@@ -13,6 +13,6 @@ if (process.env.NODE_ENV === 'production') {
   prisma = global.prisma;
 }
 
-console.log('Real Prisma Server');
+//console.log('Real Prisma Server');
 
 module.exports = prisma;

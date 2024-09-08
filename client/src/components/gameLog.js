@@ -5,7 +5,7 @@ import { DimensionsContext } from './dimensionsContext';
 import './custom.css';
 
 
-const GameLog = ({ currentInstruction, log, exitToTitle }) => {
+const GameLog = ({ currentInstruction, log, exitToTitle, handleHowToOpenClick }) => {
   // Get the dimensions from the dimension context
   const {width, height} = useContext(DimensionsContext);
   const maxOverlayWidth = 0.8 * width;
@@ -71,7 +71,7 @@ const GameLog = ({ currentInstruction, log, exitToTitle }) => {
           <Grid item xs = {1}>
              <Typography variant='h6' sx={{ marginX:0, paddingX:0, paddingY:0, color: 'white', fontSize: `${customFontSize/2}rem` }}>Game Log</Typography>
           </Grid>
-          <Grid item xs = {4}>
+          <Grid item xs = {3.5}>
             <Tooltip title="Click to expand game log">
               <Box id="log" onClick={handleLogClick} 
                   sx={{width:'100%', p:0, mt:'0rem', fontSize: `${customFontSize/2}rem`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
@@ -79,15 +79,25 @@ const GameLog = ({ currentInstruction, log, exitToTitle }) => {
               </Box>
             </Tooltip>
           </Grid>
-          <Grid item xs={1}>
+          <Grid item xs={0.75}>
+              <Tooltip title="Show How to Play Guide">
+                <Button variant='contained' color="primary" onClick={handleHowToOpenClick} sx={{color:'white'}}>
+                  <Typography variant='h6' sx={{fontSize: `${customFontSize/2}rem`}}>
+                                    ?
+                  </Typography>
+                </Button>
+              </Tooltip>
+          </Grid>
+          <Grid item xs={0.75}>
               <Tooltip title="Go back to main menu">
-                <Button variant='contained' onClick={exitGame} sx={{color:'white', backgroundColor:'red'}}>
+                <Button variant='contained' color="secondary"  onClick={exitGame} sx={{color:'white'}}>
                   <Typography variant='h6' sx={{fontSize: `${customFontSize/2}rem`}}>
                                     X
                   </Typography>
                 </Button>
               </Tooltip>
           </Grid>
+          
         
             {isOverlayVisible && (
               <Box id="logOverlay">

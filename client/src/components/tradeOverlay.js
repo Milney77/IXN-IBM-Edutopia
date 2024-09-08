@@ -12,10 +12,9 @@ import { tradingRatios } from '../constants/constants';
 export const calculateFontSizeAndMargin = (width, setCustomFontSize, setCustomMargin) => {
     // Size is based on screen width & number of players
     const overlayWidth = Math.min(900, width * 0.8);
-    console.log(overlayWidth);
     let newFontSize = Math.min(1.5, Math.max(0.5, 0.75 + 0.25 * Math.floor((overlayWidth)/300)));
     let newMargin = Math.min(1.5, Math.max(0, 0.25 * Math.floor((overlayWidth - 100)/100)));
-    console.log('overlayWidth:', overlayWidth, ', newFontSize:', newFontSize);
+    //console.log('overlayWidth:', overlayWidth, ', newFontSize:', newFontSize);
   setCustomFontSize(newFontSize);
   setCustomMargin(newMargin);
 };

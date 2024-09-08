@@ -11,7 +11,7 @@ const prismaMock = {
   },
 };
 
-console.log('Using Prisma Mock Server')
+//console.log('Using Prisma Mock Server')
 
 // Mock PrismaClient constructor to return the mock object
 const PrismaClientMock = jest.fn(() => prismaMock);

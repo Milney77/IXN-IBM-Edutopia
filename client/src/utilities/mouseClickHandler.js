@@ -50,8 +50,8 @@ else if (gamePlayData.actionPhaseSet === 1 ||
 if (mousePos.type === 'hex' && mapData[mousePos.id].actionable === 1) {
 // Player has selected one of their own hexes to develop.
 hexid = mousePos.id;
-validMove =  validateMove('build', hexid, boardData, mapData, currentPlayer);
-console.log('Valid Move:', validMove);
+validMove =  validateMove('build', hexid, boardData, mapData, currentPlayer, gamePlayData.numberPlayers);
+//console.log('Valid Move:', validMove);
 if (!validMove.isAllowed) {
 // Error - cannot build any more - display a message
 showOverlay(validMove.disallowReason, null, null, true);
@@ -104,7 +104,7 @@ if (mousePos.type === 'hex' && mapData[mousePos.id].actionable === 2) {
 // Player is developing hex.
 hexid = mousePos.id;
 cost = resourceCosts.expand;
-validMove =  validateMove('develop', hexid, boardData, mapData, currentPlayer);
+validMove =  validateMove('develop', hexid, boardData, mapData, currentPlayer, gamePlayData.numberPlayers);
 //console.log('Valid Move:', validMove);
 // Check if player has sufficient resources
 if (playerData[currentPlayer].wood < cost.wood || playerData[currentPlayer].food < cost.food ||
@@ -155,8 +155,8 @@ if (mousePos.type === 'hex' && mapData[mousePos.id].actionable === 3) {
 // Player is taking over an opposing player's hex.
 hexid = mousePos.id;
 cost = resourceCosts.takeover;
-validMove =  validateMove('takeover', hexid, boardData, mapData, currentPlayer);
-console.log('Valid Move:', validMove); 
+validMove =  validateMove('takeover', hexid, boardData, mapData, currentPlayer, gamePlayData.numberPlayers);
+//console.log('Valid Move:', validMove); 
 if (!validMove.isAllowed) {
 // Error - cannot build any more - display a message
 showOverlay(validMove.disallowReason, null, null, true);
@@ -184,7 +184,7 @@ wood:  playerData[currentPlayer].wood  - cost.wood
 UpdatePlayerData(playerDataUpdates);
 // Update the board data
 UpdateMapData(hexid, 'currentOwner', currentPlayerOwnership);
-UpdateMapData(hexid, 'structure', Math.max(1, mapData[hexid].structure - 1));
+UpdateMapData(hexid, 'structure', 1);
 // Add to log
 var logTxt = 'Player ' + (currentPlayer + 1) + ' has taken over hex ' + hexid;
 addLog(logTxt);

@@ -149,9 +149,6 @@ const UsersPage = ({customFontSize}) => {
       <Button variant="contained" color="primary" onClick={() => setShowAddUserForm(true)}>
         Add User
       </Button>
-      <Button onClick={()=>console.log(users)} color="secondary" autoFocus>
-        Show Data
-      </Button>
 
       {/* Add User Form */}
       {showAddUserForm && (
