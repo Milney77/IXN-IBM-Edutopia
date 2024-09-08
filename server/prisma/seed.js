@@ -45,7 +45,7 @@ async function main() {
     );
     // Create the users in the database
     await prisma.users.createMany({
-        data: password
+        data: users
     });
 
     
