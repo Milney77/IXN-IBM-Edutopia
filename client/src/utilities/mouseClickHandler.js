@@ -65,7 +65,7 @@ var structureName = structNames[mapData[hexid].structure - 1];
 // Check if player has enough resources
 if (playerData[currentPlayer].wood < cost.wood || playerData[currentPlayer].food < cost.food ||
 playerData[currentPlayer].metal < cost.metal || playerData[currentPlayer].tech < cost.tech          ) {
-showOverlay('Insufficient resources to build on this hex.', cost, null, true);
+showOverlay('Insufficient resources to build on this tile.', cost, null, true);
 UpdateGamePlayData('actionPhaseSet', -1);
 } else {
 const onConfirm = () => {
@@ -84,11 +84,11 @@ UpdatePlayerData(playerDataUpdates);
 // Update the board data
 UpdateMapData(hexid, 'structure', (mapData[hexid].structure += 1));
 // Add to log
-var logTxt = 'Player ' + (currentPlayer + 1) + ' has built a ' + structureName + ' on hex ' + hexid;
+var logTxt = 'Player ' + (currentPlayer + 1) + ' has built a ' + structureName + ' on tile ' + hexid;
 addLog(logTxt);
 UpdateGamePlayData('actionPhaseSet', -1);
 };
-showOverlay('Do you want to build on this hex?', cost, onConfirm, false);
+showOverlay('Do you want to build on this tile?', cost, onConfirm, false);
 }
 }
 } else {
@@ -109,7 +109,7 @@ validMove =  validateMove('develop', hexid, boardData, mapData, currentPlayer, g
 // Check if player has sufficient resources
 if (playerData[currentPlayer].wood < cost.wood || playerData[currentPlayer].food < cost.food ||
 playerData[currentPlayer].metal < cost.metal || playerData[currentPlayer].tech < cost.tech) {
-showOverlay('Insufficient resources to develop this hex.', cost, null, true);
+showOverlay('Insufficient resources to develop this tile.', cost, null, true);
 UpdateGamePlayData('actionPhaseSet', -1);
 } else {
 //console.log('HexID:', hexid, 'CurrPlayer idx:', currentPlayer, 'CurrOwnership:', currentPlayerOwnership);
@@ -130,11 +130,11 @@ UpdatePlayerData(playerDataUpdates);
 UpdateMapData(hexid, 'currentOwner', currentPlayerOwnership);
 UpdateMapData(hexid, 'structure', 1);
 // Add to log
-var logTxt = 'Player ' + (currentPlayer + 1) + ' has developed hex ' + hexid;
+var logTxt = 'Player ' + (currentPlayer + 1) + ' has developed tile ' + hexid;
 addLog(logTxt);
 UpdateGamePlayData('actionPhaseSet', -1);
 };
-showOverlay('Do you want to build on this hex?', cost, onConfirm, false);
+showOverlay('Do you want to build on this tile?', cost, onConfirm, false);
 //console.log(mapData[hexid]);
 }
 }
@@ -165,7 +165,7 @@ UpdateGamePlayData('actionPhaseSet', -1);
 // Check if player has sufficient resources
 if (playerData[currentPlayer].wood < (cost.wood) || playerData[currentPlayer].food < (cost.food) ||
 playerData[currentPlayer].metal < (cost.metal) || playerData[currentPlayer].tech < (cost.tech)) {
-showOverlay('Insufficient resources to take over this hex.', cost, null, true);
+showOverlay('Insufficient resources to take over this tile.', cost, null, true);
 UpdateGamePlayData('actionPhaseSet', -1);
 } else {
 //console.log('HexID:', hexid, 'CurrPlayer idx:', currentPlayer, 'CurrOwnership:', currentPlayerOwnership);
@@ -186,11 +186,11 @@ UpdatePlayerData(playerDataUpdates);
 UpdateMapData(hexid, 'currentOwner', currentPlayerOwnership);
 UpdateMapData(hexid, 'structure', 1);
 // Add to log
-var logTxt = 'Player ' + (currentPlayer + 1) + ' has taken over hex ' + hexid;
+var logTxt = 'Player ' + (currentPlayer + 1) + ' has taken over tile ' + hexid;
 addLog(logTxt);
 UpdateGamePlayData('actionPhaseSet', -1);
 };
-showOverlay('Do you want to take over this hex?', cost, onConfirm, false);
+showOverlay('Do you want to take over this tile?', cost, onConfirm, false);
 //console.log(mapData[hexid]);
 }
 }

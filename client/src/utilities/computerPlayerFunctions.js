@@ -368,7 +368,7 @@ export const calculateTakeOverRisk = (tiledata, mapData, currentPlayer) => {
         UpdateMapData(hexid, 'currentOwner', (currentPlayer + 1));
         UpdateMapData(hexid, 'structure', 1);
         // Add to log
-        logTxt = 'Player ' + (currentPlayer + 1) + ' has taken over hex ' + hexid;
+        logTxt = 'Player ' + (currentPlayer + 1) + ' has taken over tile ' + hexid;
         addLog(logTxt);
     } else if  (bestAction.action === 'expand') {
         UpdatePlayerData(playerDataUpdates);
@@ -376,7 +376,7 @@ export const calculateTakeOverRisk = (tiledata, mapData, currentPlayer) => {
         UpdateMapData(hexid, 'currentOwner', (currentPlayer + 1));
         UpdateMapData(hexid, 'structure', 1);
         // Add to log
-        logTxt = 'Player ' + (currentPlayer + 1) + ' has developed hex ' + hexid;
+        logTxt = 'Player ' + (currentPlayer + 1) + ' has developed tile ' + hexid;
         addLog(logTxt);
     } else if (bestAction.action === 'build') {
         UpdatePlayerData(playerDataUpdates);
@@ -385,7 +385,7 @@ export const calculateTakeOverRisk = (tiledata, mapData, currentPlayer) => {
         UpdateMapData(hexid, 'structure', newStructValue);
         // Add to log
         const structureName = ['Camp', 'House', 'Village', 'Castle'][newStructValue - 1];
-        logTxt = 'Player ' + (currentPlayer + 1) + ' has built a ' + structureName + ' on hex ' + hexid;
+        logTxt = 'Player ' + (currentPlayer + 1) + ' has built a ' + structureName + ' on tile ' + hexid;
         addLog(logTxt);
     } else if (bestAction.action === 'pass') {
       addLog('Player ' + (gamePlayData.currentPlayer + 1) + ' has ended their turn.');

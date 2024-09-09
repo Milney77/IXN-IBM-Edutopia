@@ -198,7 +198,7 @@ export function highlightTile(ctx, tileData, images, mapData, playerData, gamePl
         actionCost = {wood: 0, food: 0, metal: 0, tech: 0};
       }
       
-      const tiptext1 = 'Tile ID: ' + tileData.id + ', Resource: ' + resource;
+      const tiptext1 = 'Tile: ' + tileData.id + ', Resource: ' + resource;
       const tiptext2 = 'Action: ' + actionType;
       const tiptext3 = 'Cost : [' + (actionCost.wood > 0 ? actionCost.wood + ' wood ' : '') + (actionCost.food > 0 ? actionCost.food + ' food ' : '') + (actionCost.metal > 0 ? actionCost.metal + ' metal ' : '') + ']'
       // Positioning parameters
@@ -382,9 +382,9 @@ export function fillCircle(ctx, x, y, rad, colour) {
 
 export function addToolTip(ctx, iconx, icony, actionMenuHeight, iconid) {
       const padding = 5;
-      const actionMenuHelpText = ['Build - Upgrade a structure on your own hex'
-                              , 'Develop - Take over an empty adjacent hex'
-                              , 'TakeOver - Take over an adjacent hex owned by another player'
+      const actionMenuHelpText = ['Build - Upgrade a structure on your own tile'
+                              , 'Develop - Take over an empty adjacent tile'
+                              , 'TakeOver - Take over an adjacent tile owned by another player'
                               , 'Trade - Trade resources with the bank'
                               , 'End Turn'
       ];

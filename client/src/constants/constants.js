@@ -92,7 +92,7 @@ export const tradingRatios = {
     tradeBankRatioFood: 1,
     tradeBankRatioWood: 1,
     tradeBankRatioMetal: 1,
-    tradeBankRatioTech: 50
+    tradeBankRatioTech: 2
 }
 
 export const initresources = {

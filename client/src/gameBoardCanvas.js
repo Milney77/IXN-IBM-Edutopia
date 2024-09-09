@@ -362,7 +362,7 @@ const GameBoardCanvas = ({ images, gameComponents, addLog, addCurrentInstruction
         } catch (error) {
           console.error('Error updating question responses:', error);
         }
-        //ReturnToMainMenu();
+        ReturnToMainMenu();
       };
       showOverlay('Player ' + (gamePlayData.winner) + ' has won the game!', null, onConfirm, true);
     }

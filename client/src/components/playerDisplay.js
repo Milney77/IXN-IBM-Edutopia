@@ -98,6 +98,7 @@ const PlayerBox = (props) => {
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center'}}>  
+                            <Tooltip title="The Skills Build Button">
                     <Box
                         component='img'
                         src='images/icons/icon-v2-skillsbuild.png'
@@ -113,6 +114,7 @@ const PlayerBox = (props) => {
                         
                         onClick={() => handleButtonClick(addCurrentInstruction, showQuestionOverlay)}
                     ></Box>
+                    </Tooltip>
                      </Box>
                 ) : (gamePlayData.currentPlayer === playerData.id && gamePlayData.currentPhase === 1 && playerData.compPlayer === 0) ? (
                     <Box>
@@ -215,7 +217,7 @@ const PlayerBox = (props) => {
                         </Grid>
                         <Grid item xs={0.25}></Grid>
 
-                        <Tooltip title="Tech resource.  Only gained by answering IBM Skills Build questions correctly">
+                        <Tooltip title="Tech resource.  Trade to the bank for 2 resources of your choice">
                         <Grid item xs={1}>
                             <Box
                                 component='img'

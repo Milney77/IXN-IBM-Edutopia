@@ -396,7 +396,7 @@ const AdminScreen = ({handleAdminExit}) => {
          : null}
         
 
-        <Button variant='contained' onClick={showAdminData}>debugging - DATA</Button>
+       
         </Box>
         );
     } else {

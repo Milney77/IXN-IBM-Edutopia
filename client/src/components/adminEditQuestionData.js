@@ -1023,7 +1023,6 @@ const AdminEditQuestion = ({questiondata, courselist, editType, customFontSize, 
                 </Grid>
             </Grid>
 
-            <Button variant='outlined' onClick={showData}>Show Data</Button>
         </Box>
     </Box>
 

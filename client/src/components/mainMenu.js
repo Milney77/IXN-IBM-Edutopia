@@ -416,10 +416,10 @@ const MainMenu = ({ startGame }) => {
     const coursesSelected = selectedCourses.length;
     //console.log(hasHumanPlayer, coursesSelected);
     if (!hasHumanPlayer) {
-      //setIsStartDisabled(!hasHumanPlayer);
-      //setStartDisabledReason('Must have at least 1 human player')
+      setIsStartDisabled(!hasHumanPlayer);
+      setStartDisabledReason('Must have at least 1 human player')
     }
-    else if (coursesSelected < boardData.minQuizzes * 0) {
+    else if (coursesSelected < boardData.minQuizzes ) {
       setIsStartDisabled(true);
       setStartDisabledReason('Have to select at least ' + boardData.minQuizzes + ' Skills Build Courses.')
     }
