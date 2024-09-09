@@ -37,7 +37,7 @@ npx prisma migrate dev --name 0_init
 npx prisma migrate reset
 ```
 
-9 - Navigate to the root/client folder and create another environment file called ".env".
+9 - Navigate to the root/client folder and open the environment file called ".env" (or create it if it doesn't exist).
 
 10 - In this file, you will need to add the following.  If you are not using PORT=3001, then change the number after localhost: to the port number you are using.
 ```bash
